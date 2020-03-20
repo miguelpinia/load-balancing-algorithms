@@ -59,6 +59,9 @@ public class ChaseLevWorkStealing {
         return task;
     }
 
+    // En trabajo a futuro, hay que actualizar esta versión para que pueda
+    // decrecer el tamaño del arreglo circular que usa, como lo mencionan en
+    // la sección 3 del artículo de este algoritmo.
     public int popBottom() {
         int b = bottom.get();
         CircularArrayChaseLev a = this.activeArray;

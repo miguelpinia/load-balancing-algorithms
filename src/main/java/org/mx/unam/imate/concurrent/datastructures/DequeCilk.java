@@ -25,7 +25,9 @@ public class DequeCilk {
 
     private void expand() {
         int[] newData = new int[2 * tasks.length];
-        System.arraycopy(tasks, 0, newData, 0, tasks.length);
+        for (int i = 0; i < tasks.length; i++) { // Comparar contra System.arrayCopy
+            newData[i] = tasks[i];
+        }
         tasks = newData;
     }
 
