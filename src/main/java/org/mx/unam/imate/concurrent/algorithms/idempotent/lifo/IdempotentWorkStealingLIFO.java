@@ -16,7 +16,7 @@ public class IdempotentWorkStealingLIFO {
     private static final int EMPTY = -1;
 
     private int[] tasks;
-    private AtomicReference<Pair> anchor;
+    private final AtomicReference<Pair> anchor;
     private int capacity;
 
     public IdempotentWorkStealingLIFO(int size) {
