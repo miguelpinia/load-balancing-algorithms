@@ -2,6 +2,8 @@ package org.mx.unam.imate.concurrent.algorithms.idempotent.fifo;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
+
 /**
  *
  * @author miguel
@@ -65,25 +67,6 @@ public class IdempotentWorkStealingFIFO {
             a.getArray()[i % a.getSize()] = tasks.getArray()[i % a.getSize()];
         }
         tasks = a;
-    }
-
-    private final class TaskArrayWithSize {
-
-        private final int size;
-        private final int[] array;
-
-        public TaskArrayWithSize(int size) {
-            this.size = size;
-            this.array = new int[size];
-        }
-
-        public int getSize() {
-            return size;
-        }
-
-        public int[] getArray() {
-            return array;
-        }
     }
 
 }
