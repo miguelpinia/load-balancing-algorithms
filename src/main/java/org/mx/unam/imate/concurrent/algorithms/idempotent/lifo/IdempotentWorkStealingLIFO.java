@@ -25,6 +25,10 @@ public class IdempotentWorkStealingLIFO {
         tasks = new int[size];
     }
 
+    public boolean isEmpty() {
+        return anchor.get().getT() == 0;
+    }
+
     public void put(int task) {
         Pair a = anchor.get();
         int t = a.getT();
