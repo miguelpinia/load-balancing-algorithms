@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
-import org.mx.unam.imate.concurrent.datastructures.DequeCilk;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;

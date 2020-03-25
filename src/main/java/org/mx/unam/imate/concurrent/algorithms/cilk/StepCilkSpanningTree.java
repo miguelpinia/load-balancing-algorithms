@@ -4,7 +4,6 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
-import org.mx.unam.imate.concurrent.datastructures.DequeCilk;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.Node;
 

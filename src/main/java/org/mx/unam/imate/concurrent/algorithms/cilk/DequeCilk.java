@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.datastructures;
+package org.mx.unam.imate.concurrent.algorithms.cilk;
 
 import java.util.concurrent.locks.ReentrantLock;
 
