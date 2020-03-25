@@ -2,7 +2,6 @@ package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.mx.unam.imate.concurrent.datastructures.CircularArrayChaseLev;
 
 /**
  *
