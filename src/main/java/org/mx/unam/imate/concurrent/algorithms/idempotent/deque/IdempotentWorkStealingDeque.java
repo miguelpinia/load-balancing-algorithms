@@ -34,6 +34,10 @@ public class IdempotentWorkStealingDeque {
         anchor.set(new Triplet(h, s + 1, g + 1));
     }
 
+    public boolean isEmpty() {
+        return anchor.get().getSize() == 0;
+    }
+
     public int take() {
         Triplet oldReference = anchor.get();
         int h = oldReference.getHead();
