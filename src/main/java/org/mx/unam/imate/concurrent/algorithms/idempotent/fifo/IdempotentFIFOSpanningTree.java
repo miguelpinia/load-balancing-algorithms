@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
-import org.mx.unam.imate.concurrent.algorithms.idempotent.lifo.IdempotentLIFOSpanningTree;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
@@ -49,7 +48,7 @@ public class IdempotentFIFOSpanningTree implements SpanningTree {
             try {
                 threads[i].join();
             } catch (InterruptedException ex) {
-                Logger.getLogger(IdempotentLIFOSpanningTree.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(IdempotentFIFOSpanningTree.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         for (int i = 0; i < graph.getNumVertices(); i++) {
