@@ -22,6 +22,10 @@ public class IdempotentWorkStealingFIFO {
         this.tasks = new TaskArrayWithSize(size);
     }
 
+    public boolean isEmpty() {
+        return head.get() == tail.get();
+    }
+
     public void put(int task) {
         int h = head.get();
         int t = tail.get();
