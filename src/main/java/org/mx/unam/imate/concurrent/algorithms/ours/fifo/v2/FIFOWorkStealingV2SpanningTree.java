@@ -5,7 +5,6 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v2;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -23,26 +22,31 @@ import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 public class FIFOWorkStealingV2SpanningTree implements SpanningTree {
 
     @Override
-    public void spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type) {
+    public Graph spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type) {
         Thread[] threads = new Thread[numThreads];
         Random r = new Random(System.currentTimeMillis());
         Graph graph = GraphUtils.graphType(shape, type);
         int[] color = new int[graph.getNumVertices()];
-        int[] parent = new int[graph.getNumVertices()];
+        int[] parents = GraphUtils.initializeParent(graph.getNumVertices());
         int roots[] = GraphUtils.stubSpanning(graph, numThreads);
+        graph.setRoot(roots[0]);
         AtomicInteger counter = new AtomicInteger(0);
         FIFOWorkStealingV2[] queues = new FIFOWorkStealingV2[numThreads];
         for (int i = 0; i < numThreads; i++) {
             queues[i] = new FIFOWorkStealingV2(graph.getNumVertices());
         }
         if (displayInfo) {
-            System.out.println(Arrays.toString(roots));
+            System.out.print("[");
+            for (int i = 0; i < roots.length; i++) {
+                System.out.print(roots[i] + " ");
+            }
+            System.out.println("]");
         }
         int[] processors = new int[numThreads];
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new Thread(new StepFIFOWorkStealingV2(graph,
                     randomRoots ? r.nextInt(graph.getNumVertices()) : roots[i],
-                    color, parent, (i + 1),
+                    color, parents, (i + 1),
                     queues[i], queues,
                     numThreads, counter), String.format("Hilo %d", i));
         }
@@ -61,12 +65,20 @@ public class FIFOWorkStealingV2SpanningTree implements SpanningTree {
                 processors[color[i] - 1]++;
             }
             if (displayInfo) {
-                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parent[i], color[i]);
+                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parents[i], color[i]);
                 System.out.println(val);
             }
         }
+        graph = null;
         for (int i = 0; i < numThreads; i++) {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
+        for (int i = 1; i < roots.length; i++) {
+            if (parents[roots[i]] == -1) {
+                parents[roots[i]] = roots[i - 1];
+            }
+        }
+        Graph tree = GraphUtils.buildFromParents(parents);
+        return tree;
     }
 }

@@ -9,8 +9,14 @@ public class Graph {
     private Node[] vertices;
     private int numVertices;
     private int numConnectedVertices;
+    private int root;
 
     public Graph() {
+    }
+
+    public Graph(Edge[] edges, int numVertices, int root) {
+        this(edges, numVertices);
+        this.root = root;
     }
 
     public Graph(Edge[] edges, int numVertices) {
@@ -20,12 +26,19 @@ public class Graph {
         for (Edge edge : edges) {
             int src = edge.getSrc();
             int dest = edge.getDest();
-            Node srcNode = new Node(dest, vertices[src]);
-            Node destNode = new Node(src, vertices[dest]);
-            if (!inList(srcNode, vertices[src])) {
+            Node srcNode;
+            Node destNode;
+            if (dest == -1) {
+                srcNode = null;
+                destNode = new Node(src, null);
+            } else {
+                srcNode = new Node(dest, vertices[src]);
+                destNode = new Node(src, vertices[dest]);
+            }
+            if (srcNode != null && !inList(srcNode, vertices[src])) {
                 vertices[src] = srcNode;
             }
-            if (!inList(destNode, vertices[dest])) {
+            if (dest != -1 && !inList(destNode, vertices[dest])) {
                 vertices[dest] = destNode;
             }
         }
@@ -34,6 +47,10 @@ public class Graph {
                 numConnectedVertices++;
             }
         }
+    }
+
+    public void setRoot(int root) {
+        this.root = root;
     }
 
     public int getNumVertices() {
@@ -46,6 +63,18 @@ public class Graph {
 
     public int getNumConnectedVertices() {
         return numConnectedVertices;
+    }
+
+    public void printGraph() {
+        String repr = "";
+        for (int i = 0; i < vertices.length; i++) {
+            Node node = vertices[i];
+            while (node != null) {
+                System.out.println(String.format("(%d, %d) ", i, node.getVal()));
+                node = node.getNext();
+            }
+            System.out.println();
+        }
     }
 
     void printRow(int i) {
@@ -66,6 +95,41 @@ public class Graph {
             head = head.getNext();
         }
         return false;
+    }
+
+    boolean isCyclicUtil(int v, boolean visited[], int parent) {
+        visited[v] = true;
+        Node it = vertices[v];
+        while (it != null) {
+            if (!visited[it.getVal()]) {
+                visited[it.getVal()] = true;
+
+                if (isCyclicUtil(it.getVal(), visited, v)) {
+                    return true;
+                }
+            } else if (it.getVal() != parent) {
+                return true;
+            }
+            it = it.getNext();
+
+        }
+        return false;
+    }
+
+    public boolean isTree() {
+        boolean visited[] = new boolean[numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            visited[i] = false;
+        }
+        if (isCyclicUtil(root, visited, -1)) {
+            return false;
+        }
+        for (int u = 0; u < numVertices; u++) {
+            if (!visited[u]) {
+                return false;
+            }
+        }
+        return true;
     }
 
 }

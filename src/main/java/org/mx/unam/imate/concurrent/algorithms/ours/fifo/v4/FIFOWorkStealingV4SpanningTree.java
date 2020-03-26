@@ -1,6 +1,5 @@
 package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v4;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -18,20 +17,25 @@ import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 public class FIFOWorkStealingV4SpanningTree implements SpanningTree {
 
     @Override
-    public void spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type) {
+    public Graph spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type) {
         Thread[] threads = new Thread[numThreads];
         Random r = new Random(System.currentTimeMillis());
         Graph graph = GraphUtils.graphType(shape, type);
         int[] color = new int[graph.getNumVertices()];
-        int[] parent = new int[graph.getNumVertices()];
+        int[] parent = GraphUtils.initializeParent(graph.getNumVertices());
         int roots[] = GraphUtils.stubSpanning(graph, numThreads);
+        graph.setRoot(roots[0]);
         AtomicInteger counter = new AtomicInteger(0);
         FIFOWorkStealingV4[] queues = new FIFOWorkStealingV4[numThreads];
         for (int i = 0; i < numThreads; i++) {
             queues[i] = new FIFOWorkStealingV4();
         }
         if (displayInfo) {
-            System.out.println(Arrays.toString(roots));
+            System.out.print("[");
+            for (int i = 0; i < roots.length; i++) {
+                System.out.print(roots[i] + " ");
+            }
+            System.out.println("]");
         }
         int[] processors = new int[numThreads];
         for (int i = 0; i < numThreads; i++) {
@@ -60,9 +64,17 @@ public class FIFOWorkStealingV4SpanningTree implements SpanningTree {
                 System.out.println(val);
             }
         }
+        graph = null;
         for (int i = 0; i < numThreads; i++) {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
+        for (int i = 1; i < roots.length; i++) {
+            if (parent[roots[i]] == -1) {
+                parent[roots[i]] = roots[i - 1];
+            }
+        }
+        Graph tree = GraphUtils.buildFromParents(parent);
+        return tree;
     }
 
 }

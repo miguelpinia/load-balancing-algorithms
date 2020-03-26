@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms;
 
+import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 
 /**
@@ -8,6 +9,6 @@ import org.mx.unam.imate.concurrent.datastructures.GraphType;
  */
 public interface SpanningTree {
 
-    void spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type);
+    Graph spanningTree(int shape, int numThreads, boolean displayInfo, boolean randomRoots, GraphType type);
 
 }

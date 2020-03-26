@@ -18,6 +18,23 @@ public class GraphUtils {
         return false;
     }
 
+    public static int[] initializeParent(int numVertices) {
+        int parents[] = new int[numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            parents[i] = -1;
+        }
+        return parents;
+    }
+
+    public static Graph buildFromParents(int[] parents) {
+        Edge[] edges = new Edge[parents.length];
+        for (int i = 0; i < parents.length; i++) {
+            edges[i] = new Edge(i, parents[i]);
+        }
+        Graph graph = new Graph(edges, parents.length);
+        return graph;
+    }
+
     public static int MOD(int a, int b) {
         return ((a % b) + b) % b;
     }
