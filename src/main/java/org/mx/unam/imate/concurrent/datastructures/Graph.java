@@ -31,6 +31,7 @@ public class Graph {
             if (dest == -1) {
                 srcNode = null;
                 destNode = new Node(src, null);
+                root = src;
             } else {
                 srcNode = new Node(dest, vertices[src]);
                 destNode = new Node(src, vertices[dest]);
@@ -98,20 +99,25 @@ public class Graph {
     }
 
     boolean isCyclicUtil(int v, boolean visited[], int parent) {
+        int[] parents = new int[visited.length];
+        Stack stack = new Stack();
         visited[v] = true;
-        Node it = vertices[v];
-        while (it != null) {
-            if (!visited[it.getVal()]) {
-                visited[it.getVal()] = true;
-
-                if (isCyclicUtil(it.getVal(), visited, v)) {
+        stack.push(v);
+        int u;
+        Node tmp;
+        while (!stack.isEmpty()) {
+            u = stack.pop();
+            tmp = vertices[u];
+            while (tmp != null) {
+                if (!visited[tmp.getVal()]) {
+                    visited[tmp.getVal()] = true;
+                    stack.push(tmp.getVal());
+                    parents[tmp.getVal()] = u;
+                } else if (parents[u] != tmp.getVal()) {
                     return true;
                 }
-            } else if (it.getVal() != parent) {
-                return true;
+                tmp = tmp.getNext();
             }
-            it = it.getNext();
-
         }
         return false;
     }
