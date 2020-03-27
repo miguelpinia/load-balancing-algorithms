@@ -1,6 +1,8 @@
 package org.mx.unam.imate.concurrent.algorithms.simple;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 
 /**
@@ -20,23 +22,25 @@ public class SIMPLESpanningTreeTest {
         boolean displayInfo = false;
         boolean randomStub = false;
         SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D);
+        GraphType type = GraphType.TORUS_2D;
+        Graph graph = instance.spanningTree(shape, numThreads, displayInfo, randomStub, type);
+        instance = null;
+        Assertions.assertTrue(graph.isTree());
     }
 
-    /**
-     * Test of spanningTree method, of class SIMPLESpanningTree.
-     */
-    @Test
-    public void testSpanningTree2DTorusRandomStub() {
-        System.out.println("spanningTree2DTorusRandomStub");
-        int shape = 1000;
-        int numThreads = 8;
-        boolean displayInfo = false;
-        SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        boolean randomStub = true;
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D);
-    }
-
+//    /**
+//     * Test of spanningTree method, of class SIMPLESpanningTree.
+//     */
+//    @Test
+//    public void testSpanningTree2DTorusRandomStub() {
+//        System.out.println("spanningTree2DTorusRandomStub");
+//        int shape = 1000;
+//        int numThreads = 8;
+//        boolean displayInfo = false;
+//        SIMPLESpanningTree instance = new SIMPLESpanningTree();
+//        boolean randomStub = true;
+//        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D);
+//    }
     /**
      * Test of spanningTree2D method, of class SIMPLESpanningTree.
      */
@@ -48,23 +52,25 @@ public class SIMPLESpanningTreeTest {
         boolean displayInfo = false;
         boolean randomStub = false;
         SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D_60);
+        GraphType type = GraphType.TORUS_2D_60;
+        Graph graph = instance.spanningTree(shape, numThreads, displayInfo, randomStub, type);
+        instance = null;
+        Assertions.assertTrue(graph.isTree());
     }
 
-    /**
-     * Test of spanningTree method, of class SIMPLESpanningTree.
-     */
-    @Test
-    public void testSpanningTree2D60TorusRandomStub() {
-        System.out.println("spanningTree2D60TorusRandomStub");
-        int shape = 1000;
-        int numThreads = 8;
-        boolean displayInfo = false;
-        SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        boolean randomStub = true;
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D_60);
-    }
-
+//    /**
+//     * Test of spanningTree method, of class SIMPLESpanningTree.
+//     */
+//    @Test
+//    public void testSpanningTree2D60TorusRandomStub() {
+//        System.out.println("spanningTree2D60TorusRandomStub");
+//        int shape = 1000;
+//        int numThreads = 8;
+//        boolean displayInfo = false;
+//        SIMPLESpanningTree instance = new SIMPLESpanningTree();
+//        boolean randomStub = true;
+//        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_2D_60);
+//    }
     /**
      * Test of spanningTree method, of class SIMPLESpanningTree.
      */
@@ -76,23 +82,25 @@ public class SIMPLESpanningTreeTest {
         boolean displayInfo = false;
         boolean randomStub = false;
         SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D);
+        GraphType type = GraphType.TORUS_3D;
+        Graph graph = instance.spanningTree(shape, numThreads, displayInfo, randomStub, type);
+        instance = null;
+        Assertions.assertTrue(graph.isTree());
     }
 
-    /**
-     * Test of spanningTree method, of class SIMPLESpanningTree.
-     */
-    @Test
-    public void testSpanningTree3DTorusRandomStub() {
-        System.out.println("spanningTree3DTorusRandomStub");
-        int shape = 100;
-        int numThreads = 8;
-        boolean displayInfo = false;
-        SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        boolean randomStub = true;
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D);
-    }
-
+//    /**
+//     * Test of spanningTree method, of class SIMPLESpanningTree.
+//     */
+//    @Test
+//    public void testSpanningTree3DTorusRandomStub() {
+//        System.out.println("spanningTree3DTorusRandomStub");
+//        int shape = 100;
+//        int numThreads = 8;
+//        boolean displayInfo = false;
+//        SIMPLESpanningTree instance = new SIMPLESpanningTree();
+//        boolean randomStub = true;
+//        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D);
+//    }
     /**
      * Test of spanningTree method, of class SIMPLESpanningTree.
      */
@@ -104,23 +112,25 @@ public class SIMPLESpanningTreeTest {
         boolean displayInfo = false;
         boolean randomStub = false;
         SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D_40);
+        GraphType type = GraphType.TORUS_3D_40;
+        Graph graph = instance.spanningTree(shape, numThreads, displayInfo, randomStub, type);
+        instance = null;
+        Assertions.assertTrue(graph.isTree());
     }
 
-    /**
-     * Test of spanningTree method, of class SIMPLESpanningTree.
-     */
-    @Test
-    public void testSpanningTree3D40TorusRandomStub() {
-        System.out.println("spanningTree3D40TorusRandomStub");
-        int shape = 100;
-        int numThreads = 8;
-        boolean displayInfo = false;
-        SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        boolean randomStub = true;
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D_40);
-    }
-
+//    /**
+//     * Test of spanningTree method, of class SIMPLESpanningTree.
+//     */
+//    @Test
+//    public void testSpanningTree3D40TorusRandomStub() {
+//        System.out.println("spanningTree3D40TorusRandomStub");
+//        int shape = 100;
+//        int numThreads = 8;
+//        boolean displayInfo = false;
+//        SIMPLESpanningTree instance = new SIMPLESpanningTree();
+//        boolean randomStub = true;
+//        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.TORUS_3D_40);
+//    }
     /**
      * Test of spanningTree method, of class SIMPLESpanningTree.
      */
@@ -132,20 +142,23 @@ public class SIMPLESpanningTreeTest {
         boolean displayInfo = false;
         boolean randomStub = false;
         SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.RANDOM);
+        GraphType type = GraphType.RANDOM;
+        Graph graph = instance.spanningTree(shape, numThreads, displayInfo, randomStub, type);
+        instance = null;
+        Assertions.assertTrue(graph.isTree());
     }
 
-    /**
-     * Test of spanningTree method, of class SIMPLESpanningTree.
-     */
-    @Test
-    public void testSpanningTreeRandomRandomStub() {
-        System.out.println("spanningTreeRandomRandomStub");
-        int shape = 200000;
-        int numThreads = 8;
-        boolean displayInfo = false;
-        SIMPLESpanningTree instance = new SIMPLESpanningTree();
-        boolean randomStub = true;
-        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.RANDOM);
-    }
+//    /**
+//     * Test of spanningTree method, of class SIMPLESpanningTree.
+//     */
+//    @Test
+//    public void testSpanningTreeRandomRandomStub() {
+//        System.out.println("spanningTreeRandomRandomStub");
+//        int shape = 200000;
+//        int numThreads = 8;
+//        boolean displayInfo = false;
+//        SIMPLESpanningTree instance = new SIMPLESpanningTree();
+//        boolean randomStub = true;
+//        instance.spanningTree(shape, numThreads, displayInfo, randomStub, GraphType.RANDOM);
+//    }
 }
