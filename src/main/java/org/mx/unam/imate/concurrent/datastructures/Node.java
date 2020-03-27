@@ -54,4 +54,9 @@ public class Node {
         return Objects.equals(this.next, other.next);
     }
 
+    @Override
+    public String toString() {
+        return "Node{" + "val=" + val + ", next=" + next + '}';
+    }
+
 }
