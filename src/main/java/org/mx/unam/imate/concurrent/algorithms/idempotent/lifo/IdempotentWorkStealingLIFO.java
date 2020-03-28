@@ -5,7 +5,12 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.idempotent.lifo;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import sun.misc.Unsafe;
 
 /**
  *
@@ -14,10 +19,22 @@ import java.util.concurrent.atomic.AtomicReference;
 public class IdempotentWorkStealingLIFO {
 
     private static final int EMPTY = -1;
+    private static final Unsafe unsafe = createUnsafe();
 
-    private int[] tasks;
+    private volatile int[] tasks;
     private final AtomicReference<Pair> anchor;
-    private int capacity;
+    private volatile int capacity;
+
+    private static Unsafe createUnsafe() {
+        try {
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return (Unsafe) field.get(null);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(IdempotentWorkStealingLIFO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
     public IdempotentWorkStealingLIFO(int size) {
         anchor = new AtomicReference<>(new Pair(0, 0));
@@ -38,7 +55,9 @@ public class IdempotentWorkStealingLIFO {
             put(task);
         }
         tasks[t] = task;
+        unsafe.storeFence();
         anchor.set(new Pair(t + 1, g + 1));
+        unsafe.storeFence();
     }
 
     public int take() {
@@ -55,6 +74,7 @@ public class IdempotentWorkStealingLIFO {
 
     public int steal() {
         Pair oldReference = anchor.get();
+        unsafe.loadFence();
         int t = oldReference.getT();
         int g = oldReference.getG();
         if (t == 0) {
@@ -62,8 +82,8 @@ public class IdempotentWorkStealingLIFO {
         }
         int[] tmp = tasks;
         int task = tmp[t - 1];
-        Pair newReference = new Pair(t - 1, g);
-        if (!anchor.compareAndSet(oldReference, newReference)) {
+        unsafe.loadFence();
+        if (!anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
             steal();
         }
         return task;
@@ -74,7 +94,9 @@ public class IdempotentWorkStealingLIFO {
         for (int i = 0; i < capacity; i++) { // Comparar con System.arrayCopy
             newTasks[i] = tasks[i];
         }
+        unsafe.storeFence();
         tasks = newTasks;
+        unsafe.storeFence();
         capacity = 2 * capacity;
     }
 
