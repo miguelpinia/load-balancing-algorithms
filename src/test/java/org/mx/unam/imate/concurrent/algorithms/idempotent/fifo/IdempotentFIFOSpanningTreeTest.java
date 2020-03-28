@@ -34,7 +34,7 @@ public class IdempotentFIFOSpanningTreeTest {
     @Test
     public void testSpanningTree2060DTorusSequentialStub() {
         System.out.println("spanningTree2D60TorusSequentialStub");
-        int shape = 100;
+        int shape = 1000;
         int numThreads = 8;
         boolean displayInfo = false;
         boolean randomRoots = false;

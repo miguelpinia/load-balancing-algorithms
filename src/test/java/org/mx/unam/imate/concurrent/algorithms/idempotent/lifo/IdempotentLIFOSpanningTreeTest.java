@@ -84,7 +84,7 @@ public class IdempotentLIFOSpanningTreeTest {
      */
     @Test
     public void testSpanningTreeRandomTorusSequentialStub() {
-        System.out.println("spanningTree2DTorusSequentialStub");
+        System.out.println("spanningTreeRandomTorusSequentialStub");
         int shape = 100000;
         int numThreads = 8;
         boolean displayInfo = false;
