@@ -130,7 +130,7 @@ public class CilkSpanningTreeTest {
     @Test
     public void testSpanningTreeRandomTorusSequentialStub() {
         System.out.println("spanningTreeRandomTorusSequentialStub");
-        int shape = 100;
+        int shape = 100000;
         int numThreads = 8;
         boolean displayInfo = false;
         boolean randomRoots = false;
