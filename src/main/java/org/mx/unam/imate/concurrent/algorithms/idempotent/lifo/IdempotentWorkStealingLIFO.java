@@ -21,15 +21,15 @@ public class IdempotentWorkStealingLIFO {
     private static final int EMPTY = -1;
     private static final Unsafe unsafe = createUnsafe();
 
-    private volatile int[] tasks;
+    private int[] tasks;
     private final AtomicReference<Pair> anchor;
-    private volatile int capacity;
+    private int capacity;
 
     private static Unsafe createUnsafe() {
         try {
             Field field = Unsafe.class.getDeclaredField("theUnsafe");
             field.setAccessible(true);
-            return (Unsafe) field.get(null);
+            return (Unsafe) field.get(Unsafe.class);
         } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(IdempotentWorkStealingLIFO.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -73,16 +73,16 @@ public class IdempotentWorkStealingLIFO {
     }
 
     public int steal() {
-        Pair oldReference = anchor.get();
         unsafe.loadFence();
+        Pair oldReference = anchor.get();
         int t = oldReference.getT();
         int g = oldReference.getG();
         if (t == 0) {
             return EMPTY;
         }
         int[] tmp = tasks;
-        int task = tmp[t - 1];
         unsafe.loadFence();
+        int task = tmp[t - 1];
         if (!anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
             steal();
         }

@@ -1,8 +1,12 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent.fifo;
 
+import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
+import sun.misc.Unsafe;
 
 /**
  *
@@ -11,10 +15,22 @@ import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
 public class IdempotentWorkStealingFIFO {
 
     private static final int EMPTY = -1;
+    private static final Unsafe unsafe = createUnsafe();
 
     private TaskArrayWithSize tasks;
     private final AtomicInteger head;
     private final AtomicInteger tail;
+
+    private static Unsafe createUnsafe() {
+        try {
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return (Unsafe) field.get(Unsafe.class);
+        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(IdempotentWorkStealingFIFO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
     public IdempotentWorkStealingFIFO(int size) {
         this.head = new AtomicInteger(0);
@@ -34,6 +50,7 @@ public class IdempotentWorkStealingFIFO {
             put(task);
         }
         tasks.getArray()[t % tasks.getSize()] = task;
+        unsafe.storeFence();
         tail.set(t + 1);
     }
 
@@ -49,12 +66,15 @@ public class IdempotentWorkStealingFIFO {
     }
 
     public int steal() {
+        unsafe.loadFence();
         int h = head.get();
+        unsafe.loadFence();
         int t = tail.get();
         if (h == t) {
             return EMPTY;
         }
         TaskArrayWithSize a = tasks;
+        unsafe.loadFence();
         int task = a.getArray()[h % a.getSize()];
         if (!head.compareAndSet(h, h + 1)) {
             steal();
@@ -65,12 +85,15 @@ public class IdempotentWorkStealingFIFO {
     public void expand() {
         int size = tasks.getSize();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * size);
+        unsafe.storeFence();
         int h = head.get();
         int t = tail.get();
         for (int i = h; i < t; i++) {
-            a.getArray()[i % a.getSize()] = tasks.getArray()[i % a.getSize()];
+            a.getArray()[i % a.getSize()] = tasks.getArray()[i % tasks.getSize()];
         }
+        unsafe.storeFence();
         tasks = a;
+        unsafe.storeFence();
     }
 
 }
