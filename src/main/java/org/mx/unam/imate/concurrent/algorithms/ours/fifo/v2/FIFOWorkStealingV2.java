@@ -1,6 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v2;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  *
@@ -8,50 +9,85 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FIFOWorkStealingV2 {
 
+    private static final int TOP = -3;
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
-    private final AtomicInteger head;
-    private final AtomicInteger tail;
-    private int t;
-    private final int[] tasks;
+    private final AtomicInteger Head;
+    private final AtomicInteger Tail;
+    private final AtomicIntegerArray Tasks;
+
+    private volatile int tail;
+    private volatile int head;
 
     public FIFOWorkStealingV2(int size) {
-        this.tail = new AtomicInteger(0);
-        this.head = new AtomicInteger(0);
-        this.t = 0;
-        this.tasks = new int[size];
+        this.tail = 0;
+        this.head = 1;
+        this.Tail = new AtomicInteger(0);
+        this.Head = new AtomicInteger(1);
+        int array[] = new int[size];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = BOTTOM;
+        }
+        this.Tasks = new AtomicIntegerArray(array); // Inicializar las tareas a bottom.
     }
 
     public boolean isEmpty() {
-        return t == 0;
+        return Tail.get() < Head.get();
     }
 
     public boolean put(int task) {
-        t = t + 1;
-        tasks[t] = task;
-        tail.set(t);
+        tail = tail + 1;
+        Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
+        Tail.set(tail);
         return true;
     }
 
     public int take() {
-        int l = tail.get();
-        for (int i = 0; i < l; i++) {
-            int x = tasks[i];
-            tasks[i] = BOTTOM;
-            head.set(i);
-            if (x != BOTTOM) {
+        if (head > tail) {
+            return EMPTY;
+        }
+        int r = head;
+        int x;
+        while (r <= tail) {
+            x = Tasks.get(r);
+            if (x != BOTTOM && x != TOP) {
+                head = r + 1;
+                Tasks.set(r, TOP);
+                Head.set(head);
                 return x;
             }
+            r++;
         }
+        head = tail + 1;
+        Head.set(head);
         return EMPTY;
     }
 
     public int steal() {
-        int x = tasks[head.get()];
-        if (x != BOTTOM) {
-            return x;
+        head = Math.max(head, Head.get());
+        tail = Tail.get();
+        if (head > tail) {
+            return EMPTY;
         }
+        int r = head;
+        int x = BOTTOM;
+        while (r <= tail) {
+            x = Tasks.get(r);
+            if (x != BOTTOM && x != TOP) {
+                head = r + 1;
+                Tasks.set(r, TOP);
+                Head.set(head);
+                return x;
+            }
+            r++;
+        }
+        if (x == BOTTOM) {
+            head = tail;
+        } else {
+            head = tail + 1;
+        }
+        Head.set(head);
         return EMPTY;
     }
 

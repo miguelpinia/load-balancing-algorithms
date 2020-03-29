@@ -41,34 +41,6 @@ public class FIFOWorkStealingV3 {
             int x = tasks[i];
             tasks[i] = BOTTOM;
             if (x != BOTTOM) {
-                head.incrementAndGet();
-                return x;
-            }
-        }
-        return EMPTY;
-    }
-
-    public int steal() {
-        int l = tail.get();
-        int h = head.get();
-        for (int i = h; i < l; i++) {
-            int x = tasks[i];
-            tasks[i] = BOTTOM;
-            if (x != BOTTOM) {
-                head.incrementAndGet();
-                return x;
-            }
-        }
-        return EMPTY;
-    }
-
-    public int take_v3a() {
-        int l = tail.get();
-        int h = head.get();
-        for (int i = h; i < l; i++) {
-            int x = tasks[i];
-            tasks[i] = BOTTOM;
-            if (x != BOTTOM) {
                 head.set(i + 1);
                 return x;
             }
@@ -76,7 +48,7 @@ public class FIFOWorkStealingV3 {
         return EMPTY;
     }
 
-    public int steal_v3a() {
+    public int steal() {
         int l = tail.get();
         int h = head.get();
         for (int i = h; i < l; i++) {
