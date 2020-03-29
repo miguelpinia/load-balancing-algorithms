@@ -34,7 +34,7 @@ public class FIFOWorkStealingV1SpanningTreeTest {
     @Test
     public void testSpanningTree2060DTorusSequentialStub() {
         System.out.println("spanningTree2D60TorusSequentialStub");
-        int shape = 100;
+        int shape = 1000;
         int numThreads = 8;
         boolean displayInfo = false;
         boolean randomRoots = false;
@@ -84,7 +84,7 @@ public class FIFOWorkStealingV1SpanningTreeTest {
      */
     @Test
     public void testSpanningTreeRandomTorusSequentialStub() {
-        System.out.println("spanningTree2DTorusSequentialStub");
+        System.out.println("spanningTreeRandomTorusSequentialStub");
         int shape = 100000;
         int numThreads = 8;
         boolean displayInfo = false;
