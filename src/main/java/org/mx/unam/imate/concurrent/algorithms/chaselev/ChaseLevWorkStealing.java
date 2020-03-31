@@ -2,6 +2,8 @@ package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
+import sun.misc.Unsafe;
 
 /**
  *
@@ -13,6 +15,7 @@ public class ChaseLevWorkStealing {
 
     public final static int EMPTY = -1;
     public final static int ABORT = -2;
+    private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
     private final AtomicInteger top;
     private final AtomicInteger bottom;
@@ -30,7 +33,7 @@ public class ChaseLevWorkStealing {
         return (b - t) <= 0;
     }
 
-    public void pushBottom(int task) {
+    public void put(int task) {
         int b = bottom.get();
         int t = top.get();
         CircularArrayChaseLev a = this.activeArray;
@@ -61,11 +64,12 @@ public class ChaseLevWorkStealing {
     // En trabajo a futuro, hay que actualizar esta versión para que pueda
     // decrecer el tamaño del arreglo circular que usa, como lo mencionan en
     // la sección 3 del artículo de este algoritmo.
-    public int popBottom() {
-        int b = bottom.get();
+    public int take() {
         CircularArrayChaseLev a = this.activeArray;
+        int b = bottom.get();
         b = b - 1;
         bottom.set(b);
+        UNSAFE.loadFence();
         int t = top.get();
         long size = b - t;
         if (size < 0) {

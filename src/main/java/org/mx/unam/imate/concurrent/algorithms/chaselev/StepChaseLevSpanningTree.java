@@ -51,14 +51,14 @@ public class StepChaseLevSpanningTree implements StepSpanningTree {
     public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
         color[root] = label;
         counter.incrementAndGet();
-        queue.pushBottom(root);
+        queue.put(root);
         int v, w;
         int stolenItem;
         int thread;
         int iterations = graph.getNumConnectedVertices();
         do {
             while (!queue.isEmpty()) {
-                v = queue.popBottom();
+                v = queue.take();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -66,7 +66,7 @@ public class StepChaseLevSpanningTree implements StepSpanningTree {
                         if (color[w] == 0) {
                             color[w] = label;
                             parent[w] = v;
-                            queue.pushBottom(w);
+                            queue.put(w);
                             counter.incrementAndGet();
                         }
                         ptr = ptr.getNext();
@@ -76,7 +76,7 @@ public class StepChaseLevSpanningTree implements StepSpanningTree {
             thread = pickRandomThread(numThreads, label);
             stolenItem = queues[thread].steal();
             if (stolenItem != -1 && stolenItem != -2) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                queue.pushBottom(stolenItem);
+                queue.put(stolenItem);
             }
         } while (counter.get() < iterations);
     }
