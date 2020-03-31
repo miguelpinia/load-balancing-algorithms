@@ -50,14 +50,14 @@ public class StepCilkSpanningTree implements StepSpanningTree {
     public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
         color[root] = label;
         counter.incrementAndGet();
-        deque.push(root);
+        deque.put(root);
         int v, w;
         int stolenItem;
         int thread;
         int iterations = graph.getNumConnectedVertices();
         do {
             while (!deque.isEmpty()) {
-                v = deque.pop();
+                v = deque.take();
                 if (v != -1) {
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -65,7 +65,7 @@ public class StepCilkSpanningTree implements StepSpanningTree {
                         if (color[w] == 0) {
                             color[w] = label;
                             parent[w] = v;
-                            deque.push(w);
+                            deque.put(w);
                             counter.incrementAndGet();
                         }
                         ptr = ptr.getNext();
@@ -75,7 +75,7 @@ public class StepCilkSpanningTree implements StepSpanningTree {
             thread = pickRandomThread(numThreads, label);
             stolenItem = deques[thread].steal();
             if (stolenItem != -1) {
-                deque.push(stolenItem);
+                deque.put(stolenItem);
             }
         } while (counter.get() < iterations);
     }

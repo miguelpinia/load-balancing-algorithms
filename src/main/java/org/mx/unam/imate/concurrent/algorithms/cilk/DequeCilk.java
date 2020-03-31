@@ -2,24 +2,32 @@ package org.mx.unam.imate.concurrent.algorithms.cilk;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
+import sun.misc.Unsafe;
+
 /**
  *
  * @author miguel
  */
 public class DequeCilk {
 
+    private static final int EMPTY = -1;
+    private volatile int H;
+    private volatile int T;
     private int[] tasks;
-    private int head;
-    private int tail;
     private final ReentrantLock lock;
+    private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
     public DequeCilk(int initialSize) {
         this.lock = new ReentrantLock();
         tasks = new int[initialSize];
-        head = tail = 0;
+        H = 0;
+        T = 0;
     }
 
     public boolean isEmpty() {
+        int tail = T;
+        int head = H;
         return head >= tail;
     }
 
@@ -31,52 +39,63 @@ public class DequeCilk {
         tasks = newData;
     }
 
-    public void push(int task) {
+    public void put(int task) {
+        int tail = T;
         if (tail == tasks.length) {
             expand();
-            push(task);
+            put(task);
         }
-        tasks[tail++] = task;
+        tasks[tail] = task;
+        T = tail + 1;
     }
 
-    public int pop() {
-        tail--;
-        if (head > tail) {
-            tail++;
+    public int take() {
+        int t = T - 1;
+        T = t;
+        UNSAFE.loadFence();
+        int h = H;
+        if (t > h) {
+            return tasks[t];
+        }
+        if (t < h) {
             lock.lock();
             try {
-                tail--;
-                if (head > tail) {
-                    tail++;
+                if (H >= (t + 1)) {
+                    T = t + 1;
                     if (lock.isHeldByCurrentThread()) {
                         lock.unlock();
                     }
-                    return -1;
+                    return EMPTY;
                 }
             } finally {
                 if (lock.isHeldByCurrentThread()) {
                     lock.unlock();
                 }
             }
+
         }
-        return tasks[tail];
+        return tasks[t];
     }
 
     public int steal() {
         lock.lock();
+        int ret = EMPTY;
         try {
-            head++;
-            if (head > tail) {
-                head--;
-                lock.unlock();
-                return -1;
+            int h = H;
+            H = h + 1;
+            UNSAFE.storeFence();
+            if (h + 1 <= T) {
+                ret = tasks[h];
+            } else {
+                H = h;
+                ret = EMPTY;
             }
         } finally {
             if (lock.isHeldByCurrentThread()) {
                 lock.unlock();
             }
         }
-        return tasks[head];
+        return ret;
     }
 
 }
