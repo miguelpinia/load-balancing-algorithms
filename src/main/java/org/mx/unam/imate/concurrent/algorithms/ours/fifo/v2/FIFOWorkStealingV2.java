@@ -33,7 +33,7 @@ public class FIFOWorkStealingV2 {
     }
 
     public boolean isEmpty() {
-        return Tail.get() < Head.get();
+        return head > tail;
     }
 
     public boolean put(int task) {
