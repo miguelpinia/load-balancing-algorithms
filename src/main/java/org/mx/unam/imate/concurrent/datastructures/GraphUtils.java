@@ -2,6 +2,7 @@ package org.mx.unam.imate.concurrent.datastructures;
 
 import java.util.Arrays;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 /**
  *
@@ -32,6 +33,15 @@ public class GraphUtils {
             edges[i] = new Edge(i, parents[i]);
         }
         Graph graph = new Graph(edges, parents.length);
+        return graph;
+    }
+
+    public static Graph buildFromParents(AtomicIntegerArray parents) {
+        Edge[] edges = new Edge[parents.length()];
+        for (int i = 0; i < parents.length(); i++) {
+            edges[i] = new Edge(i, parents.get(i));
+        }
+        Graph graph = new Graph(edges, parents.length());
         return graph;
     }
 
