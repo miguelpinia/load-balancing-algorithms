@@ -5,7 +5,8 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.simple;
 
-import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.Node;
 import org.mx.unam.imate.concurrent.datastructures.Stack;
@@ -14,15 +15,15 @@ import org.mx.unam.imate.concurrent.datastructures.Stack;
  *
  * @author miguel
  */
-public class StepSIMPLESpanningTree implements StepSpanningTree {
+public class StepSIMPLESpanningTree implements Runnable {
 
     private final Graph graph;
     private final int root;
-    private final int[] color;
-    private final int[] parent;
+    private final AtomicIntegerArray color;
+    private final AtomicIntegerArray parent;
     private final int label;
 
-    public StepSIMPLESpanningTree(Graph graph, int root, int[] color, int[] parent, int label) {
+    public StepSIMPLESpanningTree(Graph graph, int root, AtomicIntegerArray color, AtomicIntegerArray parent, int label) {
         this.graph = graph;
         this.root = root;
         this.color = color;
@@ -35,10 +36,10 @@ public class StepSIMPLESpanningTree implements StepSpanningTree {
         graph_traversal_step(graph, root, color, parent, label);
     }
 
-    @Override
-    public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
+    public void graph_traversal_step(Graph graph, int root, AtomicIntegerArray color,
+            AtomicIntegerArray parent, int label) {
         Stack stack = new Stack();
-        color[root] = label;
+        color.set(root, label);
         stack.push(root);
         int v, w;
         while (!stack.isEmpty()) {
@@ -46,9 +47,9 @@ public class StepSIMPLESpanningTree implements StepSpanningTree {
             Node ptr = graph.getVertices()[v];
             while (ptr != null) {
                 w = ptr.getVal();
-                if (color[w] == 0) {
-                    color[w] = label;
-                    parent[w] = v;
+                if (color.get(w) == 0) {
+                    color.set(w, label);
+                    parent.set(w, v);
                     stack.push(w);
                 }
                 ptr = ptr.getNext();

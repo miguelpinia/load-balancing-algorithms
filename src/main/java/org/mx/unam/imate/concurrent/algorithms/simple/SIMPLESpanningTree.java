@@ -1,6 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.simple;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,8 +21,8 @@ public class SIMPLESpanningTree implements SpanningTree {
         Thread[] threads = new Thread[numThreads];
         Random r = new Random(System.currentTimeMillis());
         Graph graph = GraphUtils.graphType(shape, type);
-        int[] color = new int[graph.getNumVertices()];
-        int[] parent = GraphUtils.initializeParent(graph.getNumVertices());
+        AtomicIntegerArray color = new AtomicIntegerArray(graph.getNumVertices());
+        AtomicIntegerArray parent = new AtomicIntegerArray(GraphUtils.initializeParent(graph.getNumVertices()));
         int roots[] = GraphUtils.stubSpanning(graph, numThreads);
         graph.setRoot(roots[0]);
         if (displayInfo) {
@@ -47,11 +48,11 @@ public class SIMPLESpanningTree implements SpanningTree {
             }
         }
         for (int i = 0; i < graph.getNumVertices(); i++) {
-            if (color[i] != 0) {
-                processors[color[i] - 1]++;
+            if (color.get(i) != 0) {
+                processors[color.get(i) - 1]++;
             }
             if (displayInfo) {
-                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parent[i], color[i]);
+                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parent.get(i), color.get(i));
                 System.out.println(val);
             }
         }
@@ -60,8 +61,8 @@ public class SIMPLESpanningTree implements SpanningTree {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
         for (int i = 1; i < roots.length; i++) {
-            if (parent[roots[i]] == -1) {
-                parent[roots[i]] = roots[i - 1];
+            if (parent.get(roots[i]) == -1) {
+                parent.set(roots[i], roots[i - 1]);;
             }
         }
         Graph tree = GraphUtils.buildFromParents(parent);
