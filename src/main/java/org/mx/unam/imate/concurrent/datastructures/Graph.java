@@ -1,10 +1,16 @@
 package org.mx.unam.imate.concurrent.datastructures;
 
+import java.util.Arrays;
+
 /**
  *
  * @author miguel
  */
 public class Graph {
+
+    private static final String CICLO = "CICLO_DETECTADO";
+    private static final String DISCONEXA = "COMPONENTES_DISCONEXAS";
+    private static final String ES_ARBOL = "ES_ARBOL";
 
     private Node[] vertices;
     private int numVertices;
@@ -98,22 +104,24 @@ public class Graph {
         return false;
     }
 
-    boolean isCyclicUtil(int v, boolean visited[], int parent) {
+    boolean isCyclicUtil(int root, boolean visited[]) {
         int[] parents = new int[visited.length];
-        Stack stack = new Stack();
-        visited[v] = true;
-        stack.push(v);
+        Arrays.fill(parents, -1);
+        Queue queue = new Queue();
+        visited[root] = true;
+        queue.enqueue(root);
         int u;
         Node tmp;
-        while (!stack.isEmpty()) {
-            u = stack.pop();
+        while (!queue.isEmpty()) {
+            u = queue.dequeue();
             tmp = vertices[u];
             while (tmp != null) {
-                if (!visited[tmp.getVal()]) {
-                    visited[tmp.getVal()] = true;
-                    stack.push(tmp.getVal());
-                    parents[tmp.getVal()] = u;
-                } else if (parents[u] != tmp.getVal()) {
+                int v = tmp.getVal();
+                if (!visited[v]) {
+                    visited[v] = true;
+                    queue.enqueue(v);
+                    parents[v] = u;
+                } else if (parents[u] != v) {
                     return true;
                 }
                 tmp = tmp.getNext();
@@ -127,15 +135,32 @@ public class Graph {
         for (int i = 0; i < numVertices; i++) {
             visited[i] = false;
         }
-        if (isCyclicUtil(root, visited, -1)) {
+        if (isCyclicUtil(root, visited)) {
             return false;
         }
         for (int u = 0; u < numVertices; u++) {
-            if (!visited[u]) {
+            if (u != root && !visited[u]) {
                 return false;
             }
         }
         return true;
+    }
+
+    public String isTreeResponde() {
+        boolean visited[] = new boolean[numVertices];
+        for (int i = 0; i < numVertices; i++) {
+            visited[i] = false;
+        }
+        if (isCyclicUtil(root, visited)) {
+            return CICLO;
+        }
+        for (int u = 0; u < numVertices; u++) {
+            if (!visited[u]) {
+                System.out.println("Vértice: " + u);
+                return DISCONEXA;
+            }
+        }
+        return ES_ARBOL;
     }
 
 }

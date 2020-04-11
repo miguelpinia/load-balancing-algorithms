@@ -69,9 +69,7 @@ public class CilkSpanningTree implements SpanningTree {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
         for (int i = 1; i < roots.length; i++) {
-            if (parents[roots[i]] == -1) {
-                parents[roots[i]] = roots[i - 1];
-            }
+            parents[roots[i]] = roots[i - 1];
         }
         Graph tree = GraphUtils.buildFromParents(parents);
         return tree;

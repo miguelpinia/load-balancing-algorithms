@@ -1,5 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 /**
  *
  * @author miguel
@@ -7,7 +9,7 @@ package org.mx.unam.imate.concurrent.algorithms.chaselev;
 public class CircularArrayChaseLev {
 
     private int size;
-    private int[] tasks;
+    private AtomicIntegerArray tasks;
 
     public CircularArrayChaseLev() {
         this(7);
@@ -15,7 +17,7 @@ public class CircularArrayChaseLev {
 
     public CircularArrayChaseLev(int logarithmicSize) {
         this.size = logarithmicSize;
-        this.tasks = new int[1 << size];
+        this.tasks = new AtomicIntegerArray(1 << size);
     }
 
     public int size() {
@@ -23,11 +25,11 @@ public class CircularArrayChaseLev {
     }
 
     public int get(int i) {
-        return tasks[i % size()];
+        return tasks.get(i % size());
     }
 
     public void put(int i, int task) {
-        tasks[i % size()] = task;
+        tasks.set(i % size(), task);
     }
 
     public CircularArrayChaseLev grow(int b, int t) {

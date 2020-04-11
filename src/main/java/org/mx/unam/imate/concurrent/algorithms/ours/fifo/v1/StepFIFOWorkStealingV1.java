@@ -51,14 +51,14 @@ public class StepFIFOWorkStealingV1 implements StepSpanningTree {
     public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
         color[root] = label;
         counter.incrementAndGet();
-        fifo.put(root);
+        fifo.put(root, label);
         int v, w;
         int stolenItem;
         int thread;
         int iterations = graph.getNumConnectedVertices();
         do {
             while (!fifo.isEmpty()) {
-                v = fifo.take();
+                v = fifo.take(label);
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -66,7 +66,7 @@ public class StepFIFOWorkStealingV1 implements StepSpanningTree {
                         if (color[w] == 0) {
                             color[w] = label;
                             parent[w] = v;
-                            fifo.put(w);
+                            fifo.put(w, label);
                             counter.incrementAndGet();
                         }
                         ptr = ptr.getNext();
@@ -74,9 +74,9 @@ public class StepFIFOWorkStealingV1 implements StepSpanningTree {
                 }
             }
             thread = pickRandomThread(numThreads, label);
-            stolenItem = fifos[thread].steal();
+            stolenItem = fifos[thread].steal(label);
             if (stolenItem != -1) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                fifo.put(stolenItem);
+                fifo.put(stolenItem, label);
             }
         } while (counter.get() < iterations);
     }

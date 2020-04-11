@@ -38,4 +38,8 @@ public class Queue {
         return val;
     }
 
+    public boolean isEmpty() {
+        return head == null;
+    }
+
 }

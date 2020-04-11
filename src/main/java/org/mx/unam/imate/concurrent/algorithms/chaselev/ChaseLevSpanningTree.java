@@ -2,10 +2,12 @@ package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
@@ -21,8 +23,8 @@ public class ChaseLevSpanningTree implements SpanningTree {
         Thread[] threads = new Thread[numThreads];
         Random r = new Random(System.currentTimeMillis());
         Graph graph = GraphUtils.graphType(shape, type);
-        int[] color = new int[graph.getNumVertices()];
-        int[] parent = GraphUtils.initializeParent(graph.getNumVertices());
+        AtomicIntegerArray color = new AtomicIntegerArray(graph.getNumVertices());
+        AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParent(graph.getNumVertices()));
         int roots[] = GraphUtils.stubSpanning(graph, numThreads);
         graph.setRoot(roots[0]);
         AtomicInteger counter = new AtomicInteger(0);
@@ -41,7 +43,7 @@ public class ChaseLevSpanningTree implements SpanningTree {
         for (int i = 0; i < numThreads; i++) {
             threads[i] = new Thread(new StepChaseLevSpanningTree(graph,
                     randomRoots ? r.nextInt(graph.getNumVertices()) : roots[i],
-                    color, parent, (i + 1),
+                    color, parents, (i + 1),
                     queues[i], queues,
                     numThreads, counter), String.format("Hilo %d", i));
         }
@@ -56,24 +58,26 @@ public class ChaseLevSpanningTree implements SpanningTree {
             }
         }
         for (int i = 0; i < graph.getNumVertices(); i++) {
-            if (color[i] != 0) {
-                processors[color[i] - 1]++;
+            if (color.get(i) != 0) {
+                processors[color.get(i) - 1]++;
             }
             if (displayInfo) {
-                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parent[i], color[i]);
+                String val = String.format("Vértice: %d, padre: %d, color: %d", i, parents.get(i), color.get(i));
                 System.out.println(val);
             }
         }
-        graph = null;
         for (int i = 0; i < numThreads; i++) {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
         for (int i = 1; i < roots.length; i++) {
-            if (parent[roots[i]] == -1) {
-                parent[roots[i]] = roots[i - 1];
-            }
+            parents.set(roots[i], roots[i - 1]);
         }
-        Graph tree = GraphUtils.buildFromParents(parent);
+        Graph tree = GraphUtils.buildFromParents(parents);
+        if (!tree.isTree()) {
+            System.out.println(String.format("El error es: %s", tree.isTreeResponde()));
+            WorkStealingUtils.report(graph, parents, roots);
+        }
+        graph = null;
         return tree;
     }
 

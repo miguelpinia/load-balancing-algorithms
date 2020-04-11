@@ -28,7 +28,7 @@ public class FIFOWorkStealingV1SpanningTree implements SpanningTree {
         AtomicInteger counter = new AtomicInteger(0);
         FIFOWorkStealingV1[] queues = new FIFOWorkStealingV1[numThreads];
         for (int i = 0; i < numThreads; i++) {
-            queues[i] = new FIFOWorkStealingV1(graph.getNumVertices());
+            queues[i] = new FIFOWorkStealingV1(graph.getNumVertices(), numThreads);
         }
         if (displayInfo) {
             System.out.print("[");
@@ -69,9 +69,7 @@ public class FIFOWorkStealingV1SpanningTree implements SpanningTree {
             System.out.println(String.format("C%d: %d", (i + 1), processors[i]));
         }
         for (int i = 1; i < roots.length; i++) {
-            if (parents[roots[i]] == -1) {
-                parents[roots[i]] = roots[i - 1];
-            }
+            parents[roots[i]] = roots[i - 1];
         }
         Graph tree = GraphUtils.buildFromParents(parents);
         return tree;
