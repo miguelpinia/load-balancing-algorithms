@@ -7,8 +7,8 @@ package org.mx.unam.imate.concurrent.algorithms.idempotent.lifo;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.Node;
 
@@ -16,12 +16,12 @@ import org.mx.unam.imate.concurrent.datastructures.Node;
  *
  * @author miguel
  */
-public class StepIdempotentLIFOSpanningTree implements StepSpanningTree {
+public class StepIdempotentLIFOSpanningTree implements Runnable {
 
     private final Graph graph;
     private final int root;
-    private final int[] color;
-    private final int[] parent;
+    private final AtomicIntegerArray color;
+    private final AtomicIntegerArray parent;
     private final int label;
     private final int numThreads;
     private final AtomicInteger counter;
@@ -29,7 +29,7 @@ public class StepIdempotentLIFOSpanningTree implements StepSpanningTree {
     private final IdempotentWorkStealingLIFO[] lifos;
     private final Random random;
 
-    public StepIdempotentLIFOSpanningTree(Graph graph, int root, int[] color, int[] parent,
+    public StepIdempotentLIFOSpanningTree(Graph graph, int root, AtomicIntegerArray color, AtomicIntegerArray parent,
             int label, IdempotentWorkStealingLIFO lifo, IdempotentWorkStealingLIFO[] lifos,
             int numThreads, AtomicInteger counter) {
         this.graph = graph;
@@ -52,9 +52,8 @@ public class StepIdempotentLIFOSpanningTree implements StepSpanningTree {
         return val - 1;
     }
 
-    @Override
-    public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
-        color[root] = label;
+    public void graph_traversal_step(Graph graph, int root, AtomicIntegerArray color, AtomicIntegerArray parent, int label) {
+        color.set(root, label);
         counter.incrementAndGet();
         lifo.put(root);
         int v, w;
@@ -68,9 +67,9 @@ public class StepIdempotentLIFOSpanningTree implements StepSpanningTree {
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
                         w = ptr.getVal();
-                        if (color[w] == 0) {
-                            color[w] = label;
-                            parent[w] = v;
+                        if (color.get(w) == 0) {
+                            color.set(w, label);
+                            parent.set(w, v);
                             lifo.put(w);
                             counter.incrementAndGet();
                         }

@@ -54,10 +54,9 @@ public class IdempotentWorkStealingLIFO {
             expand();
             put(task);
         }
+        unsafe.storeFence();
         tasks[t] = task;
-        unsafe.storeFence();
         anchor.set(new Pair(t + 1, g + 1));
-        unsafe.storeFence();
     }
 
     public int take() {
@@ -73,16 +72,16 @@ public class IdempotentWorkStealingLIFO {
     }
 
     public int steal() {
-        unsafe.loadFence();
         Pair oldReference = anchor.get();
         int t = oldReference.getT();
         int g = oldReference.getG();
+        unsafe.loadFence();
         if (t == 0) {
             return EMPTY;
         }
         int[] tmp = tasks;
-        unsafe.loadFence();
         int task = tmp[t - 1];
+        unsafe.loadFence();
         if (!anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
             steal();
         }

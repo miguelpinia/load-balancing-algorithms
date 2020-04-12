@@ -49,8 +49,8 @@ public class IdempotentWorkStealingFIFO {
             expand();
             put(task);
         }
-        tasks.getArray()[t % tasks.getSize()] = task;
         unsafe.storeFence();
+        tasks.getArray()[t % tasks.getSize()] = task;
         tail.set(t + 1);
     }
 

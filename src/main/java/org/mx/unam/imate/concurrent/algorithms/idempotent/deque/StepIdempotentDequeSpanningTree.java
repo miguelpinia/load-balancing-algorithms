@@ -51,11 +51,12 @@ public class StepIdempotentDequeSpanningTree implements Runnable {
         color.set(root, label);
         counter.incrementAndGet();
         deque.put(root);
-        int v, w;
-        int stolenItem;
+        int v, w, pos;
+        int stolenItem = -1;
         int thread;
-        int iterations = graph.getNumConnectedVertices();
-        do {
+        boolean firstTime = true;
+        boolean workToSteal = false;
+        while (firstTime || workToSteal) {
             while (!deque.isEmpty()) {
                 v = deque.take();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
@@ -72,12 +73,23 @@ public class StepIdempotentDequeSpanningTree implements Runnable {
                     }
                 }
             }
-            thread = pickRandomThread(numThreads, label);
-            stolenItem = deques[thread].steal();
-            if (stolenItem != -1) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                deque.put(stolenItem);
+            if (firstTime) {
+                firstTime = false;
             }
-        } while (counter.get() < iterations);
+            workToSteal = false;
+            thread = pickRandomThread(numThreads, label);
+            for (int idx = 0; idx < numThreads; idx++) {
+                pos = (idx + thread) % numThreads;
+                if (pos != label) {
+                    stolenItem = deques[(idx + thread) % numThreads].steal();
+                }
+                if (stolenItem != -1) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                    deque.put(stolenItem);
+                    workToSteal = true;
+                    break;
+                }
+            }
+        }
     }
 
     @Override

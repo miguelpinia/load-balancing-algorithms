@@ -7,7 +7,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
@@ -73,10 +72,10 @@ public class IdempotentDequeSpanningTree implements SpanningTree {
             parents.set(roots[i], roots[i - 1]);
         }
         Graph tree = GraphUtils.buildFromParents(parents);
-        if (!tree.isTree()) {
-            System.out.println(String.format("El error es: %s", tree.isTreeResponde()));
-            WorkStealingUtils.report(graph, parents, color, roots);
-        }
+//        if (!tree.isTree()) {
+//            System.out.println(String.format("El error es: %s", tree.isTreeResponde()));
+//            WorkStealingUtils.report(graph, parents, color, roots);
+//        }
         graph = null;
         return tree;
     }

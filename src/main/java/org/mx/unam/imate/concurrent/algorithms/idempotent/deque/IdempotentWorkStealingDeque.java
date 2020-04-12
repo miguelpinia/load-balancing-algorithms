@@ -1,7 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent.deque;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,11 +14,11 @@ import sun.misc.Unsafe;
 public class IdempotentWorkStealingDeque {
 
     private static final int EMPTY = -1;
-    private static final int MAX_SIZE = 0xFFFF;
+    private static final int MAX_SIZE = 0xFFFFFF;
     private static final Unsafe unsafe = createUnsafe();
 
     private TaskArrayWithSize tasks;
-    private final AtomicReference<Triplet> anchor;
+    private Triplet anchor;
 
     private static Unsafe createUnsafe() {
         try {
@@ -34,11 +33,22 @@ public class IdempotentWorkStealingDeque {
 
     public IdempotentWorkStealingDeque(int size) {
         this.tasks = new TaskArrayWithSize(size);
-        this.anchor = new AtomicReference<>(new Triplet(0, 0, 0));
+        this.anchor = new Triplet(0, 0, 0);
+    }
+
+    private boolean casAnchor(Triplet oldValue, Triplet newVal) {
+        boolean preCond = false;
+        synchronized (anchor) {
+            preCond = anchor.equals(oldValue);
+            if (preCond) {
+                anchor = newVal;
+            }
+        }
+        return preCond;
     }
 
     public void put(int task) {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor;
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
@@ -46,17 +56,17 @@ public class IdempotentWorkStealingDeque {
             expand();
             put(task);
         }
-        tasks.getArray()[(h + s) % tasks.getSize()] = task;
         unsafe.storeFence();
-        anchor.set(new Triplet(h, s + 1, g + 1));
+        tasks.getArray()[(h + s) % tasks.getSize()] = task;
+        anchor = new Triplet(h, s + 1, g + 1);
     }
 
     public boolean isEmpty() {
-        return anchor.get().getSize() == 0;
+        return anchor.getSize() <= 0;
     }
 
     public int take() {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor;
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
@@ -64,35 +74,36 @@ public class IdempotentWorkStealingDeque {
             return EMPTY;
         }
         int task = tasks.getArray()[(h + s - 1) % tasks.getSize()];
-        anchor.set(new Triplet(h, s - 1, g));
+        anchor = new Triplet(h, s - 1, g);
         return task;
     }
 
     public int steal() {
-        unsafe.loadFence();
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor;
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
+        unsafe.loadFence();
         if (s == 0) {
             return EMPTY;
         }
         TaskArrayWithSize a = tasks;
-        unsafe.loadFence();
         int task = a.getArray()[h % a.getSize()];
+        unsafe.loadFence();
         int h2 = h + 1 % MAX_SIZE;
         Triplet newReference = new Triplet(h2, s - 1, g);
-        if (!anchor.compareAndSet(oldReference, newReference)) {
+        if (!casAnchor(oldReference, newReference)) {
             steal();
         }
         return task;
     }
 
     public void expand() {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor;
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
+        unsafe.storeFence();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * s);
         unsafe.storeFence();
         for (int i = 0; i < s; i++) {
@@ -100,7 +111,6 @@ public class IdempotentWorkStealingDeque {
         }
         unsafe.storeFence();
         tasks = a;
-        unsafe.storeFence();
     }
 
     class Triplet {
