@@ -5,6 +5,8 @@
  */
 package org.mx.unam.imate.concurrent.algorithms;
 
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
+
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.datastructures.Graph;

@@ -1,5 +1,6 @@
-package org.mx.unam.imate.concurrent.algorithms;
+package org.mx.unam.imate.concurrent.algorithms.utils;
 
+import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 
 /**

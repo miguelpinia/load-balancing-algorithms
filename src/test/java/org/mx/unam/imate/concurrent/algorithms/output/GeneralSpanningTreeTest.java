@@ -8,7 +8,7 @@ package org.mx.unam.imate.concurrent.algorithms.output;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.Parameters;
+import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 

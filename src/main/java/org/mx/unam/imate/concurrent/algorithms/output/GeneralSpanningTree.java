@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.mx.unam.imate.concurrent.algorithms.Parameters;
-import org.mx.unam.imate.concurrent.algorithms.Report;
+import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.datastructures.Graph;

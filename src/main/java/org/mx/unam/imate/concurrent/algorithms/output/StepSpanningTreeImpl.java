@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.mx.unam.imate.concurrent.algorithms.Report;
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
