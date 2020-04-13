@@ -8,6 +8,7 @@ package org.mx.unam.imate.concurrent.algorithms.idempotent.lifo;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.Pair;
 import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import sun.misc.Unsafe;
 
@@ -64,20 +65,21 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
 
     @Override
     public int steal() {
-        Pair oldReference = anchor.get();
-        int t = oldReference.getT();
-        int g = oldReference.getG();
-        unsafe.loadFence();
-        if (t == 0) {
-            return EMPTY;
+        while (true) {
+            Pair oldReference = anchor.get();
+            int t = oldReference.getT();
+            int g = oldReference.getG();
+            if (t == 0) {
+                return EMPTY;
+            }
+            int[] tmp = tasks;
+            unsafe.loadFence();
+            int task = tmp[t - 1];
+            if (anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
+                return task;
+            }
         }
-        int[] tmp = tasks;
-        int task = tmp[t - 1];
-        unsafe.loadFence();
-        if (!anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
-            steal();
-        }
-        return task;
+
     }
 
     public void expand() {
@@ -104,26 +106,6 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    class Pair {
-
-        private final int t;
-        private final int g;
-
-        public Pair(int t, int g) {
-            this.t = t;
-            this.g = g;
-        }
-
-        public int getT() {
-            return t;
-        }
-
-        public int getG() {
-            return g;
-        }
-
     }
 
 }

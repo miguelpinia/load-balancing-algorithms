@@ -15,14 +15,15 @@ import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 /**
  *
  * @author miguel
- * @param <WorkSteal>
  */
 public class GeneralSpanningTree implements SpanningTree {
 
     private final Parameters params;
+    private Report report;
 
     public GeneralSpanningTree(Parameters parameters) {
         params = parameters;
+        report = new Report();
     }
 
     @Override
@@ -34,7 +35,6 @@ public class GeneralSpanningTree implements SpanningTree {
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         AtomicInteger counter = new AtomicInteger(0);
         WorkStealingStruct[] structs = new WorkStealingStruct[params.getNumThreads()];
-        Report report = new Report();
         int[] processors = new int[params.getNumThreads()];
 
         for (int i = 0; i < params.getNumThreads(); i++) {
