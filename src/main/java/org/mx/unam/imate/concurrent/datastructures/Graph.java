@@ -8,9 +8,9 @@ import java.util.Arrays;
  */
 public class Graph {
 
-    private static final String CICLO = "CICLO_DETECTADO";
-    private static final String DISCONEXA = "COMPONENTES_DISCONEXAS";
-    private static final String ES_ARBOL = "ES_ARBOL";
+    public static final String CICLO = "CICLO_DETECTADO";
+    public static final String DISCONEXA = "COMPONENTES_DISCONEXAS";
+    public static final String ES_ARBOL = "ES_ARBOL";
 
     private Node[] vertices;
     private int numVertices;
@@ -146,7 +146,7 @@ public class Graph {
         return true;
     }
 
-    public String isTreeResponde() {
+    public String isTreeResponse() {
         boolean visited[] = new boolean[numVertices];
         for (int i = 0; i < numVertices; i++) {
             visited[i] = false;
