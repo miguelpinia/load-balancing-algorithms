@@ -144,8 +144,8 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
             }
             workToSteal = false;
             thread = pickRandomThread(numThreads, label);
-            for (int idx = 0; idx < numThreads; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
-                pos = (idx + thread) % numThreads;
+            for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
+                pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                 if (pos != label) {
                     stolenItem = structs[(idx + thread) % numThreads].steal(label);
                 }
