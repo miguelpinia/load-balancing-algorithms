@@ -3,11 +3,13 @@ package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v1;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
+import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+
 /**
  *
  * @author miguel
  */
-public class FIFOWorkStealingV1 {
+public class FIFOWorkStealingV1 implements WorkStealingStruct {
 
     private static final int TOP = -3;
     private static final int BOTTOM = -2;
@@ -17,14 +19,15 @@ public class FIFOWorkStealingV1 {
     private final AtomicInteger Tail;
     private final AtomicIntegerArray Tasks;
 
-    private int[] tail;
-    private int[] head;
+    private final int[] tail;
+    private final int[] head;
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
      * tareas.
      *
      * @param size El tamaño del arreglo de tareas.
+     * @param numThreads
      */
     public FIFOWorkStealingV1(int size, int numThreads) {
         this.tail = new int[numThreads + 1];
@@ -42,10 +45,12 @@ public class FIFOWorkStealingV1 {
         this.Tasks = new AtomicIntegerArray(array); // Inicializar las tareas a bottom.
     }
 
+    @Override
     public boolean isEmpty() {
         return Head.get() > Tail.get();
     }
 
+    @Override
     public boolean put(int task, int label) {
         label--;
         tail[label] = tail[label] + 1;
@@ -54,6 +59,7 @@ public class FIFOWorkStealingV1 {
         return true;
     }
 
+    @Override
     public int take(int label) {
         label--;
         if (head[label] > tail[label]) {
@@ -76,6 +82,7 @@ public class FIFOWorkStealingV1 {
         return EMPTY;
     }
 
+    @Override
     public int steal(int label) {
         label--;
         head[label] = Math.max(head[label], Head.get());
@@ -95,6 +102,21 @@ public class FIFOWorkStealingV1 {
             r++;
         }
         return EMPTY;
+    }
+
+    @Override
+    public void put(int task) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int take() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int steal() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

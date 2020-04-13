@@ -2,7 +2,9 @@ package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v2;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
+import org.mx.unam.imate.concurrent.algorithms.Report;
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.Node;
@@ -47,7 +49,6 @@ public class StepFIFOWorkStealingV2 implements StepSpanningTree {
         return val - 1;
     }
 
-    @Override
     public void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label) {
         color[root] = label;
         counter.incrementAndGet();
@@ -84,6 +85,11 @@ public class StepFIFOWorkStealingV2 implements StepSpanningTree {
     @Override
     public void run() {
         graph_traversal_step(graph, root, color, parent, label);
+    }
+
+    @Override
+    public void graph_traversal_step(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parent, int root, int label, Report report) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

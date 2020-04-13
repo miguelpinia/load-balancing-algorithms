@@ -1,10 +1,9 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent.fifo;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
 import sun.misc.Unsafe;
 
@@ -12,25 +11,14 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class IdempotentWorkStealingFIFO {
+public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private static final Unsafe unsafe = createUnsafe();
+    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private TaskArrayWithSize tasks;
     private final AtomicInteger head;
     private final AtomicInteger tail;
-
-    private static Unsafe createUnsafe() {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            return (Unsafe) field.get(Unsafe.class);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(IdempotentWorkStealingFIFO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
 
     public IdempotentWorkStealingFIFO(int size) {
         this.head = new AtomicInteger(0);
@@ -38,10 +26,12 @@ public class IdempotentWorkStealingFIFO {
         this.tasks = new TaskArrayWithSize(size);
     }
 
+    @Override
     public boolean isEmpty() {
         return head.get() == tail.get();
     }
 
+    @Override
     public void put(int task) {
         int h = head.get();
         int t = tail.get();
@@ -54,6 +44,7 @@ public class IdempotentWorkStealingFIFO {
         tail.set(t + 1);
     }
 
+    @Override
     public int take() {
         int h = head.get();
         int t = tail.get();
@@ -65,6 +56,7 @@ public class IdempotentWorkStealingFIFO {
         return task;
     }
 
+    @Override
     public int steal() {
         unsafe.loadFence();
         int h = head.get();
@@ -94,6 +86,21 @@ public class IdempotentWorkStealingFIFO {
         unsafe.storeFence();
         tasks = a;
         unsafe.storeFence();
+    }
+
+    @Override
+    public boolean put(int task, int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int take(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int steal(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

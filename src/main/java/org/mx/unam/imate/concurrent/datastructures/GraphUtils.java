@@ -21,9 +21,7 @@ public class GraphUtils {
 
     public static int[] initializeParent(int numVertices) {
         int parents[] = new int[numVertices];
-        for (int i = 0; i < numVertices; i++) {
-            parents[i] = -1;
-        }
+        Arrays.fill(parents, -1);
         return parents;
     }
 

@@ -1,9 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent.deque;
 
-import java.lang.reflect.Field;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
 import sun.misc.Unsafe;
 
@@ -11,25 +9,14 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class IdempotentWorkStealingDeque {
+public class IdempotentWorkStealingDeque implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
     private static final int MAX_SIZE = 0xFFFFFF;
-    private static final Unsafe unsafe = createUnsafe();
+    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private TaskArrayWithSize tasks;
-    private Triplet anchor;
-
-    private static Unsafe createUnsafe() {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            return (Unsafe) field.get(Unsafe.class);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(IdempotentWorkStealingDeque.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
+    private final Triplet anchor;
 
     public IdempotentWorkStealingDeque(int size) {
         this.tasks = new TaskArrayWithSize(size);
@@ -41,12 +28,13 @@ public class IdempotentWorkStealingDeque {
         synchronized (anchor) {
             preCond = anchor.equals(oldValue);
             if (preCond) {
-                anchor = newVal;
+                anchor.set(newVal.getHead(), newVal.getSize(), newVal.getTag());
             }
         }
         return preCond;
     }
 
+    @Override
     public void put(int task) {
         Triplet oldReference = anchor;
         int h = oldReference.getHead();
@@ -58,13 +46,15 @@ public class IdempotentWorkStealingDeque {
         }
         unsafe.storeFence();
         tasks.getArray()[(h + s) % tasks.getSize()] = task;
-        anchor = new Triplet(h, s + 1, g + 1);
+        anchor.set(h, s + 1, g + 1);
     }
 
+    @Override
     public boolean isEmpty() {
         return anchor.getSize() <= 0;
     }
 
+    @Override
     public int take() {
         Triplet oldReference = anchor;
         int h = oldReference.getHead();
@@ -74,10 +64,11 @@ public class IdempotentWorkStealingDeque {
             return EMPTY;
         }
         int task = tasks.getArray()[(h + s - 1) % tasks.getSize()];
-        anchor = new Triplet(h, s - 1, g);
+        anchor.set(h, s - 1, g);
         return task;
     }
 
+    @Override
     public int steal() {
         Triplet oldReference = anchor;
         int h = oldReference.getHead();
@@ -113,11 +104,26 @@ public class IdempotentWorkStealingDeque {
         tasks = a;
     }
 
+    @Override
+    public boolean put(int task, int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int take(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int steal(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     class Triplet {
 
-        private final int head;
-        private final int size;
-        private final int tag;
+        private int head;
+        private int size;
+        private int tag;
 
         public Triplet(int head, int size, int tag) {
             this.head = head;
@@ -135,6 +141,12 @@ public class IdempotentWorkStealingDeque {
 
         public int getTag() {
             return tag;
+        }
+
+        public void set(int head, int size, int tag) {
+            this.head = head;
+            this.size = size;
+            this.tag = tag;
         }
 
         @Override

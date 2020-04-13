@@ -5,6 +5,8 @@
  */
 package org.mx.unam.imate.concurrent.algorithms;
 
+import java.util.concurrent.atomic.AtomicIntegerArray;
+
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 
 /**
@@ -13,7 +15,7 @@ import org.mx.unam.imate.concurrent.datastructures.Graph;
  */
 public interface StepSpanningTree extends Runnable {
 
-    void graph_traversal_step(Graph graph, int root, int[] color, int[] parent, int label);
+    void graph_traversal_step(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parent, int root, int label, Report report);
 
     @Override
     void run();

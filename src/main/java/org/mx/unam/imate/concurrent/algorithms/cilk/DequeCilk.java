@@ -2,6 +2,7 @@ package org.mx.unam.imate.concurrent.algorithms.cilk;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import sun.misc.Unsafe;
 
@@ -9,7 +10,7 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class DequeCilk {
+public class DequeCilk implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
     private volatile int H;
@@ -25,6 +26,7 @@ public class DequeCilk {
         T = 0;
     }
 
+    @Override
     public boolean isEmpty() {
         int tail = T;
         int head = H;
@@ -39,6 +41,7 @@ public class DequeCilk {
         tasks = newData;
     }
 
+    @Override
     public void put(int task) {
         int tail = T;
         if (tail == tasks.length) {
@@ -49,6 +52,7 @@ public class DequeCilk {
         T = tail + 1;
     }
 
+    @Override
     public int take() {
         int t = T - 1;
         T = t;
@@ -77,6 +81,7 @@ public class DequeCilk {
         return tasks[t];
     }
 
+    @Override
     public int steal() {
         lock.lock();
         int ret = EMPTY;
@@ -96,6 +101,21 @@ public class DequeCilk {
             }
         }
         return ret;
+    }
+
+    @Override
+    public boolean put(int task, int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int take(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int steal(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

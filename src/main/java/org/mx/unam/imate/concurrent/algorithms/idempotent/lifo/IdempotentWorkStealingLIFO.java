@@ -5,36 +5,24 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.idempotent.lifo;
 
-import java.lang.reflect.Field;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import sun.misc.Unsafe;
 
 /**
  *
  * @author miguel
  */
-public class IdempotentWorkStealingLIFO {
+public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private static final Unsafe unsafe = createUnsafe();
+    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private int[] tasks;
     private final AtomicReference<Pair> anchor;
     private int capacity;
-
-    private static Unsafe createUnsafe() {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            return (Unsafe) field.get(Unsafe.class);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(IdempotentWorkStealingLIFO.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
 
     public IdempotentWorkStealingLIFO(int size) {
         anchor = new AtomicReference<>(new Pair(0, 0));
@@ -42,10 +30,12 @@ public class IdempotentWorkStealingLIFO {
         tasks = new int[size];
     }
 
+    @Override
     public boolean isEmpty() {
         return anchor.get().getT() == 0;
     }
 
+    @Override
     public void put(int task) {
         Pair a = anchor.get();
         int t = a.getT();
@@ -59,6 +49,7 @@ public class IdempotentWorkStealingLIFO {
         anchor.set(new Pair(t + 1, g + 1));
     }
 
+    @Override
     public int take() {
         Pair a = anchor.get();
         int t = a.getT();
@@ -71,6 +62,7 @@ public class IdempotentWorkStealingLIFO {
         return task;
     }
 
+    @Override
     public int steal() {
         Pair oldReference = anchor.get();
         int t = oldReference.getT();
@@ -97,6 +89,21 @@ public class IdempotentWorkStealingLIFO {
         tasks = newTasks;
         unsafe.storeFence();
         capacity = 2 * capacity;
+    }
+
+    @Override
+    public boolean put(int task, int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int take(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int steal(int label) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     class Pair {
