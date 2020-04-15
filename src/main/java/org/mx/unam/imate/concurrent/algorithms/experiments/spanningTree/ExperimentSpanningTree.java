@@ -41,10 +41,11 @@ public class ExperimentSpanningTree {
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             long executionTime = System.nanoTime();
-            spanningTree(graph, roots, report);
+            Graph tree = spanningTree(graph, roots, report);
             executionTime = System.nanoTime() - executionTime;
             report.setExecutionTime(executionTime);
             reports.add(report);
+            assert (tree.isTree()); // Quitarlo al construir la aplicación
         }
         return reports;
     }
@@ -118,8 +119,8 @@ public class ExperimentSpanningTree {
         System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
         System.out.println("Mediana de tiempo:\t" + median + " ns");
         System.out.println("Mediana de tiempo:\t" + median / 1000000 + " ms");
-        System.out.println("Promedio de tiempo:\t" + average + "ns");
-        System.out.println("Promedio de tiempo:\t" + average / 1000000 + "ms");
+        System.out.println("Promedio de tiempo:\t" + average + " ns");
+        System.out.println("Promedio de tiempo:\t" + average / 1000000 + " ms");
         System.out.println("Promedio de takes:\t" + averageTakes);
         System.out.println("Promedio de puts:\t" + averagePuts);
         System.out.println("Promedio de steals:\t" + averageSteals);
