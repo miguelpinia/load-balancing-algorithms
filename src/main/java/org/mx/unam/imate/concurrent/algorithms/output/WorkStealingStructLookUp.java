@@ -8,6 +8,7 @@ import org.mx.unam.imate.concurrent.algorithms.idempotent.deque.IdempotentWorkSt
 import org.mx.unam.imate.concurrent.algorithms.idempotent.fifo.IdempotentWorkStealingFIFO;
 import org.mx.unam.imate.concurrent.algorithms.idempotent.lifo.IdempotentWorkStealingLIFO;
 import org.mx.unam.imate.concurrent.algorithms.ours.fifo.v1.FIFOWorkStealingV1;
+import org.mx.unam.imate.concurrent.algorithms.ours.fifo.v2.FIFOWorkStealingV2;
 import org.mx.unam.imate.concurrent.algorithms.simple.SIMPLEWorkStealing;
 
 /**
@@ -32,6 +33,8 @@ public class WorkStealingStructLookUp {
                 return new IdempotentWorkStealingLIFO(size);
             case OURS_V1:
                 return new FIFOWorkStealingV1(size, numThreads);
+            case OURS_V2:
+                return new FIFOWorkStealingV2(size, numThreads);
         }
         return null;
     }

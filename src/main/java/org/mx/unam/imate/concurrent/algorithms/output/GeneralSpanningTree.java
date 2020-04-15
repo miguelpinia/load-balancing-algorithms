@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
-import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 
@@ -19,7 +19,7 @@ import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 public class GeneralSpanningTree implements SpanningTree {
 
     private final Parameters params;
-    private Report report;
+    private final Report report;
 
     public GeneralSpanningTree(Parameters parameters) {
         params = parameters;
