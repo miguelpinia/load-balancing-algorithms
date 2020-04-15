@@ -74,6 +74,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             TaskArrayWithSize a = tasks;
             unsafe.loadFence();
             int task = a.getArray()[h % a.getSize()];
+            unsafe.loadFence();
             int h2 = h + 1 % MAX_SIZE;
             Triplet newReference = new Triplet(h2, s - 1, g);
             if (anchor.compareAndSet(oldReference, newReference)) {
@@ -89,8 +90,8 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         int s = oldReference.getSize();
         int g = oldReference.getTag();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * s);
-        unsafe.storeFence();
         for (int i = 0; i < s; i++) {
+            unsafe.storeFence();
             a.getArray()[(h + i) % a.getSize()] = tasks.getArray()[(h + i) % tasks.getSize()];
         }
         unsafe.storeFence();

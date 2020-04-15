@@ -4,9 +4,9 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.Node;
 
@@ -22,7 +22,6 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
     private final AtomicIntegerArray parent;
     private final int label;
     private final int numThreads;
-    private final AtomicInteger counter;
     private final WorkStealingStruct struct;
     private final WorkStealingStruct[] structs;
     private final Report report;
@@ -38,7 +37,6 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
         this.parent = parent;
         this.label = label;
         this.numThreads = numThreads;
-        this.counter = counter;
         this.struct = struct;
         this.structs = structs;
         this.report = report;
@@ -70,7 +68,6 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
 
     private void generalExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         color.set(root, label);
-        counter.incrementAndGet();
         struct.put(root);
         int v, w, pos;
         int stolenItem = -1;
@@ -88,7 +85,6 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
                             color.set(w, label);
                             parents.set(w, v);
                             struct.put(w);
-                            counter.incrementAndGet();
                         }
                         ptr = ptr.getNext();
                     }
@@ -115,7 +111,7 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
 
     private void specialExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
-        counter.incrementAndGet();
+
         struct.put(root, label);
         int v, w, pos;
         int stolenItem = -1;
@@ -133,7 +129,6 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w, label);
-                            counter.incrementAndGet();
                         }
                         ptr = ptr.getNext();
                     }

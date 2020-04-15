@@ -58,7 +58,6 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     @Override
     public int steal() {
-        unsafe.loadFence();
         int h = head.get();
         unsafe.loadFence();
         int t = tail.get();
@@ -66,8 +65,8 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             return EMPTY;
         }
         TaskArrayWithSize a = tasks;
-        unsafe.loadFence();
         int task = a.getArray()[h % a.getSize()];
+        unsafe.loadFence();
         if (!head.compareAndSet(h, h + 1)) {
             steal();
         }
@@ -76,16 +75,16 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     public void expand() {
         int size = tasks.getSize();
-        TaskArrayWithSize a = new TaskArrayWithSize(2 * size);
         unsafe.storeFence();
+        TaskArrayWithSize a = new TaskArrayWithSize(2 * size);
         int h = head.get();
         int t = tail.get();
+        unsafe.storeFence();
         for (int i = h; i < t; i++) {
             a.getArray()[i % a.getSize()] = tasks.getArray()[i % tasks.getSize()];
         }
         unsafe.storeFence();
         tasks = a;
-        unsafe.storeFence();
     }
 
     @Override
