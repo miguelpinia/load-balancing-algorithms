@@ -27,6 +27,8 @@ public class Report {
      */
     private long executionTime;
 
+    private int[] processors;
+
     public Report() {
         takes = new AtomicInteger(0);
         puts = new AtomicInteger(0);
@@ -65,4 +67,13 @@ public class Report {
     public int getSteals() {
         return steals.get();
     }
+
+    public int[] getProcessors() {
+        return processors;
+    }
+
+    public void setProcessors(int[] processors) {
+        this.processors = processors;
+    }
+
 }
