@@ -2,13 +2,16 @@ package org.mx.unam.imate.concurrent.algorithms.utils;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
+import org.mx.unam.imate.concurrent.datastructures.GraphType;
+
 /**
  * Esta clase llevará contadores de las operaciones que se realizan en los
  * distintos algoritmos.
  *
  * @author miguel
  */
-public class Report {
+public class Report implements Comparable<Report> {
 
     /**
      * Lleva el conteo de takes realizados en la ejecución de la prueba.
@@ -28,6 +31,9 @@ public class Report {
     private long executionTime;
 
     private int[] processors;
+
+    private GraphType graphType;
+    private AlgorithmsType algType;
 
     public Report() {
         takes = new AtomicInteger(0);
@@ -52,6 +58,18 @@ public class Report {
         this.executionTime = executionTime;
     }
 
+    public void setProcessors(int[] processors) {
+        this.processors = processors;
+    }
+
+    public void setGraphType(GraphType graphType) {
+        this.graphType = graphType;
+    }
+
+    public void setAlgType(AlgorithmsType algType) {
+        this.algType = algType;
+    }
+
     public long getExecutionTime() {
         return executionTime;
     }
@@ -72,8 +90,17 @@ public class Report {
         return processors;
     }
 
-    public void setProcessors(int[] processors) {
-        this.processors = processors;
+    public AlgorithmsType getAlgType() {
+        return algType;
+    }
+
+    public GraphType getGraphType() {
+        return graphType;
+    }
+
+    @Override
+    public int compareTo(Report t) {
+        return (int) (this.executionTime - t.getExecutionTime());
     }
 
 }
