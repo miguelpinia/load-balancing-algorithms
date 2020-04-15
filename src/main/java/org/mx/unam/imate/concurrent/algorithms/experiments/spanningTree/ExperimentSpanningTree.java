@@ -6,6 +6,7 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
@@ -37,6 +38,8 @@ public class ExperimentSpanningTree {
             Graph graph = GraphUtils.graphType(params.getShape(), params.getType());
             final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
             Report report = new Report();
+            report.setAlgType(params.getAlgType());
+            report.setGraphType(params.getType());
             long executionTime = System.nanoTime();
             spanningTree(graph, roots, report);
             executionTime = System.nanoTime() - executionTime;
@@ -54,27 +57,23 @@ public class ExperimentSpanningTree {
         int[] processors = new int[params.getNumThreads()];
 
         for (int i = 0; i < params.getNumThreads(); i++) {
-            System.out.println("Generando estructura");
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
         }
 
         for (int i = 0; i < params.getNumThreads(); i++) {
-            System.out.println("Construyendo hilos");
             threads[i] = new Thread(new ExperimentStepSpanningTree(graph, roots[i], colors,
                     parents, (i + 1), params.getNumThreads(), structs[i],
                     structs, report, params.isSpecialExecution()));
         }
 
         for (Thread thread : threads) {
-            System.out.println("Iniciando ejecución");
             thread.start();
         }
 
         for (Thread thread : threads) {
             try {
                 thread.join();
-                System.out.println("Esperando que se una los hilos");
             } catch (InterruptedException ex) {
                 Logger.getLogger(GeneralSpanningTree.class.getName())
                         .log(Level.SEVERE, ex.getMessage(), ex);
@@ -92,6 +91,55 @@ public class ExperimentSpanningTree {
         }
         Graph tree = GraphUtils.buildFromParents(parents);
         return tree;
+    }
+
+    public void statistics(List<Report> reports) {
+        reports = removeWorstAndBest(reports);
+
+        List<Long> values2Median = new ArrayList<>();
+        List<Integer> takes = new ArrayList<>();
+        List<Integer> puts = new ArrayList<>();
+        List<Integer> steals = new ArrayList<>();
+
+        reports.forEach((reporte) -> {
+            values2Median.add(reporte.getExecutionTime());
+            takes.add(reporte.getTakes());
+            puts.add(reporte.getPuts());
+            steals.add(reporte.getSteals());
+        });
+
+        long median = median(values2Median);
+        double average = values2Median.stream().mapToDouble(a -> a).average().getAsDouble();
+        double averageTakes = takes.stream().mapToDouble(a -> a).average().getAsDouble();
+        double averagePuts = puts.stream().mapToDouble(a -> a).average().getAsDouble();
+        double averageSteals = steals.stream().mapToDouble(a -> a).average().getAsDouble();
+
+        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
+        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
+        System.out.println("Mediana de tiempo:\t" + median + " ns");
+        System.out.println("Mediana de tiempo:\t" + median / 1000000 + " ms");
+        System.out.println("Promedio de tiempo:\t" + average + "ns");
+        System.out.println("Promedio de tiempo:\t" + average / 1000000 + "ms");
+        System.out.println("Promedio de takes:\t" + averageTakes);
+        System.out.println("Promedio de puts:\t" + averagePuts);
+        System.out.println("Promedio de steals:\t" + averageSteals);
+
+    }
+
+    private List<Report> removeWorstAndBest(List<Report> reports) {
+        Collections.sort(reports);
+        reports.remove(0);
+        reports.remove(reports.size() - 1);
+        return reports;
+    }
+
+    private long median(List<Long> values) {
+        Collections.sort(values);
+        int n = values.size();
+        if (n % 2 != 0) {
+            return values.get(n / 2);
+        }
+        return (values.get((n - 1) / 2) + values.get(n / 2)) / 2;
     }
 
 }

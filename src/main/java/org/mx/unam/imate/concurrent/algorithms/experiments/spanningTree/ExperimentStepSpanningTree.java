@@ -45,11 +45,9 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
 
     int pickRandomThread(int numThreads, int self) {
         int val = random.nextInt(numThreads) + 1;
-        System.out.println("Entramos aquí");
         while (val == self) {
             val = random.nextInt(numThreads) + 1;
         }
-        System.out.println("salimos de aquí?");
         return val - 1;
     }
 
