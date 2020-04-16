@@ -45,8 +45,8 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             expand();
             put(task);
         }
-        unsafe.storeFence();
         tasks[t] = task;
+        unsafe.storeFence();
         anchor.set(new Pair(t + 1, g + 1));
     }
 
@@ -87,10 +87,10 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
         for (int i = 0; i < capacity; i++) { // Comparar con System.arrayCopy
             newTasks[i] = tasks[i];
         }
-        unsafe.storeFence();
         tasks = newTasks;
         unsafe.storeFence();
         capacity = 2 * capacity;
+        unsafe.storeFence();
     }
 
     @Override
