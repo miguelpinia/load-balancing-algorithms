@@ -156,7 +156,6 @@ public class Graph {
         }
         for (int u = 0; u < numVertices; u++) {
             if (!visited[u]) {
-                System.out.println("Vértice: " + u);
                 return DISCONEXA;
             }
         }

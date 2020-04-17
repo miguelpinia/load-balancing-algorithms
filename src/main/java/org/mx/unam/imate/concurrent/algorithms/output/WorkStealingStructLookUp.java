@@ -10,6 +10,12 @@ import org.mx.unam.imate.concurrent.algorithms.idempotent.lifo.IdempotentWorkSte
 import org.mx.unam.imate.concurrent.algorithms.ours.fifo.v1.FIFOWorkStealingV1;
 import org.mx.unam.imate.concurrent.algorithms.ours.fifo.v2.FIFOWorkStealingV2;
 import org.mx.unam.imate.concurrent.algorithms.simple.SIMPLEWorkStealing;
+import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedNonBlockingWorkStealingMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedWaitFreeWorkStealingMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedWorkStealingNonConcurrentMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.NonBlockingWorkStealingMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.WaitFreeWorkStealingMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.WorkStealingNonConcurrentMultFIFO;
 
 /**
  *
@@ -35,6 +41,18 @@ public class WorkStealingStructLookUp {
                 return new FIFOWorkStealingV1(size, numThreads);
             case OURS_V2:
                 return new FIFOWorkStealingV2(size, numThreads);
+            case NBWSMULT_FIFO:
+                return new NonBlockingWorkStealingMultFIFO(size, numThreads);
+            case WFWSMULT_FIFO:
+                return new WaitFreeWorkStealingMultFIFO(size, numThreads);
+            case WSNCMULT_FIFO:
+                return new WorkStealingNonConcurrentMultFIFO(size, numThreads);
+            case B_NBWSMULT_FIFO:
+                return new BoundedNonBlockingWorkStealingMultFIFO(size, numThreads);
+            case B_WFWSMULT_FIFO:
+                return new BoundedWaitFreeWorkStealingMultFIFO(size, numThreads);
+            case B_WSNCMULT_FIFO:
+                return new BoundedWorkStealingNonConcurrentMultFIFO(size, numThreads);
         }
         return null;
     }

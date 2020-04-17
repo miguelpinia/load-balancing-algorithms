@@ -8,6 +8,7 @@ package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +57,8 @@ public class ExperimentSpanningTree {
         AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParent(graph.getNumVertices()));
         WorkStealingStruct[] structs = new WorkStealingStruct[params.getNumThreads()];
         int[] processors = new int[params.getNumThreads()];
+        AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumVertices());
+        AtomicInteger counter = new AtomicInteger(0);
 
         for (int i = 0; i < params.getNumThreads(); i++) {
             structs[i] = WorkStealingStructLookUp
@@ -65,7 +68,7 @@ public class ExperimentSpanningTree {
         for (int i = 0; i < params.getNumThreads(); i++) {
             threads[i] = new Thread(new ExperimentStepSpanningTree(graph, roots[i], colors,
                     parents, (i + 1), params.getNumThreads(), structs[i],
-                    structs, report, params.isSpecialExecution()));
+                    structs, report, params.isSpecialExecution(), visited, counter));
         }
 
         for (Thread thread : threads) {

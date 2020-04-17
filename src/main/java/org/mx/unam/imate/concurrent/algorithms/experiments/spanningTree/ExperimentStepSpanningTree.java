@@ -1,6 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
@@ -26,10 +27,13 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
     private final Report report;
     private final boolean specialExecution;
     private final Random random;
+    private final AtomicInteger counter;
+    private final AtomicIntegerArray visited;
 
     public ExperimentStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            WorkStealingStruct[] structs, Report report, boolean specialExecution) {
+            WorkStealingStruct[] structs, Report report, boolean specialExecution,
+            AtomicIntegerArray visited, AtomicInteger counter) {
         this.graph = graph;
         this.root = root;
         this.color = color;
@@ -40,6 +44,8 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
         this.structs = structs;
         this.report = report;
         this.specialExecution = specialExecution;
+        this.visited = visited;
+        this.counter = counter;
         this.random = new Random(System.currentTimeMillis());
     }
 
@@ -68,13 +74,15 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
     private void generalExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
         struct.put(root);
+        int x = visited.getAndSet(root, 1);
+        if (x == 0) {
+            counter.getAndIncrement();
+        }
         report.putsIncrement();
         int v, w, pos;
-        int stolenItem = -1;
+        int stolenItem;
         int thread;
-        boolean firstTime = true;
-        boolean workToSteal = false;
-        while (firstTime || workToSteal) {
+        do {
             while (!struct.isEmpty()) {
                 v = struct.take();
                 report.takesIncrement();
@@ -86,45 +94,41 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w);
+                            x = visited.getAndSet(w, 1);
+                            if (x == 0) {
+                                counter.getAndIncrement();
+                            }
                             report.putsIncrement();
                         }
                         ptr = ptr.getNext();
                     }
                 }
             }
-            if (firstTime) {
-                firstTime = false;
-            }
-            workToSteal = false;
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
-                for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
-                    pos = (idx + thread) % numThreads;// Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
-                    if (pos != label) {
-                        stolenItem = structs[(idx + thread) % numThreads].steal();
-                        report.stealsIncrement();
-                    }
-                    if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                        struct.put(stolenItem);
-                        report.putsIncrement();
-                        workToSteal = true;
-                        break;
-                    }
+                stolenItem = structs[thread].steal();
+                report.stealsIncrement();
+                if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                    struct.put(stolenItem);
+                    report.putsIncrement();
                 }
             }
-        }
+        } while (counter.get() < graph.getNumVertices());
+
     }
 
     private void specialExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
         struct.put(root, label);
+        int x = visited.getAndSet(root, 1);
+        if (x == 0) {
+            counter.getAndIncrement();
+        }
         report.putsIncrement();
         int v, w, pos;
-        int stolenItem = -1;
+        int stolenItem;
         int thread;
-        boolean firstTime = true;
-        boolean workToSteal = false;
-        while (firstTime || workToSteal) {
+        do {
             while (!struct.isEmpty()) {
                 v = struct.take(label);
                 report.takesIncrement();
@@ -136,33 +140,25 @@ public class ExperimentStepSpanningTree implements StepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w, label);
+                            x = visited.getAndSet(w, 1);
+                            if (x == 0) {
+                                counter.getAndIncrement();
+                            }
                             report.putsIncrement();
                         }
                         ptr = ptr.getNext();
                     }
                 }
             }
-            if (firstTime) {
-                firstTime = false;
-            }
-            workToSteal = false;
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
-                for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
-                    pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
-                    if (pos != label) {
-                        stolenItem = structs[(idx + thread) % numThreads].steal(label);
-                        report.stealsIncrement();
-                    }
-                    if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                        struct.put(stolenItem, label);
-                        report.putsIncrement();
-                        workToSteal = true;
-                        break;
-                    }
+                stolenItem = structs[thread].steal(label);
+                report.stealsIncrement();
+                if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                    struct.put(stolenItem, label);
+                    report.putsIncrement();
                 }
             }
-
-        }
+        } while (counter.get() < graph.getNumVertices());
     }
 }
