@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.algorithms.ours.fifo.v1;
+package org.mx.unam.imate.concurrent.algorithms.ours.fifo;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;

@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.algorithms.idempotent.deque;
+package org.mx.unam.imate.concurrent.algorithms.idempotent;
 
 import java.util.concurrent.atomic.AtomicReference;
 
