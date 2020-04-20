@@ -62,6 +62,15 @@ public class ExperimentSpanningTreeTest {
     }
 
     @Test
+    public void testExperimentNewAlgorithm() {
+        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.NEW_ALGORITHM, 1000, 8, 1000000, true, 10);
+        System.out.println("\n\nexperimento de New Algorithm con 8 hilos y 10 repeticiones");
+        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        List<Report> reports = instance.experiment();
+        instance.statistics(reports);
+    }
+
+    @Test
     public void testExperimentWFWS() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.WFWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 

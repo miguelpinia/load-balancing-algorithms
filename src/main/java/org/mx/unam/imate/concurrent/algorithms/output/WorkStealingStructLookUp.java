@@ -56,7 +56,6 @@ public class WorkStealingStructLookUp {
                 return new BoundedWaitFreeWorkStealingMultFIFO(size, numThreads);
             case B_WSNCMULT_FIFO:
                 return new BoundedWorkStealingNonConcurrentMultFIFO(size, numThreads);
-
         }
         return null;
     }

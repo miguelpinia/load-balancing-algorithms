@@ -86,24 +86,13 @@ public class NewAlgorithm implements WorkStealingStruct {
     public int steal(int label) {
         label--;
         head[label] = Math.max(head[label], Head.get());
-        tail[label] = Tail.get();
-        while (true) {
-            if (head[label] <= tail[label]) {
-                int x = Tasks.get(head[label]);
-                if (x != BOTTOM) {
-                    head[label]++;
-                    Head.set(head[label]);
-                    return x;
-                }
-            }
-            int ntail = Tail.get();
-            unsafe.loadFence();
-            if (tail[label] == ntail) {
-                Head.set(head[label]);
-                return EMPTY;
-            } else {
-                tail[label] = ntail;
-            }
+        int x = Tasks.get(head[label]);
+        if (x != BOTTOM) {
+            head[label]++;
+            Head.set(head[label]);
+            return x;
+        } else {
+            return EMPTY;
         }
     }
 

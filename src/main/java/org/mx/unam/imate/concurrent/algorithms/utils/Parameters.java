@@ -143,7 +143,8 @@ public class Parameters {
         return (algType == AlgorithmsType.OURS_V1 || algType == AlgorithmsType.OURS_V2
                 || algType == AlgorithmsType.NBWSMULT_FIFO || algType == AlgorithmsType.WFWSMULT_FIFO
                 || algType == AlgorithmsType.WSNCMULT_FIFO || algType == AlgorithmsType.B_NBWSMULT_FIFO
-                || algType == AlgorithmsType.B_WFWSMULT_FIFO || algType == AlgorithmsType.B_WSNCMULT_FIFO);
+                || algType == AlgorithmsType.B_WFWSMULT_FIFO || algType == AlgorithmsType.B_WSNCMULT_FIFO
+                || algType == AlgorithmsType.NEW_ALGORITHM);
     }
 
     public int getNumIterExps() {
