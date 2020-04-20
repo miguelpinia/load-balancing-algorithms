@@ -1,5 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.output;
 
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
+
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;

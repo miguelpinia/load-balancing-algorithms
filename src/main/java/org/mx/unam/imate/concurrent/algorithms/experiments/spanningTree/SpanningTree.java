@@ -15,9 +15,9 @@ import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.output.GeneralSpanningTree;
-import org.mx.unam.imate.concurrent.algorithms.output.WorkStealingStructLookUp;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
+import org.mx.unam.imate.concurrent.algorithms.utils.Result;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
 
@@ -25,11 +25,11 @@ import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
  *
  * @author miguel
  */
-public class ExperimentSpanningTree {
+public class SpanningTree {
 
     private final Parameters params;
 
-    public ExperimentSpanningTree(Parameters parameters) {
+    public SpanningTree(Parameters parameters) {
         params = parameters;
     }
 
@@ -99,7 +99,7 @@ public class ExperimentSpanningTree {
         return tree;
     }
 
-    public void statistics(List<Report> reports) {
+    public Result statistics(List<Report> reports) {
         reports = removeWorstAndBest(reports);
 
         List<Long> values2Median = new ArrayList<>();
@@ -129,7 +129,8 @@ public class ExperimentSpanningTree {
         System.out.println("Promedio de takes:\t" + averageTakes);
         System.out.println("Promedio de puts:\t" + averagePuts);
         System.out.println("Promedio de steals:\t" + averageSteals);
-
+        return new Result(reports.get(0).getGraphType(),
+                reports.get(0).getAlgType(), median, average, averageTakes, averagePuts, averageSteals);
     }
 
     private List<Report> removeWorstAndBest(List<Report> reports) {

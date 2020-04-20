@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.algorithms.output;
+package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;

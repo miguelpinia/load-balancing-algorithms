@@ -20,13 +20,13 @@ import org.mx.unam.imate.concurrent.datastructures.GraphType;
 public class ExperimentSpanningTreeTest {
 
     /**
-     * Test of experiment method, of class ExperimentSpanningTree.
+     * Test of experiment method, of class SpanningTree.
      */
     @Test
     public void testExperiment() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 0, true, 10);
         System.out.println("\n\nexperimento de Chase-Lev con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -36,7 +36,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 1, 0, true, 10);
 
         System.out.println("\n\nexperimento de Chase-Lev con 1 hilo y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -46,7 +46,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.OURS_V1, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de FIFOWorkStealing con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -56,7 +56,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.NBWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Non-Blocking Work Stealing con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -65,7 +65,7 @@ public class ExperimentSpanningTreeTest {
     public void testExperimentNewAlgorithm() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.NEW_ALGORITHM, 1000, 8, 1000000, true, 10);
         System.out.println("\n\nexperimento de New Algorithm con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -75,7 +75,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.WFWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Wait-Free WorkStealing con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -85,7 +85,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.WSNCMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de WorkStealing Non-Concurrent con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -95,7 +95,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_NBWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Bounded Non-Blocking Work Stealing con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -105,7 +105,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_WFWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Bounded Wait-Free WorkStealing con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -115,7 +115,7 @@ public class ExperimentSpanningTreeTest {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_WSNCMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Bounded WorkStealing Non-Concurrent con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -124,7 +124,7 @@ public class ExperimentSpanningTreeTest {
     public void testExperimentLIFO() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.IDEMPOTENT_LIFO, 1000, 8, 128, true, 10);
         System.out.println("\n\nexperimento de IdempotentLIFO con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -133,7 +133,7 @@ public class ExperimentSpanningTreeTest {
     public void testExperimentFIFO() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.IDEMPOTENT_FIFO, 1000, 8, 128, true, 10);
         System.out.println("\n\nexperimento de IdempotentFIFO con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
@@ -142,7 +142,7 @@ public class ExperimentSpanningTreeTest {
     public void testExperimentDeque() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.IDEMPOTENT_DEQUE, 1000, 8, 128, true, 10);
         System.out.println("\n\nexperimento de IdempotentDeque con 8 hilos y 10 repeticiones");
-        ExperimentSpanningTree instance = new ExperimentSpanningTree(params);
+        SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
     }
