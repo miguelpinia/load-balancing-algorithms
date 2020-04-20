@@ -66,9 +66,11 @@ public class ExperimentSpanningTree {
         }
 
         for (int i = 0; i < params.getNumThreads(); i++) {
-            threads[i] = new Thread(new ExperimentStepSpanningTree(graph, roots[i], colors,
-                    parents, (i + 1), params.getNumThreads(), structs[i],
-                    structs, report, params.isSpecialExecution(), visited, counter));
+            AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
+                    graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
+                    report, params.isSpecialExecution(), visited, counter);
+
+            threads[i] = new Thread(step);
         }
 
         for (Thread thread : threads) {
