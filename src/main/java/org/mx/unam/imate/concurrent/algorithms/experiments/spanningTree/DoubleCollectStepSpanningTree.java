@@ -64,16 +64,18 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                 firstTime = false;
             }
             workToSteal = false;
-            thread = pickRandomThread(numThreads, label);
-            for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
-                pos = (idx + thread) % numThreads;// Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
-                if (pos != label) {
-                    stolenItem = structs[(idx + thread) % numThreads].steal();
-                }
-                if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                    struct.put(stolenItem);
-                    workToSteal = true;
-                    break;
+            if (numThreads > 1) {
+                thread = pickRandomThread(numThreads, label);
+                for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
+                    pos = (idx + thread) % numThreads;// Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
+                    if (pos != label) {
+                        stolenItem = structs[(idx + thread) % numThreads].steal();
+                    }
+                    if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                        struct.put(stolenItem);
+                        workToSteal = true;
+                        break;
+                    }
                 }
             }
         }
@@ -107,16 +109,18 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                 firstTime = false;
             }
             workToSteal = false;
-            thread = pickRandomThread(numThreads, label);
-            for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
-                pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
-                if (pos != label) {
-                    stolenItem = structs[(idx + thread) % numThreads].steal(label);
-                }
-                if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                    struct.put(stolenItem, label);
-                    workToSteal = true;
-                    break;
+            if (numThreads > 1) {
+                thread = pickRandomThread(numThreads, label);
+                for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
+                    pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
+                    if (pos != label) {
+                        stolenItem = structs[(idx + thread) % numThreads].steal(label);
+                    }
+                    if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                        struct.put(stolenItem, label);
+                        workToSteal = true;
+                        break;
+                    }
                 }
             }
         }
