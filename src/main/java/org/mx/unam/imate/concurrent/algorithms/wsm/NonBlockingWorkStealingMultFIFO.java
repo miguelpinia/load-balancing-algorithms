@@ -38,7 +38,7 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
         this.head = new int[numThreads + 1];
         this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
-        int array[] = new int[size];
+        int array[] = new int[size + 1]; // Si no, se rompe
         for (int i = 0; i < numThreads; i++) {
             tail[i] = 0;
             head[i] = 1;

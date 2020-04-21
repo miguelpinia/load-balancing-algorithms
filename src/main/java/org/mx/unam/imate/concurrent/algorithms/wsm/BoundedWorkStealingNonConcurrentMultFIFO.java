@@ -39,7 +39,7 @@ public class BoundedWorkStealingNonConcurrentMultFIFO implements WorkStealingStr
         this.head = new int[numThreads + 1];
         this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
-        Pair array[] = new Pair[size];
+        Pair array[] = new Pair[size + 1];
         for (int i = 0; i < numThreads; i++) {
             tail[i] = 0;
             head[i] = 1;
