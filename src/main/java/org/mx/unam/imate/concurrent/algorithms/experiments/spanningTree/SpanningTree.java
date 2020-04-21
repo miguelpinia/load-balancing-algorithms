@@ -46,7 +46,6 @@ public class SpanningTree {
             executionTime = System.nanoTime() - executionTime;
             report.setExecutionTime(executionTime);
             reports.add(report);
-            assert (tree.isTree()); // Quitarlo al construir la aplicación
         }
         return reports;
     }

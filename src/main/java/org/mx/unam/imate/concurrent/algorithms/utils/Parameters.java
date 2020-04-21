@@ -183,4 +183,9 @@ public class Parameters {
         this.stepSpanningTreeType = stepSpanningTreeType;
     }
 
+    @Override
+    public String toString() {
+        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize=" + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType=" + stepSpanningTreeType + '}';
+    }
+
 }
