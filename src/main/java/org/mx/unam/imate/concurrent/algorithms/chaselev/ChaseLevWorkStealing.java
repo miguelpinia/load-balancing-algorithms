@@ -74,8 +74,8 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
         int b = bottom.get();
         b = b - 1;
         bottom.set(b);
-        UNSAFE.loadFence();
         int t = top.get();
+        UNSAFE.loadFence();
         long size = b - t;
         if (size < 0) {
             bottom.set(t);
