@@ -39,6 +39,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
     private void generalExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         color.set(root, label);
         struct.put(root);
+        report.putsIncrement();
         int v, w, pos;
         int stolenItem = -1;
         int thread;
@@ -47,6 +48,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
         while (firstTime || workToSteal) {
             while (!struct.isEmpty()) {
                 v = struct.take();
+                report.takesIncrement();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -55,6 +57,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                             color.set(w, label);
                             parents.set(w, v);
                             struct.put(w);
+                            report.putsIncrement();
                         }
                         ptr = ptr.getNext();
                     }
@@ -70,9 +73,11 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                     pos = (idx + thread) % numThreads;// Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                     if (pos != label) {
                         stolenItem = structs[(idx + thread) % numThreads].steal();
+                        report.stealsIncrement();
                     }
                     if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                         struct.put(stolenItem);
+                        report.putsIncrement();
                         workToSteal = true;
                         break;
                     }
@@ -84,6 +89,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
     private void specialExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
         struct.put(root, label);
+        report.putsIncrement();
         int v, w, pos;
         int stolenItem = -1;
         int thread;
@@ -92,6 +98,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
         while (firstTime || workToSteal) {
             while (!struct.isEmpty()) {
                 v = struct.take(label);
+                report.takesIncrement();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -100,6 +107,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w, label);
+                            report.putsIncrement();
                         }
                         ptr = ptr.getNext();
                     }
@@ -115,9 +123,11 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                     pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                     if (pos != label) {
                         stolenItem = structs[(idx + thread) % numThreads].steal(label);
+                        report.stealsIncrement();
                     }
                     if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                         struct.put(stolenItem, label);
+                        report.putsIncrement();
                         workToSteal = true;
                         break;
                     }
