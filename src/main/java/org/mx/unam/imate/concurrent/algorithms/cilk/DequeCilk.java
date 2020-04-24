@@ -1,5 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.cilk;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
@@ -13,59 +15,59 @@ import sun.misc.Unsafe;
 public class DequeCilk implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private volatile int H;
-    private volatile int T;
-    private int[] tasks;
+    private AtomicInteger H;
+    private AtomicInteger T;
+    private AtomicIntegerArray tasks;
     private final ReentrantLock lock;
     private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
     public DequeCilk(int initialSize) {
-        this.lock = new ReentrantLock();
-        tasks = new int[initialSize];
-        H = 0;
-        T = 0;
+        lock = new ReentrantLock();
+        tasks = new AtomicIntegerArray(initialSize);
+        H = new AtomicInteger(0);
+        T = new AtomicInteger(0);
     }
 
     @Override
     public boolean isEmpty() {
-        int tail = T;
-        int head = H;
+        long tail = T.get();
+        long head = H.get();
         return head >= tail;
     }
 
     private void expand() {
-        int[] newData = new int[2 * tasks.length];
-        for (int i = 0; i < tasks.length; i++) { // Comparar contra System.arrayCopy
-            newData[i] = tasks[i];
+        AtomicIntegerArray newData = new AtomicIntegerArray(2 * tasks.length());
+        for (int i = 0; i < tasks.length(); i++) {
+            newData.set(i, tasks.get(i));
         }
         tasks = newData;
     }
 
     @Override
     public void put(int task) {
-        int tail = T;
-        if (tail == tasks.length) {
+        int tail = T.get();
+        if (tail >= tasks.length()) {
             expand();
             put(task);
         }
-        tasks[tail] = task;
-        T = tail + 1;
+        tasks.set(tail % tasks.length(), task);
+        T.set(tail + 1);
     }
 
     @Override
     public int take() {
-        int t = T - 1;
-        T = t;
-        UNSAFE.loadFence();
-        int h = H;
+        int t = T.get() - 1;
+        T.set(t);
+        UNSAFE.storeFence();
+        int h = H.get();
         if (t > h) {
-            return tasks[t];
+            return tasks.get(t % tasks.length());
         }
         if (t < h) {
             lock.lock();
             try {
-                if (H >= (t + 1)) {
-                    T = t + 1;
+                if (H.get() >= (t + 1)) {
+                    T.set(t + 1);
                     if (lock.isHeldByCurrentThread()) {
                         lock.unlock();
                     }
@@ -78,27 +80,24 @@ public class DequeCilk implements WorkStealingStruct {
             }
 
         }
-        return tasks[t];
+        return tasks.get(t % tasks.length());
     }
 
     @Override
     public int steal() {
         lock.lock();
-        int ret = EMPTY;
-        try {
-            int h = H;
-            H = h + 1;
-            UNSAFE.storeFence();
-            if (h + 1 <= T) {
-                ret = tasks[h];
-            } else {
-                H = h;
-                ret = EMPTY;
-            }
-        } finally {
-            if (lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+        int h = H.get();
+        H.set(h + 1);
+        UNSAFE.loadFence();
+        int ret;
+        if (h + 1 <= T.get()) {
+            ret = tasks.get(h % tasks.length());
+        } else {
+            H.set(h);
+            ret = EMPTY;
+        }
+        if (lock.isHeldByCurrentThread()) {
+            lock.unlock();
         }
         return ret;
     }

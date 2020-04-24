@@ -1,6 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
@@ -12,84 +13,79 @@ import sun.misc.Unsafe;
  */
 public class ChaseLevWorkStealing implements WorkStealingStruct {
 
-    private static final int LOG_INITIAL_SIZE = 7;
-
-    public final static int EMPTY = -1;
-    public final static int ABORT = -2;
+    private static final int EMPTY = -1;
+    private AtomicInteger H;
+    private AtomicInteger T;
+    private AtomicIntegerArray tasks;
     private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
-    private final AtomicInteger top;
-    private final AtomicInteger bottom;
-    private volatile CircularArrayChaseLev activeArray;
-
-    public ChaseLevWorkStealing() {
-        this.top = new AtomicInteger(0);
-        this.bottom = new AtomicInteger(0);
-        activeArray = new CircularArrayChaseLev(LOG_INITIAL_SIZE);
+    public ChaseLevWorkStealing(int initialSize) {
+        tasks = new AtomicIntegerArray(initialSize);
+        H = new AtomicInteger(0);
+        T = new AtomicInteger(0);
     }
 
     @Override
     public boolean isEmpty() {
-        int b = bottom.get();
-        int t = top.get();
-        return (b - t) <= 0;
+        long tail = T.get();
+        long head = H.get();
+        return head >= tail;
+    }
+
+    private void expand() {
+        AtomicIntegerArray newData = new AtomicIntegerArray(2 * tasks.length());
+        for (int i = 0; i < tasks.length(); i++) {
+            newData.set(i, tasks.get(i));
+        }
+        tasks = newData;
     }
 
     @Override
     public void put(int task) {
-        int b = bottom.get();
-        int t = top.get();
-        CircularArrayChaseLev a = this.activeArray;
-        long size = b - t;
-        if (size >= (a.size() - 1)) {
-            a = a.grow(b, t);
-            this.activeArray = a;
+        int tail = T.get();
+        if (tail >= tasks.length()) {
+            expand();
+            put(task);
         }
-        a.put(b, task);
-        bottom.set(b + 1);
+        tasks.set(tail % tasks.length(), task);
+        T.set(tail + 1);
+    }
+
+    @Override
+    public int take() {
+        int t = T.get() - 1;
+        T.set(t);
+        UNSAFE.storeFence();
+        int h = H.get();
+        if (t > h) {
+            return tasks.get(t % tasks.length());
+        }
+        if (t < h) {
+            T.set(h);
+            return EMPTY;
+        }
+        T.set(h + 1);
+        if (!H.compareAndSet(h, h + 1)) {
+            return EMPTY;
+        } else {
+            return tasks.get(t % tasks.length());
+        }
     }
 
     @Override
     public int steal() {
-        int t = top.get();
-        int b = bottom.get();
-        CircularArrayChaseLev a = this.activeArray;
-        long size = b - t;
-        if (size <= 0) {
-            return EMPTY;
-        }
-        int task = a.get(t);
-        if (!top.compareAndSet(t, t + 1)) {
-            return ABORT;
-        }
-        return task;
-    }
-
-    // En trabajo a futuro, hay que actualizar esta versión para que pueda
-    // decrecer el tamaño del arreglo circular que usa, como lo mencionan en
-    // la sección 3 del artículo de este algoritmo.
-    @Override
-    public int take() {
-        CircularArrayChaseLev a = this.activeArray;
-        int b = bottom.get();
-        b = b - 1;
-        bottom.set(b);
-        int t = top.get();
-        UNSAFE.loadFence();
-        long size = b - t;
-        if (size < 0) {
-            bottom.set(t);
-            return EMPTY;
-        }
-        int task = a.get(b);
-        if (size > 0) {
+        while (true) {
+            int h = H.get();
+            int t = T.get();
+            if (h >= t) {
+                return EMPTY;
+            }
+            int task = tasks.get(h % tasks.length());
+            if (!H.compareAndSet(h, h + 1)) {
+                continue;
+            }
             return task;
         }
-        if (!top.compareAndSet(t, t + 1)) {
-            task = EMPTY;
-        }
-        bottom.set(t + 1);
-        return task;
     }
 
     @Override
