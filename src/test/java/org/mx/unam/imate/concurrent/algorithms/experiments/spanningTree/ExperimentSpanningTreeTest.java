@@ -24,7 +24,7 @@ public class ExperimentSpanningTreeTest {
      */
     @Test
     public void testExperiment() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 0, true, 10);
+        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 128, true, 10);
         System.out.println("\n\nexperimento de Chase-Lev con 8 hilos y 10 repeticiones");
         SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
@@ -33,19 +33,9 @@ public class ExperimentSpanningTreeTest {
 
     @Test
     public void testExperimentChaseLev1() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 1, 0, true, 10);
+        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 1, 128, true, 10);
 
         System.out.println("\n\nexperimento de Chase-Lev con 1 hilo y 10 repeticiones");
-        SpanningTree instance = new SpanningTree(params);
-        List<Report> reports = instance.experiment();
-        instance.statistics(reports);
-    }
-
-    @Test
-    public void testExperimentOURS() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.OURS_V1, 1000, 8, 1000000, true, 10);
-
-        System.out.println("\n\nexperimento de FIFOWorkStealing con 8 hilos y 10 repeticiones");
         SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);
@@ -71,50 +61,10 @@ public class ExperimentSpanningTreeTest {
     }
 
     @Test
-    public void testExperimentWFWS() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.WFWSMULT_FIFO, 1000, 8, 1000000, true, 10);
-
-        System.out.println("\n\nexperimento de Wait-Free WorkStealing con 8 hilos y 10 repeticiones");
-        SpanningTree instance = new SpanningTree(params);
-        List<Report> reports = instance.experiment();
-        instance.statistics(reports);
-    }
-
-    @Test
-    public void testExperimentWSNC() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.WSNCMULT_FIFO, 1000, 8, 1000000, true, 10);
-
-        System.out.println("\n\nexperimento de WorkStealing Non-Concurrent con 8 hilos y 10 repeticiones");
-        SpanningTree instance = new SpanningTree(params);
-        List<Report> reports = instance.experiment();
-        instance.statistics(reports);
-    }
-
-    @Test
     public void testExperimentBNBWS() {
         Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_NBWSMULT_FIFO, 1000, 8, 1000000, true, 10);
 
         System.out.println("\n\nexperimento de Bounded Non-Blocking Work Stealing con 8 hilos y 10 repeticiones");
-        SpanningTree instance = new SpanningTree(params);
-        List<Report> reports = instance.experiment();
-        instance.statistics(reports);
-    }
-
-    @Test
-    public void testExperimentBWFWS() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_WFWSMULT_FIFO, 1000, 8, 1000000, true, 10);
-
-        System.out.println("\n\nexperimento de Bounded Wait-Free WorkStealing con 8 hilos y 10 repeticiones");
-        SpanningTree instance = new SpanningTree(params);
-        List<Report> reports = instance.experiment();
-        instance.statistics(reports);
-    }
-
-    @Test
-    public void testExperimentBWSNC() {
-        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.B_WSNCMULT_FIFO, 1000, 8, 1000000, true, 10);
-
-        System.out.println("\n\nexperimento de Bounded WorkStealing Non-Concurrent con 8 hilos y 10 repeticiones");
         SpanningTree instance = new SpanningTree(params);
         List<Report> reports = instance.experiment();
         instance.statistics(reports);

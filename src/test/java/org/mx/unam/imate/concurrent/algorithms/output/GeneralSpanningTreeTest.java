@@ -128,7 +128,7 @@ public class GeneralSpanningTreeTest {
     @Test
     public void testSpanningTreeChaseLevTorus2D() {
         System.out.println("spanningTree ChaseLev Torus 2D");
-        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 0, false);
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 128, false);
         String result = tree.isTreeResponse();
         System.out.println(String.format("El resultado del árbol generador es: %s", result));
         Assertions.assertEquals(Graph.ES_ARBOL, result);
@@ -137,7 +137,7 @@ public class GeneralSpanningTreeTest {
     @Test
     public void testSpanningTreeChaseLevTorus2D60() {
         System.out.println("spanningTree ChaseLev Torus 2D 60");
-        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.CHASELEV, 1000, 8, 0, false);
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.CHASELEV, 1000, 8, 128, false);
         String result = tree.isTreeResponse();
         System.out.println(String.format("El resultado del árbol generador es: %s", result));
         Assertions.assertEquals(Graph.ES_ARBOL, result);
@@ -146,7 +146,7 @@ public class GeneralSpanningTreeTest {
     @Test
     public void testSpanningTreeChaseLevTorus3D() {
         System.out.println("spanningTree ChaseLev Torus 3D");
-        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.CHASELEV, 100, 8, 0, false);
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.CHASELEV, 100, 8, 128, false);
         String result = tree.isTreeResponse();
         System.out.println(String.format("El resultado del árbol generador es: %s", result));
         Assertions.assertEquals(Graph.ES_ARBOL, result);
@@ -155,7 +155,7 @@ public class GeneralSpanningTreeTest {
     @Test
     public void testSpanningTreeChaseLevTorus3D40() {
         System.out.println("spanningTree ChaseLev Torus 3D 40%");
-        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.CHASELEV, 100, 8, 0, false);
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.CHASELEV, 100, 8, 128, false);
         String result = tree.isTreeResponse();
         System.out.println(String.format("El resultado del árbol generador es: %s", result));
         Assertions.assertEquals(Graph.ES_ARBOL, result);
@@ -164,7 +164,7 @@ public class GeneralSpanningTreeTest {
     @Test
     public void testSpanningTreeChaseLevRandom() {
         System.out.println("spanningTree ChaseLev Random");
-        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.CHASELEV, 1000000, 8, 0, false);
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.CHASELEV, 1000000, 8, 128, false);
         String result = tree.isTreeResponse();
         System.out.println(String.format("El resultado del árbol generador es: %s", result));
         Assertions.assertEquals(Graph.ES_ARBOL, result);
