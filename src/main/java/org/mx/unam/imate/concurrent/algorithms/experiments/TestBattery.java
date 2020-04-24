@@ -60,7 +60,7 @@ public class TestBattery {
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
             lists.get(AlgorithmsType.CILK).add(getResult(new Parameters(graphType, AlgorithmsType.CILK, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.CHASELEV).add(getResult(new Parameters(graphType, AlgorithmsType.CHASELEV, vertexSize, (i + 1), 0, false, iterations, stepType)));
+            lists.get(AlgorithmsType.CHASELEV).add(getResult(new Parameters(graphType, AlgorithmsType.CHASELEV, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.IDEMPOTENT_DEQUE).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_DEQUE, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.IDEMPOTENT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_FIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.IDEMPOTENT_LIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_LIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));

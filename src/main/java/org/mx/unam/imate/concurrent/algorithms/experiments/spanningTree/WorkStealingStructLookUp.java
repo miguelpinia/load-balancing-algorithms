@@ -31,7 +31,7 @@ public class WorkStealingStructLookUp {
             case CILK:
                 return new DequeCilk(size);
             case CHASELEV:
-                return new ChaseLevWorkStealing();
+                return new ChaseLevWorkStealing(size);
             case IDEMPOTENT_DEQUE:
                 return new IdempotentWorkStealingDeque(size);
             case IDEMPOTENT_FIFO:
