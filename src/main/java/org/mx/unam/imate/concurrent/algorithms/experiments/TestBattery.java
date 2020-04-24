@@ -67,6 +67,7 @@ public class TestBattery {
             lists.get(AlgorithmsType.NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
             lists.get(AlgorithmsType.B_NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.B_NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
             lists.get(AlgorithmsType.NEW_ALGORITHM).add(getResult(new Parameters(graphType, AlgorithmsType.NEW_ALGORITHM, vertexSize, (i + 1), 0, false, iterations, stepType)));
+            lists.get(AlgorithmsType.B_NEW_ALGORITHM).add(getResult(new Parameters(graphType, AlgorithmsType.B_NEW_ALGORITHM, vertexSize, (i + 1), 0, false, iterations, stepType)));
         }
 
         long chaseLevMedian = lists.get(AlgorithmsType.CHASELEV).get(0).getMedian();
@@ -103,7 +104,7 @@ public class TestBattery {
         lists.put(AlgorithmsType.NBWSMULT_FIFO, new ArrayList<>());
         lists.put(AlgorithmsType.B_NBWSMULT_FIFO, new ArrayList<>());
         lists.put(AlgorithmsType.NEW_ALGORITHM, new ArrayList<>());
-//        lists.put(AlgorithmsType.B_NEW_ALGORITHM, new ArrayList<>());
+        lists.put(AlgorithmsType.B_NEW_ALGORITHM, new ArrayList<>());
         return lists;
     }
 

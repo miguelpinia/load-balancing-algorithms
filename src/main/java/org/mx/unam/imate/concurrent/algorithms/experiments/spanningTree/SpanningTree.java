@@ -41,10 +41,7 @@ public class SpanningTree {
             Report report = new Report();
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
-            long executionTime = System.nanoTime();
             Graph tree = spanningTree(graph, roots, report);
-            executionTime = System.nanoTime() - executionTime;
-            report.setExecutionTime(executionTime);
             reports.add(report);
         }
         return reports;
@@ -63,7 +60,7 @@ public class SpanningTree {
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
         }
-
+        long executionTime = System.nanoTime();
         for (int i = 0; i < params.getNumThreads(); i++) {
             AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
                     graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
@@ -95,6 +92,8 @@ public class SpanningTree {
             parents.set(roots[i], roots[i - 1]);
         }
         Graph tree = GraphUtils.buildFromParents(parents);
+        executionTime = System.nanoTime() - executionTime;
+        report.setExecutionTime(executionTime);
         return tree;
     }
 
