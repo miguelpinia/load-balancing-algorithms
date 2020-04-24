@@ -36,6 +36,7 @@ public class SpanningTree {
     public List<Report> experiment() {
         List<Report> reports = new ArrayList<>();
         for (int i = 0; i < params.getNumIterExps(); i++) {
+            System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
             Graph graph = GraphUtils.graphType(params.getShape(), params.getType());
             final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
             Report report = new Report();
@@ -98,6 +99,8 @@ public class SpanningTree {
     }
 
     public Result statistics(List<Report> reports) {
+        Collections.sort(reports);
+        long best = reports.get(0).getExecutionTime();
         reports = removeWorstAndBest(reports);
 
         List<Long> values2Median = new ArrayList<>();
@@ -120,6 +123,8 @@ public class SpanningTree {
 
         System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
         System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
+        System.out.println("Mejor tiempo:\t" + best + " ns");
+        System.out.println("Mejor tiempo:\t" + best / 1000000 + " ms");
         System.out.println("Mediana de tiempo:\t" + median + " ns");
         System.out.println("Mediana de tiempo:\t" + median / 1000000 + " ms");
         System.out.println("Promedio de tiempo:\t" + average + " ns");
@@ -128,11 +133,12 @@ public class SpanningTree {
         System.out.println("Promedio de puts:\t" + averagePuts);
         System.out.println("Promedio de steals:\t" + averageSteals);
         return new Result(reports.get(0).getGraphType(),
-                reports.get(0).getAlgType(), median, average, averageTakes, averagePuts, averageSteals);
+                reports.get(0).getAlgType(), median, average,
+                averageTakes, averagePuts, averageSteals, best);
     }
 
     private List<Report> removeWorstAndBest(List<Report> reports) {
-        Collections.sort(reports);
+
         reports.remove(0);
         reports.remove(reports.size() - 1);
         return reports;

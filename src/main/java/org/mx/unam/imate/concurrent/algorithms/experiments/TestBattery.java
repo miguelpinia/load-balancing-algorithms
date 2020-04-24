@@ -56,7 +56,9 @@ public class TestBattery {
     public void medianCompare() {
         int processorsNum = Runtime.getRuntime().availableProcessors();
         Map<AlgorithmsType, List<Result>> lists = buildLists();
-        XYSeriesCollection dataset = new XYSeriesCollection();
+        XYSeriesCollection medianDataset = new XYSeriesCollection();
+        XYSeriesCollection bestDataset = new XYSeriesCollection();
+        XYSeriesCollection averageDataset = new XYSeriesCollection();
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
             lists.get(AlgorithmsType.CILK).add(getResult(new Parameters(graphType, AlgorithmsType.CILK, vertexSize, (i + 1), 128, false, iterations, stepType)));
@@ -71,12 +73,17 @@ public class TestBattery {
         }
 
         long chaseLevMedian = lists.get(AlgorithmsType.CHASELEV).get(0).getMedian();
+        long chaseLevBest = lists.get(AlgorithmsType.CHASELEV).get(0).getBest();
         double chaseLevAverage = lists.get(AlgorithmsType.CHASELEV).get(0).getAverage();
         lists.entrySet().forEach((entry) -> {
-            dataset.addSeries(getMedianSeries(entry.getValue(), chaseLevMedian, processorsNum, entry.getKey().toString()));
+            medianDataset.addSeries(getMedianSeries(entry.getValue(), chaseLevMedian, processorsNum, entry.getKey().toString()));
+            bestDataset.addSeries(getBestSeries(entry.getValue(), chaseLevBest, processorsNum, entry.getKey().toString()));
+            averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
         });
 
-        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "medianas", processorsNum, dataset);
+        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset);
+        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset);
+        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, bestDataset);
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
@@ -84,7 +91,12 @@ public class TestBattery {
         return (double) chaseLevMedian / (double) median;
     }
 
-    private double averageNormalized(long chaseLevAverage, int processorNum, List<Result> results) {
+    private double bestNormalized(long chaseLevBest, int processorNum, List<Result> results) {
+        long best = results.get(processorNum).getBest();
+        return (double) chaseLevBest / (double) best;
+    }
+
+    private double averageNormalized(double chaseLevAverage, int processorNum, List<Result> results) {
         double average = results.get(processorNum).getAverage();
         return chaseLevAverage / average;
     }
@@ -116,6 +128,22 @@ public class TestBattery {
         return series;
     }
 
+    private XYSeries getBestSeries(List<Result> listResult, long chaseLevBest, int processorsNum, String name) {
+        XYSeries series = new XYSeries(name);
+        for (int i = 0; i < processorsNum; i++) {
+            series.add((i + 1), bestNormalized(chaseLevBest, i, listResult));
+        }
+        return series;
+    }
+
+    private XYSeries getAverageSeries(List<Result> listResult, double chaseLevAverage, int processorsNum, String name) {
+        XYSeries series = new XYSeries(name);
+        for (int i = 0; i < processorsNum; i++) {
+            series.add((i + 1), averageNormalized(chaseLevAverage, i, listResult));
+        }
+        return series;
+    }
+
     private void generateSpeedUpChart(String title, String xAxisLabel, String yAxisLabel,
             String prefixName, int processorsNum, XYSeriesCollection dataset) {
         JFreeChart xylineChart = ChartFactory
@@ -139,8 +167,8 @@ public class TestBattery {
         domain.setRange(0.00, processorsNum + 1);
         domain.setTickUnit(new NumberTickUnit(1));
         NumberAxis range = (NumberAxis) plot.getRangeAxis();
-        range.setRange(0.0, 5);
-        range.setTickUnit(new NumberTickUnit(0.2));
+        range.setRange(0.5, 2.5);
+        range.setTickUnit(new NumberTickUnit(0.5));
 
         plot.setRenderer(xyline);
         plot.setDomainCrosshairVisible(true);

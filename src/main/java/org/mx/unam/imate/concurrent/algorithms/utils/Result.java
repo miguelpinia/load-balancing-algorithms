@@ -11,6 +11,7 @@ public class Result {
 
     private GraphType graphType;
     private AlgorithmsType algType;
+    private long best;
     private long median;
     private double average;
     private double averageTakes;
@@ -20,7 +21,7 @@ public class Result {
     public Result() {
     }
 
-    public Result(GraphType graphType, AlgorithmsType algType, long median, double average, double averageTakes, double averagePuts, double averageSteals) {
+    public Result(GraphType graphType, AlgorithmsType algType, long median, double average, double averageTakes, double averagePuts, double averageSteals, long best) {
         this.graphType = graphType;
         this.algType = algType;
         this.median = median;
@@ -28,6 +29,7 @@ public class Result {
         this.averageTakes = averageTakes;
         this.averagePuts = averagePuts;
         this.averageSteals = averageSteals;
+        this.best = best;
     }
 
     public GraphType getGraphType() {
@@ -66,6 +68,10 @@ public class Result {
         return averageTakes;
     }
 
+    public long getBest() {
+        return best;
+    }
+
     public void setAverageTakes(double averageTakes) {
         this.averageTakes = averageTakes;
     }
@@ -86,4 +92,7 @@ public class Result {
         this.averageSteals = averageSteals;
     }
 
+    public void setBest(long best) {
+        this.best = best;
+    }
 }
