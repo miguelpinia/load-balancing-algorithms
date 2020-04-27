@@ -25,7 +25,6 @@ public class NewAlgorithm implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final AtomicInteger Tail;
     private final AtomicIntegerArray Tasks;
 
     private final int[] tail;
@@ -39,9 +38,8 @@ public class NewAlgorithm implements WorkStealingStruct {
      * @param numThreads
      */
     public NewAlgorithm(int size, int numThreads) {
-        this.tail = new int[numThreads + 1];
-        this.head = new int[numThreads + 1];
-        this.Tail = new AtomicInteger(0);
+        this.tail = new int[numThreads];
+        this.head = new int[numThreads];
         this.Head = new AtomicInteger(1);
         int array[] = new int[size + 1];
         for (int i = 0; i < numThreads; i++) {
@@ -56,21 +54,18 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean isEmpty() {
-        return Head.get() > Tail.get();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean put(int task, int label) {
-        label--;
         tail[label] = tail[label] + 1;
         Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
-        Tail.set(tail[label]);
         return true;
     }
 
     @Override
     public int take(int label) {
-        label--;
         head[label] = Math.max(head[label], Head.get());
         if (head[label] <= tail[label]) {
             int x = Tasks.get(head[label]);
@@ -84,7 +79,6 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public int steal(int label) {
-        label--;
         head[label] = Math.max(head[label], Head.get());
         int x = Tasks.get(head[label]);
         if (x != BOTTOM) {
@@ -109,6 +103,11 @@ public class NewAlgorithm implements WorkStealingStruct {
     @Override
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isEmpty(int label) {
+        return head[label] > tail[label];
     }
 
 }

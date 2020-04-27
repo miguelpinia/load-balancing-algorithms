@@ -14,6 +14,15 @@ public interface WorkStealingStruct {
     boolean isEmpty();
 
     /**
+     * Indica si la estructura de datos está vacía.
+     *
+     * @param label El procesador (owner) que pregunta si la estructura está
+     * vacía.
+     * @return Verdadero si está vacía, falso en otro caso.
+     */
+    boolean isEmpty(int label);
+
+    /**
      * Agrega un elemento a la estructura que sólo el dueño de la estructura
      * puede añadir.Por simplicidad, agregamos un entero que representa una
      * tarea. Este modelo puede ser abstraído para contener objetos más

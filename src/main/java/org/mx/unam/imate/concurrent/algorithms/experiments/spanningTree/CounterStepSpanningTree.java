@@ -90,7 +90,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
 
     private void specialExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
-        struct.put(root, label);
+        struct.put(root, label - 1);
         int x = visited.getAndSet(root, 1);
         if (x == 0) {
             counter.getAndIncrement();
@@ -100,8 +100,8 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         int stolenItem;
         int thread;
         do {
-            while (!struct.isEmpty()) {
-                v = struct.take(label);
+            while (!struct.isEmpty(label - 1)) {
+                v = struct.take(label - 1);
                 report.takesIncrement();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
@@ -110,7 +110,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                         if (colors.get(w) == 0) {
                             colors.set(w, label);
                             parents.set(w, v);
-                            struct.put(w, label);
+                            struct.put(w, label - 1);
                             x = visited.getAndSet(w, 1);
                             if (x == 0) {
                                 counter.getAndIncrement();
@@ -123,10 +123,10 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             }
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
-                stolenItem = structs[thread].steal(label);
+                stolenItem = structs[thread].steal(label - 1);
                 report.stealsIncrement();
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                    struct.put(stolenItem, label);
+                    struct.put(stolenItem, label - 1);
                     report.putsIncrement();
                 }
             }

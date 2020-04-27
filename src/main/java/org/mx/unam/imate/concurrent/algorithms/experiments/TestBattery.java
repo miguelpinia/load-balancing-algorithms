@@ -81,9 +81,9 @@ public class TestBattery {
             averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
         });
 
-        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset);
-        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset);
-        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, bestDataset);
+        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset, 3.5);
+        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset, 3.5);
+        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, averageDataset, 3.5);
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
@@ -145,7 +145,7 @@ public class TestBattery {
     }
 
     private void generateSpeedUpChart(String title, String xAxisLabel, String yAxisLabel,
-            String prefixName, int processorsNum, XYSeriesCollection dataset) {
+            String prefixName, int processorsNum, XYSeriesCollection dataset, double rangeLimit) {
         JFreeChart xylineChart = ChartFactory
                 .createXYLineChart(title,
                         xAxisLabel,
@@ -167,7 +167,7 @@ public class TestBattery {
         domain.setRange(0.00, processorsNum + 1);
         domain.setTickUnit(new NumberTickUnit(1));
         NumberAxis range = (NumberAxis) plot.getRangeAxis();
-        range.setRange(0.5, 2.5);
+        range.setRange(0.5, rangeLimit);
         range.setTickUnit(new NumberTickUnit(0.5));
 
         plot.setRenderer(xyline);
@@ -176,8 +176,8 @@ public class TestBattery {
         plot.setDomainGridlinePaint(Color.BLACK);
         plot.setRangeGridlinePaint(Color.BLACK);
 
-        int width = 1280;
-        int height = 960;
+        int width = 1024;
+        int height = 768;
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         File XYChart = new File(String.format("/tmp/%s-%s.jpeg", prefixName,
                 dateFormat.format(Calendar.getInstance().getTime())));

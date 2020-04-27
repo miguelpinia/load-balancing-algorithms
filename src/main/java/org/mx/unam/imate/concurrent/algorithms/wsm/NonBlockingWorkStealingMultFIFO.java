@@ -56,7 +56,6 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        label--;
         tail[label] = tail[label] + 1;
         Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
         Tail.set(tail[label]);
@@ -65,7 +64,6 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
 
     @Override
     public int take(int label) {
-        label--;
         head[label] = Math.max(head[label], Head.get());
         int x = TOP;
         while (head[label] <= tail[label]) {
@@ -87,7 +85,6 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
 
     @Override
     public int steal(int label) {
-        label--;
         head[label] = Math.max(head[label], Head.get());
         tail[label] = Tail.get();
         while (true) {
@@ -130,5 +127,10 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
     @Override
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isEmpty(int label) {
+        return Head.get() > Tail.get();
     }
 }

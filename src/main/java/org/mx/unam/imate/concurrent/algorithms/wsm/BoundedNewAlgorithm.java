@@ -21,7 +21,6 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
 
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
-    private static final int TOP = -3;
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
@@ -30,8 +29,8 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
     private final AtomicIntegerArray Tasks;
     private final AtomicBoolean[] B;
 
-    private final int[] tail;
     private final int[] head;
+    private int tail;
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -41,14 +40,13 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
      * @param numThreads
      */
     public BoundedNewAlgorithm(int size, int numThreads) {
-        this.tail = new int[numThreads + 1];
-        this.head = new int[numThreads + 1];
+        this.tail = 0;
+        this.head = new int[numThreads];
         this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
         int array[] = new int[size + 1];
         this.B = new AtomicBoolean[size + 1];
         for (int i = 0; i < numThreads; i++) {
-            tail[i] = 0;
             head[i] = 1;
         }
         for (int i = 0; i < array.length; i++) {
@@ -61,26 +59,23 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean isEmpty() {
-        return Head.get() > Tail.get();
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public boolean put(int task, int label) {
-        label--;
-        tail[label] = tail[label] + 1;
-        Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
-        Tail.set(tail[label]);
+        tail = tail + 1;
+        Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
         return true;
     }
 
     @Override
     public int take(int label) {
-        label--;
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail[label]) {
+        if (head[label] <= tail) {
             int x = Tasks.get(head[label]);
+            Head.set(head[label] + 1);
             head[label]++;
-            Head.set(head[label]);
             return x;
         } else {
             return EMPTY;
@@ -89,7 +84,6 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
 
     @Override
     public int steal(int label) {
-        label--;
         while (true) {
             head[label] = Math.max(head[label], Head.get());
             int x = Tasks.get(head[label]);
@@ -99,6 +93,7 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
                     Head.set(head[label]);
                     return x;
                 }
+                System.out.println("X: " + x + " Procesador: " + label + " Tail: " + tail + " head: " + head[label] + " Head: " + Head.get());
             } else {
                 return EMPTY;
             }
@@ -118,6 +113,11 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
     @Override
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public boolean isEmpty(int label) {
+        return head[label] > tail;
     }
 
 }

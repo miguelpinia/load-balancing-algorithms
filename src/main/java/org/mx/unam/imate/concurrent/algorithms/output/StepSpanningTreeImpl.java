@@ -112,15 +112,15 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
     private void specialExecution(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         colors.set(root, label);
 
-        struct.put(root, label);
+        struct.put(root, label - 1);
         int v, w, pos;
         int stolenItem = -1;
         int thread;
         boolean firstTime = true;
         boolean workToSteal = false;
         while (firstTime || workToSteal) {
-            while (!struct.isEmpty()) {
-                v = struct.take(label);
+            while (!struct.isEmpty(label - 1)) {
+                v = struct.take(label - 1);
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     Node ptr = graph.getVertices()[v];
                     while (ptr != null) {
@@ -128,7 +128,7 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
                         if (colors.get(w) == 0) {
                             colors.set(w, label);
                             parents.set(w, v);
-                            struct.put(w, label);
+                            struct.put(w, label - 1);
                         }
                         ptr = ptr.getNext();
                     }
@@ -142,10 +142,10 @@ public class StepSpanningTreeImpl implements StepSpanningTree {
             for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
                 pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                 if (pos != label) {
-                    stolenItem = structs[(idx + thread) % numThreads].steal(label);
+                    stolenItem = structs[(idx + thread) % numThreads].steal(label - 1);
                 }
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
-                    struct.put(stolenItem, label);
+                    struct.put(stolenItem, label - 1);
                     workToSteal = true;
                     break;
                 }

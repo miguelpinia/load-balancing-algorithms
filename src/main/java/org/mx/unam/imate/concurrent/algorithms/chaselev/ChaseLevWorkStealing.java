@@ -103,4 +103,9 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public boolean isEmpty(int label) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }
