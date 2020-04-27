@@ -87,13 +87,12 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
             int x = Tasks.get(head[label]);
+            head[label]++;
             if (x != BOTTOM) {
                 if (B[head[label]].getAndSet(false)) {
-                    head[label]++;
                     Head.set(head[label]);
                     return x;
                 }
-                System.out.println("X: " + x + " Procesador: " + label + " Tail: " + tail + " head: " + head[label] + " Head: " + Head.get());
             } else {
                 return EMPTY;
             }

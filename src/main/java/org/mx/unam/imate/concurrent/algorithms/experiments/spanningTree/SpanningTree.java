@@ -100,9 +100,9 @@ public class SpanningTree {
 
     public Result statistics(List<Report> reports) {
         Collections.sort(reports);
-        long best = reports.get(0).getExecutionTime();
         reports = removeWorstAndBest(reports);
 
+        long best = reports.get(0).getExecutionTime();
         List<Long> values2Median = new ArrayList<>();
         List<Integer> takes = new ArrayList<>();
         List<Integer> puts = new ArrayList<>();
