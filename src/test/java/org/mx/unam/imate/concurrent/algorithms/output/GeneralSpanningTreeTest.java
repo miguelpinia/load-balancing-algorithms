@@ -314,4 +314,196 @@ public class GeneralSpanningTreeTest {
         Assertions.assertEquals(Graph.ES_ARBOL, result);
     }
 
+    ////////////////////////////////////////////////////
+    // Pruebas de algoritmo non-blocking workstealing //
+    ////////////////////////////////////////////////////
+    @Test
+    public void testSpanningTreeNBWSTorus2D() {
+        System.out.println("spanningTree IdempotentLifo Torus 2D");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NBWSMULT_FIFO, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNBWSTorus2D60() {
+        System.out.println("spanningTree IdempotentLifo Torus 2D 60");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NBWSMULT_FIFO, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNBWSTorus3D() {
+        System.out.println("spanningTree IdempotentLifo Torus 3D");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NBWSMULT_FIFO, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNBWSTorus3D40() {
+        System.out.println("spanningTree IdempotentLifo Torus 3D 40%");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NBWSMULT_FIFO, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNBWSRandom() {
+        System.out.println("spanningTree IdempotentLifo Random");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NBWSMULT_FIFO, 1000000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Pruebas de algoritmo bounded non-blocking workstealing //
+    ////////////////////////////////////////////////////////////
+    @Test
+    public void testSpanningTreeBNBWSTorus2D() {
+        System.out.println("spanningTree BNBWS Torus 2D");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_NBWSMULT_FIFO, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNBWSTorus2D60() {
+        System.out.println("spanningTree BNBWS Torus 2D 60");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_NBWSMULT_FIFO, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNBWSTorus3D() {
+        System.out.println("spanningTree BNBWS Torus 3D");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_NBWSMULT_FIFO, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNBWSTorus3D40() {
+        System.out.println("spanningTree BNBWS Torus 3D 40%");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_NBWSMULT_FIFO, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNBWSRandom() {
+        System.out.println("spanningTree BNBWS Random");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_NBWSMULT_FIFO, 1000000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Pruebas de algoritmo bounded non-blocking workstealing //
+    ////////////////////////////////////////////////////////////
+    @Test
+    public void testSpanningTreeNEWALGTorus2D() {
+        System.out.println("spanningTree NEWALG Torus 2D");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NEW_ALGORITHM, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNEWALGTorus2D60() {
+        System.out.println("spanningTree NEWALG Torus 2D 60");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NEW_ALGORITHM, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNEWALGTorus3D() {
+        System.out.println("spanningTree NEWALG Torus 3D");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NEW_ALGORITHM, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNEWALGTorus3D40() {
+        System.out.println("spanningTree NEWALG Torus 3D 40%");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NEW_ALGORITHM, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeNEWALGRandom() {
+        System.out.println("spanningTree NEWALG Random");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_ALGORITHM, 1000000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Pruebas de algoritmo bounded non-blocking workstealing //
+    ////////////////////////////////////////////////////////////
+    @Test
+    public void testSpanningTreeBNEWALGTorus2D() {
+        System.out.println("spanningTree BNEWALG Torus 2D");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_NEW_ALGORITHM, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNEWALGTorus2D60() {
+        System.out.println("spanningTree BNEWALG Torus 2D 60");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_NEW_ALGORITHM, 1000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNEWALGTorus3D() {
+        System.out.println("spanningTree BNEWALG Torus 3D");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_NEW_ALGORITHM, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNEWALGTorus3D40() {
+        System.out.println("spanningTree BNEWALG Torus 3D 40%");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_NEW_ALGORITHM, 100, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
+    @Test
+    public void testSpanningTreeBNEWALGRandom() {
+        System.out.println("spanningTree BNEWALG Random");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_NEW_ALGORITHM, 1000000, 8, 0, false);
+        String result = tree.isTreeResponse();
+        System.out.println(String.format("El resultado del árbol generador es: %s", result));
+        Assertions.assertEquals(Graph.ES_ARBOL, result);
+    }
+
 }
