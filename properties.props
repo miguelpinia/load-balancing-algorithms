@@ -1,0 +1,4 @@
+graphType: RANDOM
+vertexSize: 1000000
+stepSpanningType: COUNTER
+iterations: 5

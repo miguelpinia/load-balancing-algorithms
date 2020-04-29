@@ -1,0 +1,50 @@
+graphType: TORUS_2D
+vertexSize: 1000
+stepSpanningType: COUNTER
+iterations: 5
+
+graphType: TORUS_2D_60
+vertexSize: 1000
+stepSpanningType: COUNTER
+iterations: 5
+
+graphType: TORUS_3D
+vertexSize: 100
+stepSpanningType: COUNTER
+iterations: 5
+
+graphType: TORUS_3D_40
+vertexSize: 100
+stepSpanningType: COUNTER
+iterations: 5
+
+graphType: RANDOM
+vertexSize: 1000000
+stepSpanningType: COUNTER
+iterations: 5
+
+
+graphType: TORUS_2D
+vertexSize: 1000
+stepSpanningType: DOUBLE_COLLECT
+iterations: 5
+
+graphType: TORUS_2D_60
+vertexSize: 1000
+stepSpanningType: DOUBLE_COLLECT
+iterations: 5
+
+graphType: TORUS_3D
+vertexSize: 100
+stepSpanningType: DOUBLE_COLLECT
+iterations: 5
+
+graphType: TORUS_3D_40
+vertexSize: 100
+stepSpanningType: DOUBLE_COLLECT
+iterations: 5
+
+graphType: RANDOM
+vertexSize: 1000000
+stepSpanningType: DOUBLE_COLLECT
+iterations: 5
