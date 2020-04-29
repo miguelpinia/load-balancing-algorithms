@@ -24,6 +24,7 @@ import org.jfree.chart.labels.XYItemLabelGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
@@ -53,7 +54,7 @@ public class TestBattery {
         this.iterations = iterations;
     }
 
-    public void medianCompare() {
+    public void compareAlgs() {
         int processorsNum = Runtime.getRuntime().availableProcessors();
         Map<AlgorithmsType, List<Result>> lists = buildLists();
         XYSeriesCollection medianDataset = new XYSeriesCollection();
@@ -61,11 +62,11 @@ public class TestBattery {
         XYSeriesCollection averageDataset = new XYSeriesCollection();
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
-            lists.get(AlgorithmsType.CILK).add(getResult(new Parameters(graphType, AlgorithmsType.CILK, vertexSize, (i + 1), 128, false, iterations, stepType)));
+            // lists.get(AlgorithmsType.CILK).add(getResult(new Parameters(graphType, AlgorithmsType.CILK, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.CHASELEV).add(getResult(new Parameters(graphType, AlgorithmsType.CHASELEV, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.IDEMPOTENT_DEQUE).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_DEQUE, vertexSize, (i + 1), 128, false, iterations, stepType)));
+            // lists.get(AlgorithmsType.IDEMPOTENT_DEQUE).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_DEQUE, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.IDEMPOTENT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_FIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.IDEMPOTENT_LIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_LIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
+            // lists.get(AlgorithmsType.IDEMPOTENT_LIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_LIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
             lists.get(AlgorithmsType.NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
             lists.get(AlgorithmsType.B_NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.B_NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
             lists.get(AlgorithmsType.NEW_ALGORITHM).add(getResult(new Parameters(graphType, AlgorithmsType.NEW_ALGORITHM, vertexSize, (i + 1), 0, false, iterations, stepType)));
@@ -108,11 +109,11 @@ public class TestBattery {
 
     private Map<AlgorithmsType, List<Result>> buildLists() {
         Map<AlgorithmsType, List<Result>> lists = new HashMap<>();
-        lists.put(AlgorithmsType.CILK, new ArrayList<>());
+        // lists.put(AlgorithmsType.CILK, new ArrayList<>());
         lists.put(AlgorithmsType.CHASELEV, new ArrayList<>());
-        lists.put(AlgorithmsType.IDEMPOTENT_DEQUE, new ArrayList<>());
+        // lists.put(AlgorithmsType.IDEMPOTENT_DEQUE, new ArrayList<>());
         lists.put(AlgorithmsType.IDEMPOTENT_FIFO, new ArrayList<>());
-        lists.put(AlgorithmsType.IDEMPOTENT_LIFO, new ArrayList<>());
+        // lists.put(AlgorithmsType.IDEMPOTENT_LIFO, new ArrayList<>());
         lists.put(AlgorithmsType.NBWSMULT_FIFO, new ArrayList<>());
         lists.put(AlgorithmsType.B_NBWSMULT_FIFO, new ArrayList<>());
         lists.put(AlgorithmsType.NEW_ALGORITHM, new ArrayList<>());
@@ -144,6 +145,12 @@ public class TestBattery {
         return series;
     }
 
+    private void getMedianBars(List<Result> listResult, long chaseLevMedian, int processorsNum, String name, DefaultCategoryDataset dataSet) {
+        for (int i = 0; i < processorsNum; i++) {
+            dataSet.addValue(medianNormalized(chaseLevMedian, i, listResult), Integer.toString(i), name);
+        }
+    }
+
     private void generateSpeedUpChart(String title, String xAxisLabel, String yAxisLabel,
             String prefixName, int processorsNum, XYSeriesCollection dataset, double rangeLimit) {
         JFreeChart xylineChart = ChartFactory
@@ -167,7 +174,7 @@ public class TestBattery {
         domain.setRange(0.00, processorsNum + 1);
         domain.setTickUnit(new NumberTickUnit(1));
         NumberAxis range = (NumberAxis) plot.getRangeAxis();
-        range.setRange(0.5, rangeLimit);
+//        range.setRange(0.5, rangeLimit);
         range.setTickUnit(new NumberTickUnit(0.5));
 
         plot.setRenderer(xyline);
@@ -179,7 +186,7 @@ public class TestBattery {
         int width = 1024;
         int height = 768;
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        File XYChart = new File(String.format("/tmp/%s-%s.jpeg", prefixName,
+        File XYChart = new File(String.format("%s-%s.jpeg", prefixName,
                 dateFormat.format(Calendar.getInstance().getTime())));
         try {
             ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
