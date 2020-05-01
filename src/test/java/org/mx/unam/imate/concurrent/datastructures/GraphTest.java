@@ -38,7 +38,7 @@ public class GraphTest {
         Node node3 = new Node(3, node2);
         Node node4 = new Node(4, node3);
         int i = 2;
-        Graph instance = new Graph(edges, 5);
+        Graph instance = new Graph(edges, 5, GraphType.RANDOM, false);
         instance.printRow(2);
     }
 
