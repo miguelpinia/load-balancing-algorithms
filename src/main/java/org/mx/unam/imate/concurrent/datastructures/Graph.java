@@ -16,16 +16,19 @@ public class Graph {
     private int numVertices;
     private int numConnectedVertices;
     private int root;
+    private GraphType type;
+    private boolean directed;
 
     public Graph() {
     }
 
-    public Graph(Edge[] edges, int numVertices, int root) {
-        this(edges, numVertices);
+    public Graph(Edge[] edges, int numVertices, int root, GraphType type, boolean directed) {
+        this(edges, numVertices, type, directed);
         this.root = root;
     }
 
-    public Graph(Edge[] edges, int numVertices) {
+    public Graph(Edge[] edges, int numVertices, GraphType type, boolean directed) {
+        this.type = type;
         vertices = new Node[numVertices];
         this.numVertices = numVertices;
         this.numConnectedVertices = 0;
@@ -70,6 +73,14 @@ public class Graph {
 
     public int getNumConnectedVertices() {
         return numConnectedVertices;
+    }
+
+    public GraphType getType() {
+        return type;
+    }
+
+    public void setType(GraphType type) {
+        this.type = type;
     }
 
     public void printGraph() {
