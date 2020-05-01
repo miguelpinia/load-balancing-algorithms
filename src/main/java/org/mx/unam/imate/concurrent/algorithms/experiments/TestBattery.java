@@ -46,12 +46,14 @@ public class TestBattery {
     private final Integer vertexSize;
     private final StepSpanningTreeType stepType;
     private final Integer iterations;
+    private final List<AlgorithmsType> types;
 
-    public TestBattery(GraphType graphType, int vertexSize, StepSpanningTreeType stepType, int iterations) {
+    public TestBattery(GraphType graphType, int vertexSize, StepSpanningTreeType stepType, int iterations, List<AlgorithmsType> types) {
         this.graphType = graphType;
         this.vertexSize = vertexSize;
         this.stepType = stepType;
         this.iterations = iterations;
+        this.types = types;
     }
 
     public void compareAlgs() {
@@ -60,17 +62,19 @@ public class TestBattery {
         XYSeriesCollection medianDataset = new XYSeriesCollection();
         XYSeriesCollection bestDataset = new XYSeriesCollection();
         XYSeriesCollection averageDataset = new XYSeriesCollection();
+        {
+            System.out.println("Realizando ejecución de calentamiento :D");
+            types.forEach((type) -> {
+                SpanningTree st = new SpanningTree(new Parameters(graphType, type, vertexSize, 8, 128, false, 1, stepType));
+                st.experiment();
+            });
+        }
+        System.out.println("Iniciando ejecuciones");
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
-            // lists.get(AlgorithmsType.CILK).add(getResult(new Parameters(graphType, AlgorithmsType.CILK, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.CHASELEV).add(getResult(new Parameters(graphType, AlgorithmsType.CHASELEV, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            // lists.get(AlgorithmsType.IDEMPOTENT_DEQUE).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_DEQUE, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.IDEMPOTENT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_FIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            // lists.get(AlgorithmsType.IDEMPOTENT_LIFO).add(getResult(new Parameters(graphType, AlgorithmsType.IDEMPOTENT_LIFO, vertexSize, (i + 1), 128, false, iterations, stepType)));
-            lists.get(AlgorithmsType.NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
-            lists.get(AlgorithmsType.B_NBWSMULT_FIFO).add(getResult(new Parameters(graphType, AlgorithmsType.B_NBWSMULT_FIFO, vertexSize, (i + 1), 0, false, iterations, stepType)));
-            lists.get(AlgorithmsType.NEW_ALGORITHM).add(getResult(new Parameters(graphType, AlgorithmsType.NEW_ALGORITHM, vertexSize, (i + 1), 0, false, iterations, stepType)));
-            lists.get(AlgorithmsType.B_NEW_ALGORITHM).add(getResult(new Parameters(graphType, AlgorithmsType.B_NEW_ALGORITHM, vertexSize, (i + 1), 0, false, iterations, stepType)));
+            for (AlgorithmsType type : types) {
+                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize, (i + 1), 128, false, iterations, stepType)));
+            }
         }
 
         long chaseLevMedian = lists.get(AlgorithmsType.CHASELEV).get(0).getMedian();
@@ -109,15 +113,9 @@ public class TestBattery {
 
     private Map<AlgorithmsType, List<Result>> buildLists() {
         Map<AlgorithmsType, List<Result>> lists = new HashMap<>();
-        // lists.put(AlgorithmsType.CILK, new ArrayList<>());
-        lists.put(AlgorithmsType.CHASELEV, new ArrayList<>());
-        // lists.put(AlgorithmsType.IDEMPOTENT_DEQUE, new ArrayList<>());
-        lists.put(AlgorithmsType.IDEMPOTENT_FIFO, new ArrayList<>());
-        // lists.put(AlgorithmsType.IDEMPOTENT_LIFO, new ArrayList<>());
-        lists.put(AlgorithmsType.NBWSMULT_FIFO, new ArrayList<>());
-        lists.put(AlgorithmsType.B_NBWSMULT_FIFO, new ArrayList<>());
-        lists.put(AlgorithmsType.NEW_ALGORITHM, new ArrayList<>());
-        lists.put(AlgorithmsType.B_NEW_ALGORITHM, new ArrayList<>());
+        for (AlgorithmsType type : types) {
+            lists.put(type, new ArrayList<>());
+        }
         return lists;
     }
 
