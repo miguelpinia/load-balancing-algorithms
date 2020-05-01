@@ -1,6 +1,8 @@
 package org.mx.unam.imate.concurrent.datastructures;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -30,7 +32,7 @@ public class GraphUtils {
         for (int i = 0; i < parents.length; i++) {
             edges[i] = new Edge(i, parents[i]);
         }
-        Graph graph = new Graph(edges, parents.length);
+        Graph graph = new Graph(edges, parents.length, GraphType.RANDOM, false);
         return graph;
     }
 
@@ -39,7 +41,7 @@ public class GraphUtils {
         for (int i = 0; i < parents.length(); i++) {
             edges[i] = new Edge(i, parents.get(i));
         }
-        Graph graph = new Graph(edges, parents.length());
+        Graph graph = new Graph(edges, parents.length(), GraphType.RANDOM, false);
         return graph;
     }
 
@@ -76,7 +78,7 @@ public class GraphUtils {
             }
             edges[k] = new Edge(currentIdx, neighbor);
         }
-        Graph newGraph = new Graph(edges, numVertices);
+        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D, false);
         return newGraph;
     }
 
@@ -124,7 +126,7 @@ public class GraphUtils {
             }
         }
         edges = Arrays.copyOf(edges, current);
-        Graph newGraph = new Graph(edges, numVertices);
+        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D_60, false);
         return newGraph;
     }
 
@@ -168,7 +170,7 @@ public class GraphUtils {
             }
             edges[m] = new Edge(currentIdx, neighbor);
         }
-        Graph graph = new Graph(edges, numVertices);
+        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D, false);
         return graph;
     }
 
@@ -231,11 +233,11 @@ public class GraphUtils {
 
         }
         edges = Arrays.copyOf(edges, current);
-        Graph graph = new Graph(edges, numVertices);
+        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D_40, false);
         return graph;
     }
 
-    public static Graph random(int numberVertices, int vertexDegree) {
+    private static Graph myKGraph(int numberVertices, int vertexDegree, GraphType type) {
         Random random = new Random(System.currentTimeMillis());
         int numEdges = numberVertices * vertexDegree;
         int numVertices = numberVertices;
@@ -259,11 +261,34 @@ public class GraphUtils {
                     }
                 }
             } while (randomVertex == current || inPrevious);
-            inPrevious = false;
             edges[k] = new Edge(current, randomVertex);
         }
-        Graph graph = new Graph(edges, numVertices);
+        Graph graph = new Graph(edges, numVertices, type, false);
         return graph;
+    }
+
+    public static Graph random(int numberVertices, int vertexDegree) {
+        return myKGraph(numberVertices, vertexDegree, GraphType.RANDOM);
+    }
+
+    public static Graph kgraph(int numVertices, int k) {
+        Random random = new Random(System.currentTimeMillis());
+        boolean impar = k % 2 == 1;
+        List<Edge> edges = new ArrayList<>();
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 1; j < (k / 2) + 1; j++) {
+                edges.add(new Edge(i, MOD(i + j, numVertices)));
+                edges.add(new Edge(i, MOD(i - j, numVertices)));
+            }
+            if (impar) {
+                edges.add(new Edge(i, MOD(i + (numVertices / 2), numVertices)));
+            }
+        }
+        Edge[] nEdges = new Edge[edges.size()];
+        for (int i = 0; i < nEdges.length; i++) {
+            nEdges[i] = edges.get(i);
+        }
+        return new Graph(nEdges, numVertices, GraphType.KGRAPH, false);
     }
 
     public static Graph graphType(int shape, GraphType type) {
@@ -278,6 +303,8 @@ public class GraphUtils {
                 return GraphUtils.torus3D40(shape);
             case RANDOM:
                 return GraphUtils.random(shape, 6);
+            case KGRAPH:
+                return GraphUtils.kgraph(shape, 3);
         }
         return null;
     }
@@ -286,6 +313,12 @@ public class GraphUtils {
         Random random = new Random(System.currentTimeMillis());
         int[] stubSpanning = new int[steps];
         int randomVal = random.nextInt(graph.getNumVertices());
+        if (graph.getType() == GraphType.KGRAPH) {
+            for (int i = 0; i < steps; i++) {
+                stubSpanning[i] = MOD(randomVal + i, graph.getNumVertices());
+            }
+            return stubSpanning;
+        }
         int i = 0;
         Node ptr;
         Stack stack = new Stack();
