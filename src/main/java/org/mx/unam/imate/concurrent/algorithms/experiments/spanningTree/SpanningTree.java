@@ -35,14 +35,18 @@ public class SpanningTree {
 
     public List<Report> experiment() {
         List<Report> reports = new ArrayList<>();
+        Graph graph = GraphUtils.graphType(params.getShape(), params.getType(), params.isDirected());
+        final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         for (int i = 0; i < params.getNumIterExps(); i++) {
             System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
-            Graph graph = GraphUtils.graphType(params.getShape(), params.getType());
-            final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
+            long executionTime = System.nanoTime();
             Report report = new Report();
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             Graph tree = spanningTree(graph, roots, report);
+            assert (tree.isTree());
+            executionTime = System.nanoTime() - executionTime;
+            report.setExecutionTime(executionTime);
             reports.add(report);
         }
         return reports;
@@ -61,7 +65,6 @@ public class SpanningTree {
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
         }
-        long executionTime = System.nanoTime();
         for (int i = 0; i < params.getNumThreads(); i++) {
             AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
                     graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
@@ -93,8 +96,6 @@ public class SpanningTree {
             parents.set(roots[i], roots[i - 1]);
         }
         Graph tree = GraphUtils.buildFromParents(parents);
-        executionTime = System.nanoTime() - executionTime;
-        report.setExecutionTime(executionTime);
         return tree;
     }
 
