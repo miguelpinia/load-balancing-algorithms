@@ -35,27 +35,42 @@ public class Graph {
         for (Edge edge : edges) {
             int src = edge.getSrc();
             int dest = edge.getDest();
-            Node srcNode;
-            Node destNode;
-            if (dest == -1) {
-                srcNode = null;
-                destNode = new Node(src, null);
-                root = src;
+            if (directed) {
+                addDirectedEdge(src, dest);
             } else {
-                srcNode = new Node(dest, vertices[src]);
-                destNode = new Node(src, vertices[dest]);
-            }
-            if (srcNode != null && !inList(srcNode, vertices[src])) {
-                vertices[src] = srcNode;
-            }
-            if (dest != -1 && !inList(destNode, vertices[dest])) {
-                vertices[dest] = destNode;
+                addUndirectedEdge(src, dest);
             }
         }
         for (int i = 0; i < numVertices; i++) {
             if (vertices[i] != null) {
                 numConnectedVertices++;
             }
+        }
+    }
+
+    private void addDirectedEdge(int src, int dest) {
+        Node srcNode = new Node(dest, vertices[src]);
+        if (!inList(srcNode, vertices[src])) {
+            vertices[src] = srcNode;
+        }
+    }
+
+    private void addUndirectedEdge(int src, int dest) {
+        Node srcNode;
+        Node destNode;
+        if (dest == -1) {
+            srcNode = null;
+            destNode = new Node(src, null);
+            root = src;
+        } else {
+            srcNode = new Node(dest, vertices[src]);
+            destNode = new Node(src, vertices[dest]);
+        }
+        if (srcNode != null && !inList(srcNode, vertices[src])) {
+            vertices[src] = srcNode;
+        }
+        if (dest != -1 && !inList(destNode, vertices[dest])) {
+            vertices[dest] = destNode;
         }
     }
 
