@@ -20,6 +20,7 @@ public class Parameters {
     private int structSize;
     private int numIterExps;
     private StepSpanningTreeType stepSpanningTreeType;
+    private boolean directed;
 
     public Parameters() {
     }
@@ -45,7 +46,7 @@ public class Parameters {
      * @param structSize El tamaño de la estructura.
      * @param report Si se va a realizar un reporte.
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report) {
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, boolean directed) {
         this.type = type;
         this.shape = shape;
         this.report = report;
@@ -54,6 +55,7 @@ public class Parameters {
         this.structSize = structSize;
         this.numIterExps = 1;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
+        this.directed = directed;
     }
 
     /**
@@ -78,8 +80,8 @@ public class Parameters {
      * @param report Si se va a realizar un reporte.
      * @param numIterExps El número de iteraciones para un experimento.
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps) {
-        this(type, algType, shape, numThreads, structSize, report);
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, boolean directed) {
+        this(type, algType, shape, numThreads, structSize, report, directed);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
     }
@@ -105,8 +107,8 @@ public class Parameters {
      * @param numIterExps El número de iteraciones para un experimento.
      * @param stepSpanningTreeType El tipo de stepSpanningTree.
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType) {
-        this(type, algType, shape, numThreads, structSize, report);
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, boolean directed) {
+        this(type, algType, shape, numThreads, structSize, report, directed);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = stepSpanningTreeType;
     }
@@ -160,6 +162,14 @@ public class Parameters {
         return numIterExps;
     }
 
+    public boolean isDirected() {
+        return directed;
+    }
+
+    public void setDirected(boolean directed) {
+        this.directed = directed;
+    }
+
     public void setNumIterExps(int numIterExps) {
         this.numIterExps = numIterExps;
     }
@@ -194,7 +204,10 @@ public class Parameters {
 
     @Override
     public String toString() {
-        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize=" + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType=" + stepSpanningTreeType + '}';
+        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report
+                + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize="
+                + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType="
+                + stepSpanningTreeType + ", directed=" + directed + '}';
     }
 
 }
