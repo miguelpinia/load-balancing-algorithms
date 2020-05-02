@@ -47,13 +47,15 @@ public class TestBattery {
     private final StepSpanningTreeType stepType;
     private final Integer iterations;
     private final List<AlgorithmsType> types;
+    private final boolean directed;
 
-    public TestBattery(GraphType graphType, int vertexSize, StepSpanningTreeType stepType, int iterations, List<AlgorithmsType> types) {
+    public TestBattery(GraphType graphType, int vertexSize, StepSpanningTreeType stepType, int iterations, List<AlgorithmsType> types, boolean directed) {
         this.graphType = graphType;
         this.vertexSize = vertexSize;
         this.stepType = stepType;
         this.iterations = iterations;
         this.types = types;
+        this.directed = directed;
     }
 
     public void compareAlgs() {
@@ -65,7 +67,7 @@ public class TestBattery {
         {
             System.out.println("Realizando ejecución de calentamiento :D");
             types.forEach((type) -> {
-                SpanningTree st = new SpanningTree(new Parameters(graphType, type, vertexSize, 8, 128, false, 1, stepType));
+                SpanningTree st = new SpanningTree(new Parameters(graphType, type, vertexSize, 8, 128, false, 1, stepType, directed));
                 st.experiment();
             });
         }
@@ -73,7 +75,7 @@ public class TestBattery {
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
             for (AlgorithmsType type : types) {
-                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize, (i + 1), 128, false, iterations, stepType)));
+                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize, (i + 1), 128, false, iterations, stepType, directed)));
             }
         }
 
@@ -86,9 +88,9 @@ public class TestBattery {
             averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
         });
 
-        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset, 3.5);
-        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset, 3.5);
-        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, averageDataset, 3.5);
+        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset, 3.5);
+        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset, 3.5);
+        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, averageDataset, 3.5);
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {

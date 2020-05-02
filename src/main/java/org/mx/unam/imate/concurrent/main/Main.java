@@ -32,7 +32,8 @@ public class Main {
                 Integer.valueOf(props.get("vertexSize")),
                 StepSpanningTreeType.valueOf(props.get("stepSpanningType")),
                 Integer.valueOf(props.get("iterations")),
-                types);
+                types,
+                Boolean.valueOf(props.get("directed")));
         battery.compareAlgs();
     }
 

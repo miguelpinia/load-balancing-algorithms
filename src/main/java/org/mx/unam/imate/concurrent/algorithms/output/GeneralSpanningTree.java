@@ -1,7 +1,5 @@
 package org.mx.unam.imate.concurrent.algorithms.output;
 
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
@@ -9,6 +7,7 @@ import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.SpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.datastructures.Graph;
@@ -31,7 +30,7 @@ public class GeneralSpanningTree implements SpanningTree {
     @Override
     public Graph spanningTree() {
         Thread[] threads = new Thread[params.getNumThreads()];
-        Graph graph = GraphUtils.graphType(params.getShape(), params.getType());
+        Graph graph = GraphUtils.graphType(params.getShape(), params.getType(), params.isDirected());
         AtomicIntegerArray colors = new AtomicIntegerArray(graph.getNumVertices());
         AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParent(graph.getNumVertices()));
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
