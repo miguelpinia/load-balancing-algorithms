@@ -82,6 +82,33 @@ public class GraphUtils {
         return newGraph;
     }
 
+    public static Graph directedTorus2D(int shape) {
+        int numEdges = shape * shape * 2;
+        int numVertices = shape * shape;
+        Edge[] edges = new Edge[numEdges];
+        int neighbor;
+        int i, j, currentIdx, pos;
+        for (int k = 0; k < numEdges; k++) {
+            j = (k / 2) % shape;
+            i = k / (shape * 2);
+            currentIdx = (i * shape) + j;
+            pos = k % 2;
+            switch (pos) {
+                case 0:
+                    neighbor = i * shape + MOD((j + 1), shape);
+                    break;
+                case 1:
+                    neighbor = MOD((i + 1), shape) * shape + j;
+                    break;
+                default:
+                    neighbor = 0;
+            }
+            edges[k] = new Edge(currentIdx, neighbor);
+        }
+        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D, true);
+        return newGraph;
+    }
+
     public static Graph torus2D60(int shape) {
         Random rand = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * 4;
@@ -90,7 +117,7 @@ public class GraphUtils {
         int randomNumber, i, j, currentIdx, pos;
         int current = 0;
         int neighbor;
-        for (int k = 0; k < (shape * shape * 4); k++) {
+        for (int k = 0; k < numEdges; k++) {
             j = (k / 4) % shape;
             i = k / (shape * 4);
             currentIdx = (i * shape) + j;
@@ -123,6 +150,38 @@ public class GraphUtils {
                     break;
                 default:
                     neighbor = 0;
+            }
+        }
+        edges = Arrays.copyOf(edges, current);
+        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D_60, false);
+        return newGraph;
+    }
+
+    public static Graph directedTorus2D60(int shape) {
+        Random rand = new Random(System.currentTimeMillis());
+        int numEdges = shape * shape * 2;
+        int numVertices = shape * shape;
+        Edge[] edges = new Edge[numEdges];
+        int randomNumber, i, j, currentIdx, pos;
+        int current = 0;
+        int neighbor;
+        for (int k = 0; k < numEdges; k++) {
+            j = (k / 2) % shape;
+            i = k / (shape * 2);
+            currentIdx = (i * shape) + j;
+            pos = k % 2;
+            randomNumber = rand.nextInt(100);
+            switch (pos) {
+                case 0:
+                    neighbor = i * shape + MOD((j + 1), shape);
+                    edges[current++] = new Edge(currentIdx, neighbor);
+                    break;
+                case 1:
+                    if (randomNumber < 60) {
+                        neighbor = MOD((i + 1), shape) * shape + j;
+                        edges[current++] = new Edge(currentIdx, neighbor);
+                    }
+                    break;
             }
         }
         edges = Arrays.copyOf(edges, current);
@@ -171,6 +230,41 @@ public class GraphUtils {
             edges[m] = new Edge(currentIdx, neighbor);
         }
         Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D, false);
+        return graph;
+    }
+
+    public static Graph directedTorus3D(int shape) {
+        int numEdges = shape * shape * shape * 3;
+        int numVertices = shape * shape * shape;
+        Edge[] edges = new Edge[numEdges];
+        int i;
+        int j;
+        int k;
+        int currentIdx;
+        int pos;
+        int neighbor;
+        for (int m = 0; m < numEdges; ++m) {
+            k = (m / 3) % shape;
+            j = (m / (shape * 3)) % shape;
+            i = (m / (shape * shape * 3)) % shape;
+            currentIdx = (i * shape * shape) + (j * shape) + k;
+            pos = m % 3;
+            switch (pos) {
+                case 0:
+                    neighbor = (i * shape * shape) + (j * shape) + MOD((k + 1), shape);
+                    break;
+                case 1:
+                    neighbor = (i * shape * shape) + (MOD((j + 1), shape) * shape) + k;
+                    break;
+                case 2:
+                    neighbor = (MOD((i + 1), shape) * shape * shape) + (j * shape) + k;
+                    break;
+                default:
+                    neighbor = 0;
+            }
+            edges[m] = new Edge(currentIdx, neighbor);
+        }
+        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D, true);
         return graph;
     }
 
@@ -237,6 +331,50 @@ public class GraphUtils {
         return graph;
     }
 
+    public static Graph directedTorus3D40(int shape) {
+        Random random = new Random(System.currentTimeMillis());
+        int numEdges = shape * shape * shape * 3;
+        int numVertices = shape * shape * shape;
+        Edge[] edges = new Edge[numEdges];
+        int randomNumber;
+        int i;
+        int j;
+        int k;
+        int current = 0;
+        int currentIdx;
+        int pos;
+        int neighbor;
+        for (int m = 0; m < numEdges; ++m) {
+            k = (m / 3) % shape;
+            j = (m / (shape * 3)) % shape;
+            i = (m / (shape * shape * 3)) % shape;
+            currentIdx = (i * shape * shape) + (j * shape) + k;
+            pos = m % 3;
+            randomNumber = random.nextInt(100);
+            switch (pos) {
+                case 0:
+                    neighbor = (i * shape * shape) + (j * shape) + MOD((k + 1), shape);
+                    edges[current++] = new Edge(currentIdx, neighbor);
+                    break;
+                case 1:
+                    if (randomNumber < 40) {
+                        neighbor = (i * shape * shape) + (MOD((j + 1), shape) * shape) + k;
+                        edges[current++] = new Edge(currentIdx, neighbor);
+                    }
+                    break;
+                case 2:
+                    if (randomNumber < 40) {
+                        neighbor = (MOD((i + 1), shape) * shape * shape) + (j * shape) + k;
+                        edges[current++] = new Edge(currentIdx, neighbor);
+                    }
+                    break;
+            }
+        }
+        edges = Arrays.copyOf(edges, current);
+        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D_40, false);
+        return graph;
+    }
+
     private static Graph myKGraph(int numberVertices, int vertexDegree, GraphType type) {
         Random random = new Random(System.currentTimeMillis());
         int numEdges = numberVertices * vertexDegree;
@@ -291,20 +429,44 @@ public class GraphUtils {
         return new Graph(nEdges, numVertices, GraphType.KGRAPH, false);
     }
 
-    public static Graph graphType(int shape, GraphType type) {
+    public static Graph directedKGraph(int numVertices, int k) {
+        boolean impar = k % 2 == 1;
+        List<Edge> edges = new ArrayList<>();
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 1; j < (k / 2) + 1; j++) {
+                edges.add(new Edge(i, MOD(i + j, numVertices)));
+            }
+        }
+        if (impar) {
+            for (int i = 0; i < numVertices / 2; i++) {
+                if (i % 2 == 0) {
+                    edges.add(new Edge(i, i + (numVertices / 2)));
+                } else {
+                    edges.add(new Edge(i + (numVertices / 2), i));
+                }
+            }
+        }
+        Edge[] nEdges = new Edge[edges.size()];
+        for (int i = 0; i < nEdges.length; i++) {
+            nEdges[i] = edges.get(i);
+        }
+        return new Graph(nEdges, numVertices, GraphType.KGRAPH, true);
+    }
+
+    public static Graph graphType(int shape, GraphType type, boolean directed) {
         switch (type) {
             case TORUS_2D:
-                return GraphUtils.torus2D(shape);
+                return directed ? torus2D(shape) : directedTorus2D(shape);
             case TORUS_2D_60:
-                return GraphUtils.torus2D60(shape);
+                return directed ? torus2D60(shape) : directedTorus2D60(shape);
             case TORUS_3D:
-                return GraphUtils.torus3D(shape);
+                return directed ? torus3D(shape) : directedTorus3D(shape);
             case TORUS_3D_40:
-                return GraphUtils.torus3D40(shape);
+                return directed ? torus3D40(shape) : directedTorus3D40(shape);
             case RANDOM:
                 return GraphUtils.random(shape, 6);
             case KGRAPH:
-                return GraphUtils.kgraph(shape, 3);
+                return directed ? kgraph(shape, 3) : directedKGraph(shape, 3);
         }
         return null;
     }
