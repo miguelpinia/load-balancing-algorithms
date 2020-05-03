@@ -17,7 +17,7 @@ import org.mx.unam.imate.concurrent.datastructures.GraphType;
 public class GeneralSpanningTreeTest {
 
     private Graph generateTree(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report) {
-        Parameters params = new Parameters(type, algType, shape, numThreads, structSize, report);
+        Parameters params = new Parameters(type, algType, shape, numThreads, structSize, report, false);
         GeneralSpanningTree instance = new GeneralSpanningTree(params);
         Graph tree = instance.spanningTree();
         return tree;
