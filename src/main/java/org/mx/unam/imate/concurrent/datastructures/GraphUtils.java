@@ -456,17 +456,17 @@ public class GraphUtils {
     public static Graph graphType(int shape, GraphType type, boolean directed) {
         switch (type) {
             case TORUS_2D:
-                return directed ? torus2D(shape) : directedTorus2D(shape);
+                return directed ? directedTorus2D(shape) : torus2D(shape);
             case TORUS_2D_60:
-                return directed ? torus2D60(shape) : directedTorus2D60(shape);
+                return directed ? directedTorus2D60(shape) : torus2D60(shape);
             case TORUS_3D:
-                return directed ? torus3D(shape) : directedTorus3D(shape);
+                return directed ? directedTorus3D(shape) : torus3D(shape);
             case TORUS_3D_40:
-                return directed ? torus3D40(shape) : directedTorus3D40(shape);
+                return directed ? directedTorus3D40(shape) : torus3D40(shape);
             case RANDOM:
                 return GraphUtils.random(shape, 6);
             case KGRAPH:
-                return directed ? kgraph(shape, 3) : directedKGraph(shape, 3);
+                return directed ? directedKGraph(shape, 3) : kgraph(shape, 3);
         }
         return null;
     }
