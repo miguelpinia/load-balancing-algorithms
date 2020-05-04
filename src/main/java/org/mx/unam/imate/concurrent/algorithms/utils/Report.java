@@ -100,7 +100,12 @@ public class Report implements Comparable<Report> {
 
     @Override
     public int compareTo(Report t) {
-        return (int) (this.executionTime - t.getExecutionTime());
+        if (this.executionTime > t.getExecutionTime()) {
+            return 1;
+        } else if (this.executionTime < t.getExecutionTime()) {
+            return - 1;
+        }
+        return 0;
     }
 
 }
