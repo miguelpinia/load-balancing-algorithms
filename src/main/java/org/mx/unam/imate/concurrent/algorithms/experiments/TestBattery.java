@@ -88,9 +88,9 @@ public class TestBattery {
             averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
         });
 
-        generateSpeedUpChart("SpeedUps comparisons (Medians) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Medians", processorsNum, medianDataset, 3.5);
-        generateSpeedUpChart("SpeedUps comparisons (Best) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Best", processorsNum, bestDataset, 3.5);
-        generateSpeedUpChart("SpeedUps comparisons (Average) " + graphType + (directed ? " directed" : " undirected") + ", " + stepType, "Procesadores", "SpeedUp", "Average", processorsNum, averageDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Median) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Medians-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, medianDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Best) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Best-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, bestDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Average) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Average-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, averageDataset, 3.5);
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
