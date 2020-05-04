@@ -39,14 +39,11 @@ public class SpanningTree {
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         for (int i = 0; i < params.getNumIterExps(); i++) {
             System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
-            long executionTime = System.nanoTime();
             Report report = new Report();
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             Graph tree = spanningTree(graph, roots, report);
             assert (tree.isTree());
-            executionTime = System.nanoTime() - executionTime;
-            report.setExecutionTime(executionTime);
             reports.add(report);
         }
         return reports;
@@ -72,7 +69,7 @@ public class SpanningTree {
 
             threads[i] = new Thread(step);
         }
-
+        long executionTime = System.nanoTime();
         for (Thread thread : threads) {
             thread.start();
         }
@@ -85,7 +82,8 @@ public class SpanningTree {
                         .log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
-
+        executionTime = System.nanoTime() - executionTime;
+        report.setExecutionTime(executionTime);
         for (int i = 0; i < graph.getNumVertices(); i++) {
             if (colors.get(i) != 0) {
                 processors[colors.get(i) - 1]++;
@@ -101,9 +99,14 @@ public class SpanningTree {
 
     public Result statistics(List<Report> reports) {
         Collections.sort(reports);
+        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
+        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
+        reports.forEach((r) -> {
+            System.out.println("Tiempo de ejecución " + r.getExecutionTime());
+        });
+        long best = reports.get(0).getExecutionTime();
         reports = removeWorstAndBest(reports);
 
-        long best = reports.get(0).getExecutionTime();
         List<Long> values2Median = new ArrayList<>();
         List<Integer> takes = new ArrayList<>();
         List<Integer> puts = new ArrayList<>();

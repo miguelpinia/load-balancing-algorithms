@@ -186,7 +186,7 @@ public class TestBattery {
         int width = 1024;
         int height = 768;
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
-        File XYChart = new File(String.format("%s-%s.jpeg", prefixName,
+        File XYChart = new File(String.format("results/%s-%s.jpeg", prefixName,
                 dateFormat.format(Calendar.getInstance().getTime())));
         try {
             ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
