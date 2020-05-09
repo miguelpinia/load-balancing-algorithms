@@ -33,9 +33,9 @@ public class WorkStealingStructLookUp {
                 return new IdempotentWorkStealingFIFO(size);
             case IDEMPOTENT_LIFO:
                 return new IdempotentWorkStealingLIFO(size);
-            case WFWSMULT_FIFO:
+            case WS_NC_MULT:
                 return new NewAlgorithm(size, numThreads);
-            case B_WFWSMULT_FIFO:
+            case B_WS_NC_MULT:
                 return new BoundedNewAlgorithm(size, numThreads);
             case NBWSMULT_FIFO:
                 return new NonBlockingWorkStealingMultFIFO(size, numThreads);
