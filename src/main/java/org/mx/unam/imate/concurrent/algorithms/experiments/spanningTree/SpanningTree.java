@@ -33,9 +33,8 @@ public class SpanningTree {
         params = parameters;
     }
 
-    public List<Report> experiment() {
+    public List<Report> experiment(Graph graph) {
         List<Report> reports = new ArrayList<>();
-        Graph graph = GraphUtils.graphType(params.getShape(), params.getType(), params.isDirected());
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         for (int i = 0; i < params.getNumIterExps(); i++) {
             System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
