@@ -9,4 +9,3 @@ sudo service cups stop
 sudo service bluetooth stop
 sudo service networking stop
 sudo service network-manager stop
-sudo service systemd-journald stop
