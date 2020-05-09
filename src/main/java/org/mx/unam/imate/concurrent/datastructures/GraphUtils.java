@@ -406,51 +406,101 @@ public class GraphUtils {
     }
 
     public static Graph random(int numberVertices, int vertexDegree) {
-        return myKGraph(numberVertices, vertexDegree, GraphType.RANDOM);
+        Random random = new Random(System.currentTimeMillis());
+        int numEdges = numberVertices * vertexDegree;
+        int numVertices = numberVertices;
+        Edge[] edges = new Edge[numEdges];
+        int randomVertex;
+        int i;
+        int j;
+        int current;
+        boolean inPrevious;
+        for (int k = 0; k < (numberVertices * vertexDegree); k++) {
+            i = k / (numberVertices * vertexDegree);
+            j = (k / vertexDegree) % numberVertices;
+            current = (i * numberVertices) + j;
+            do {
+                inPrevious = false;
+                randomVertex = random.nextInt(numberVertices);
+                for (int idx = 0; idx < k % vertexDegree; idx++) {
+                    if (edges[k] != null && randomVertex == edges[k].getDest()) {
+                        inPrevious = true;
+                        break;
+                    }
+                }
+            } while (randomVertex == current || inPrevious);
+            edges[k] = new Edge(current, randomVertex);
+        }
+        Graph graph = new Graph(edges, numVertices, GraphType.RANDOM, false);
+        return graph;
     }
 
     public static Graph kgraph(int numVertices, int k) {
+        return myKGraph(numVertices, k, GraphType.KGRAPH);
+    }
+
+    private static Graph myDirectedGraph(int numVertices, int degree) {
         Random random = new Random(System.currentTimeMillis());
-        boolean impar = k % 2 == 1;
-        List<Edge> edges = new ArrayList<>();
+        DirectedVertex[] vertices = new DirectedVertex[numVertices];
+        int randomVertex;
+        int intentos;
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = new DirectedVertex(degree);
+        }
         for (int i = 0; i < numVertices; i++) {
-            for (int j = 1; j < (k / 2) + 1; j++) {
-                edges.add(new Edge(i, MOD(i + j, numVertices)));
-                edges.add(new Edge(i, MOD(i - j, numVertices)));
-            }
-            if (impar) {
-                edges.add(new Edge(i, MOD(i + (numVertices / 2), numVertices)));
+            for (int j = 0; j < degree; j++) {
+                randomVertex = random.nextInt(numVertices);
+                intentos = 0;
+                do {
+                    DirectedVertex v = vertices[randomVertex];
+                    if (v.canAddEntrada() && !v.inEntrada(i)) {
+                        vertices[i].addSalida(randomVertex);
+                        v.addEntrada(i);
+                        break;
+                    }
+                    randomVertex = (randomVertex + 1) % numVertices;
+                    intentos++;
+
+                } while (intentos < numVertices);
             }
         }
-        Edge[] nEdges = new Edge[edges.size()];
-        for (int i = 0; i < nEdges.length; i++) {
-            nEdges[i] = edges.get(i);
+        Edge[] edges = new Edge[numVertices * degree];
+        int edgeIdx = 0;
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < degree; j++) {
+                edges[edgeIdx++] = new Edge(i, vertices[i].getSalida()[j]);
+            }
         }
-        return new Graph(nEdges, numVertices, GraphType.KGRAPH, false);
+        Graph graph = new Graph(edges, numVertices, GraphType.KGRAPH, true);
+        return graph;
     }
 
     public static Graph directedKGraph(int numVertices, int k) {
-        boolean impar = k % 2 == 1;
+        return myDirectedGraph(numVertices, k);
+    }
+
+    public static Graph directedRandom(int numVertices, int degree) {
+        Random random = new Random(System.currentTimeMillis());
         List<Edge> edges = new ArrayList<>();
+        int randomVertex;
         for (int i = 0; i < numVertices; i++) {
-            for (int j = 1; j < (k / 2) + 1; j++) {
-                edges.add(new Edge(i, MOD(i + j, numVertices)));
-            }
-        }
-        if (impar) {
-            for (int i = 0; i < numVertices / 2; i++) {
-                if (i % 2 == 0) {
-                    edges.add(new Edge(i, i + (numVertices / 2)));
-                } else {
-                    edges.add(new Edge(i + (numVertices / 2), i));
+            edges.add(new Edge(i, ((i + 1) % numVertices)));
+            int tryDegree = random.nextInt(degree - 1);
+            while (tryDegree > 0) {
+                randomVertex = random.nextInt(numVertices);
+                if (randomVertex == i) {
+                    continue;
                 }
+                edges.add(new Edge(i, randomVertex));
+                tryDegree--;
             }
         }
         Edge[] nEdges = new Edge[edges.size()];
         for (int i = 0; i < nEdges.length; i++) {
             nEdges[i] = edges.get(i);
         }
-        return new Graph(nEdges, numVertices, GraphType.KGRAPH, true);
+        Graph graph = new Graph(nEdges, numVertices, GraphType.RANDOM, true);
+        return graph;
     }
 
     public static Graph graphType(int shape, GraphType type, boolean directed) {
@@ -464,7 +514,7 @@ public class GraphUtils {
             case TORUS_3D_40:
                 return directed ? directedTorus3D40(shape) : torus3D40(shape);
             case RANDOM:
-                return GraphUtils.random(shape, 6);
+                return directed ? directedRandom(shape, 6) : random(shape, 6);
             case KGRAPH:
                 return directed ? directedKGraph(shape, 3) : kgraph(shape, 3);
         }
@@ -501,6 +551,74 @@ public class GraphUtils {
             }
         }
         return stubSpanning;
+    }
+
+    static class DirectedVertex {
+
+        int[] entrada;
+        int[] salida;
+        int sizeEntrada;
+        int sizeSalida;
+        int degree;
+
+        public DirectedVertex(int degree) {
+            this.degree = degree;
+            entrada = new int[degree];
+            salida = new int[degree];
+            sizeEntrada = 0;
+            sizeSalida = 0;
+        }
+
+        public boolean addEntrada(int vertexEntrada) {
+            if (sizeEntrada > degree) {
+                return false;
+            }
+            entrada[sizeEntrada++] = vertexEntrada;
+            return true;
+        }
+
+        public boolean addSalida(int vertexSalida) {
+            if (sizeSalida > degree) {
+                return false;
+            }
+            salida[sizeSalida++] = vertexSalida;
+            return true;
+        }
+
+        public int[] getEntrada() {
+            return entrada;
+        }
+
+        public int[] getSalida() {
+            return salida;
+        }
+
+        public boolean inEntrada(int vertex) {
+            for (int i = 0; i < entrada.length; i++) {
+                if (entrada[i] == vertex) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean inSalida(int vertex) {
+            for (int i = 0; i < salida.length; i++) {
+                if (salida[i] == vertex) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public boolean canAddEntrada() {
+            return sizeEntrada < degree;
+        }
+
+        public boolean canAddSalida() {
+            return sizeSalida < degree;
+        }
+
     }
 
 }
