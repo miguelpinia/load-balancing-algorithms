@@ -155,7 +155,7 @@ public class Parameters {
 
     public boolean isSpecialExecution() {
         return (algType == AlgorithmsType.NBWSMULT_FIFO || algType == AlgorithmsType.B_NBWSMULT_FIFO
-                || algType == AlgorithmsType.WFWSMULT_FIFO || algType == AlgorithmsType.B_WFWSMULT_FIFO);
+                || algType == AlgorithmsType.WS_NC_MULT || algType == AlgorithmsType.B_WS_NC_MULT);
     }
 
     public int getNumIterExps() {

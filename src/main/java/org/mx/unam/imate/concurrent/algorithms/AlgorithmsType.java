@@ -14,7 +14,7 @@ public enum AlgorithmsType {
     IDEMPOTENT_FIFO,
     IDEMPOTENT_LIFO,
     NBWSMULT_FIFO,
-    WFWSMULT_FIFO,
+    WS_NC_MULT,
     B_NBWSMULT_FIFO,
-    B_WFWSMULT_FIFO
+    B_WS_NC_MULT
 }
