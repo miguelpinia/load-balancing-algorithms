@@ -1,4 +1,6 @@
-graphType: RANDOM
-vertexSize: 1000000
+graphType: TORUS_2D_60
+vertexSize: 1000
 stepSpanningType: COUNTER
 iterations: 5
+algorithms: CILK;CHASELEV;IDEMPOTENT_LIFO;WS_NC_MULT;B_WS_NC_MULT
+directed: true
