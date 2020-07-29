@@ -76,7 +76,8 @@ public class TestBattery {
         {
             System.out.println("Realizando ejecución de calentamiento :D");
             types.forEach((type) -> {
-                SpanningTree st = new SpanningTree(new Parameters(graphType, type, vertexSize, 8, 128, false, 1, stepType, directed));
+                SpanningTree st = new SpanningTree(new Parameters(graphType, type,
+                        vertexSize, 8, 128, false, 1, stepType, directed));
                 st.experiment(graph);
             });
         }
@@ -84,8 +85,8 @@ public class TestBattery {
         for (int i = 0; i < processorsNum; i++) {
             System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
             for (AlgorithmsType type : types) {
-                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize, (i + 1),
-                        128, false, iterations, stepType, directed), graph));
+                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize,
+                        (i + 1), 128, false, iterations, stepType, directed), graph));
             }
         }
 
@@ -94,13 +95,16 @@ public class TestBattery {
         double chaseLevAverage = lists.get(AlgorithmsType.CHASELEV).get(0).getAverage();
 
         types.stream().map((type) -> {
-            medianDataset.addSeries(getMedianSeries(lists.get(type), chaseLevMedian, processorsNum, getAlgName(type)));
+            medianDataset.addSeries(getMedianSeries(lists.get(type), chaseLevMedian,
+                    processorsNum, getAlgName(type)));
             return type;
         }).map((type) -> {
-            bestDataset.addSeries(getBestSeries(lists.get(type), chaseLevBest, processorsNum, getAlgName(type)));
+            bestDataset.addSeries(getBestSeries(lists.get(type), chaseLevBest,
+                    processorsNum, getAlgName(type)));
             return type;
         }).forEachOrdered((type) -> {
-            averageDataset.addSeries(getAverageSeries(lists.get(type), chaseLevAverage, processorsNum, getAlgName(type)));
+            averageDataset.addSeries(getAverageSeries(lists.get(type), chaseLevAverage,
+                    processorsNum, getAlgName(type)));
         });
 //        lists.entrySet().forEach((entry) -> {
 //            medianDataset.addSeries(getMedianSeries(entry.getValue(), chaseLevMedian, processorsNum, entry.getKey().toString()));
@@ -108,9 +112,18 @@ public class TestBattery {
 //            averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
 //        });
 
-        generateSpeedUpChart("SpeedUp comparison (Median) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Medians-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, medianDataset, 3.5);
-        generateSpeedUpChart("SpeedUp comparison (Best) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Best-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, bestDataset, 3.5);
-        generateSpeedUpChart("SpeedUp comparison (Average) " + graphType + (directed ? " directed" : " undirected"), "Processors", "SpeedUp", "Average-" + graphType + "-" + stepType + "-" + vertexSize, processorsNum, averageDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Median) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
+                "Medians-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, medianDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Best) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors",
+                "SpeedUp", "Best-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, bestDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Average) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
+                "Average-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, averageDataset, 3.5);
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
@@ -141,7 +154,8 @@ public class TestBattery {
         return lists;
     }
 
-    private XYSeries getMedianSeries(List<Result> listResult, long chaseLevMedian, int processorsNum, String name) {
+    private XYSeries getMedianSeries(List<Result> listResult, long chaseLevMedian,
+            int processorsNum, String name) {
         XYSeries series = new XYSeries(name);
         for (int i = 0; i < processorsNum; i++) {
             series.add((i + 1), medianNormalized(chaseLevMedian, i, listResult));
@@ -149,7 +163,8 @@ public class TestBattery {
         return series;
     }
 
-    private XYSeries getBestSeries(List<Result> listResult, long chaseLevBest, int processorsNum, String name) {
+    private XYSeries getBestSeries(List<Result> listResult, long chaseLevBest,
+            int processorsNum, String name) {
         XYSeries series = new XYSeries(name);
         for (int i = 0; i < processorsNum; i++) {
             series.add((i + 1), bestNormalized(chaseLevBest, i, listResult));
@@ -157,7 +172,8 @@ public class TestBattery {
         return series;
     }
 
-    private XYSeries getAverageSeries(List<Result> listResult, double chaseLevAverage, int processorsNum, String name) {
+    private XYSeries getAverageSeries(List<Result> listResult, double chaseLevAverage,
+            int processorsNum, String name) {
         XYSeries series = new XYSeries(name);
         for (int i = 0; i < processorsNum; i++) {
             series.add((i + 1), averageNormalized(chaseLevAverage, i, listResult));
@@ -165,7 +181,8 @@ public class TestBattery {
         return series;
     }
 
-    private void getMedianBars(List<Result> listResult, long chaseLevMedian, int processorsNum, String name, DefaultCategoryDataset dataSet) {
+    private void getMedianBars(List<Result> listResult, long chaseLevMedian,
+            int processorsNum, String name, DefaultCategoryDataset dataSet) {
         for (int i = 0; i < processorsNum; i++) {
             dataSet.addValue(medianNormalized(chaseLevMedian, i, listResult), Integer.toString(i), name);
         }
