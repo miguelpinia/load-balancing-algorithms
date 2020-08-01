@@ -1,6 +1,6 @@
-graphType: TORUS_2D_60
-vertexSize: 1000
+graphType: TORUS_3D_40
+vertexSize: 100
 stepSpanningType: COUNTER
 iterations: 5
-algorithms: CILK;CHASELEV;IDEMPOTENT_LIFO;WS_NC_MULT;B_WS_NC_MULT
-directed: true
+algorithms: CILK;CHASELEV;IDEMPOTENT_LIFO;IDEMPOTENT_FIFO;IDEMPOTENT_DEQUE;WS_NC_MULT;B_WS_NC_MULT
+directed: false

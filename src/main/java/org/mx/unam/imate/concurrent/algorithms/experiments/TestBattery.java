@@ -81,9 +81,9 @@ public class TestBattery {
                 st.experiment(graph);
             });
         }
-        System.out.println("Iniciando ejecuciones");
+        System.out.println(String.format("Processors: %d", processorsNum));
         for (int i = 0; i < processorsNum; i++) {
-            System.out.println("Número de HILOS: " + (i + 1) + ", " + stepType);
+            System.out.println("Hilos: " + (i + 1));
             for (AlgorithmsType type : types) {
                 lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize,
                         (i + 1), 128, false, iterations, stepType, directed), graph));

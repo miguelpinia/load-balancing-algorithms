@@ -37,7 +37,7 @@ public class SpanningTree {
         List<Report> reports = new ArrayList<>();
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         for (int i = 0; i < params.getNumIterExps(); i++) {
-            System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
+//            System.out.println("Iteración " + i + ", Algoritmo: " + params.getAlgType());
             Report report = new Report();
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
@@ -98,10 +98,14 @@ public class SpanningTree {
 
     public Result statistics(List<Report> reports) {
         Collections.sort(reports);
-        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
-        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
+
+        System.out.println(String.format("\n\nGráfica:\t%s\nAlgoritmo:\t%s\n",
+                reports.get(0).getGraphType(),
+                reports.get(0).getAlgType()));
         reports.forEach((r) -> {
-            System.out.println("Tiempo de ejecución " + r.getExecutionTime());
+            System.out.println(String.format("Tiempo de ejecución: %d\nNúmero de takes: %d\n"
+                    + "Número de puts: %d\nNúmero de steals: %d\n",
+                    r.getExecutionTime(), r.getTakes(), r.getPuts(), r.getSteals()));
         });
         long best = reports.get(0).getExecutionTime();
         reports = removeWorstAndBest(reports);
@@ -124,8 +128,8 @@ public class SpanningTree {
         double averagePuts = puts.stream().mapToDouble(a -> a).average().getAsDouble();
         double averageSteals = steals.stream().mapToDouble(a -> a).average().getAsDouble();
 
-        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
-        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
+//        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
+//        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
         System.out.println("Mejor tiempo:\t" + best + " ns");
         System.out.println("Mejor tiempo:\t" + best / 1000000 + " ms");
         System.out.println("Mediana de tiempo:\t" + median + " ns");
@@ -135,6 +139,7 @@ public class SpanningTree {
         System.out.println("Promedio de takes:\t" + averageTakes);
         System.out.println("Promedio de puts:\t" + averagePuts);
         System.out.println("Promedio de steals:\t" + averageSteals);
+
         return new Result(reports.get(0).getGraphType(),
                 reports.get(0).getAlgType(), median, average,
                 averageTakes, averagePuts, averageSteals, best);
