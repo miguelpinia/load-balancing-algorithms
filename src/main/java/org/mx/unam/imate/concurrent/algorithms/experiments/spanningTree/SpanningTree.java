@@ -99,12 +99,11 @@ public class SpanningTree {
     public Result statistics(List<Report> reports) {
         Collections.sort(reports);
 
-        System.out.println(String.format("\n\nGráfica:\t%s\nAlgoritmo:\t%s\n",
+        System.out.println(String.format("\n\nGraph:\t%s\nAlgorithm:\t%s\n",
                 reports.get(0).getGraphType(),
                 reports.get(0).getAlgType()));
         reports.forEach((r) -> {
-            System.out.println(String.format("Tiempo de ejecución: %d\nNúmero de takes: %d\n"
-                    + "Número de puts: %d\nNúmero de steals: %d\n",
+            System.out.println(String.format("Execution time: %d\nTakes: %d\nPuts: %d\nSteals: %d\n",
                     r.getExecutionTime(), r.getTakes(), r.getPuts(), r.getSteals()));
         });
         long best = reports.get(0).getExecutionTime();
@@ -130,15 +129,15 @@ public class SpanningTree {
 
 //        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
 //        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
-        System.out.println("Mejor tiempo:\t" + best + " ns");
-        System.out.println("Mejor tiempo:\t" + best / 1000000 + " ms");
-        System.out.println("Mediana de tiempo:\t" + median + " ns");
-        System.out.println("Mediana de tiempo:\t" + median / 1000000 + " ms");
-        System.out.println("Promedio de tiempo:\t" + average + " ns");
-        System.out.println("Promedio de tiempo:\t" + average / 1000000 + " ms");
-        System.out.println("Promedio de takes:\t" + averageTakes);
-        System.out.println("Promedio de puts:\t" + averagePuts);
-        System.out.println("Promedio de steals:\t" + averageSteals);
+        System.out.println("Best time:\t" + best + " ns");
+        System.out.println("Best time:\t" + best / 1000000 + " ms");
+        System.out.println("Median time:\t" + median + " ns");
+        System.out.println("Median time:\t" + median / 1000000 + " ms");
+        System.out.println("Time Average:\t" + average + " ns");
+        System.out.println("Time Average:\t" + average / 1000000 + " ms");
+        System.out.println("Takes Average:\t" + averageTakes);
+        System.out.println("Puts Average:\t" + averagePuts);
+        System.out.println("Steals Average:\t" + averageSteals);
 
         return new Result(reports.get(0).getGraphType(),
                 reports.get(0).getAlgType(), median, average,
