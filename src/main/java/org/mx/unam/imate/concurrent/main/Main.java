@@ -28,12 +28,13 @@ public class Main {
         for (String stringType : data) {
             types.add(AlgorithmsType.valueOf(stringType));
         }
-        TestBattery battery = new TestBattery((GraphType.valueOf(props.get("graphType"))),
-                Integer.valueOf(props.get("vertexSize")),
-                StepSpanningTreeType.valueOf(props.get("stepSpanningType")),
-                Integer.valueOf(props.get("iterations")),
-                types,
-                Boolean.valueOf(props.get("directed")));
+
+        GraphType type = GraphType.valueOf(props.get("graphType"));
+        int vertexSize = Integer.valueOf(props.get("vertexSize"));
+        StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(props.get("stepSpanningType"));
+        int iterations = Integer.valueOf(props.get("iterations"));
+        boolean directed = Boolean.valueOf(props.get("directed"));
+        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed);
         battery.compareAlgs();
     }
 
