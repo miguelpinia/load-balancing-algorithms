@@ -44,16 +44,20 @@ def parse_file(path_file):
             for key in algs:
                 datos = list(filter(lambda x: x != '',
                                     info[algs[key] + 2:algs[key] + 26]))
+                statistics = info[algs[key] + 27:algs[key] + 33:2] + \
+                    info[algs[key] + 33:algs[key] + 36]
+                statistics = {output[0]: output[1].strip()
+                              for line in statistics if (output := line.split(':'))
+                              is not None}
                 datos = [datos[i:i + 4] for i in range(0, len(datos), 4)]
                 datos = {idx: {output[0]: int(output[1].strip())
                                for val in line if (output := val.split(':'))
                                is not None}
                          for idx, line in enumerate(datos)}
-                dict_thread[key] = datos
+                dict_thread[key] = {'datos': datos, 'statistics': statistics}
             execs['thread-{}'.format(thread)] = dict_thread
         results['executions'] = execs
-        pprint(results)
         return results
 
 
-parse_file('../output.log')
+results = parse_file('../output.log')
