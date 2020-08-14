@@ -58,6 +58,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     @Override
     public int steal() {
+        //  TODO: Cambiar por versión iterativa (MAPA 2020-08-05)
         int h = head.get();
         unsafe.loadFence();
         int t = tail.get();
