@@ -58,20 +58,21 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     @Override
     public int steal() {
-        //  TODO: Cambiar por versión iterativa (MAPA 2020-08-05)
-        int h = head.get();
-        unsafe.loadFence();
-        int t = tail.get();
-        if (h == t) {
-            return EMPTY;
+        while (true) {
+            int h = head.get();
+            unsafe.loadFence();
+            int t = tail.get();
+            if (h == t) {
+                return EMPTY;
+            }
+            TaskArrayWithSize a = tasks;
+            int task = a.getArray()[h % a.getSize()];
+            unsafe.loadFence();
+            if (head.compareAndSet(h, h + 1)) {
+                return task;
+            }
+
         }
-        TaskArrayWithSize a = tasks;
-        int task = a.getArray()[h % a.getSize()];
-        unsafe.loadFence();
-        if (!head.compareAndSet(h, h + 1)) {
-            steal();
-        }
-        return task;
     }
 
     public void expand() {
