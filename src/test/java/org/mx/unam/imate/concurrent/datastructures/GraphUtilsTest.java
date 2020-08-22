@@ -2,6 +2,7 @@ package org.mx.unam.imate.concurrent.datastructures;
 
 import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -13,9 +14,9 @@ public class GraphUtilsTest {
     /**
      * Test of inArray method, of class SIMPLESpanningTree.
      */
+    @DisplayName("Test if values is in array using the corresponding function")
     @Test
     public void testInArray() {
-        System.out.println("inArray");
         int val1 = 14;
         int val2 = 13;
         int[] array = {19, 20, 14, 100, 220, 300, 150};
