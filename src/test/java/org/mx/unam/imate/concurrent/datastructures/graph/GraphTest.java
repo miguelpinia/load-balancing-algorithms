@@ -54,7 +54,7 @@ public class GraphTest {
     @Test
     public void testAddEdgeDirected() {
         graph.addEdge(new Edge(3, 4));
-        List l = new ArrayList();
+        List<Integer> l = new ArrayList<>();
         l.add(2);
         l.add(4);
         Assertions.assertArrayEquals(l.toArray(), graph.getNeighbours(3).toArray());
@@ -67,9 +67,9 @@ public class GraphTest {
     @Test
     public void testAddEdgeUndirected() {
         graph.addEdge(new Edge(3, 4));
-        List l0 = new ArrayList();
+        List<Integer> l0 = new ArrayList<>();
         l0.add(0);
-        List l1 = new ArrayList();
+        List<Integer> l1 = new ArrayList<>();
         l1.add(4);
         Assertions.assertEquals(l0.get(0), graph.getNeighbours(4).get(0));
         Assertions.assertEquals(l1.get(0), graph.getNeighbours(0).get(0));
@@ -84,10 +84,10 @@ public class GraphTest {
         boolean directed1 = true;
         graph = new Graph(new Edge[0], directed1, 0, 5, GraphType.RANDOM);
         graph.addEdges(edges);
-        List l0 = new ArrayList();
-        List l1 = new ArrayList();
-        List l2 = new ArrayList();
-        List l4 = new ArrayList();
+        List<Integer> l0 = new ArrayList<>();
+        List<Integer> l1 = new ArrayList<>();
+        List<Integer> l2 = new ArrayList<>();
+        List<Integer> l4 = new ArrayList<>();
         l0.add(1);
         l1.add(2);
         l2.add(3);
@@ -196,11 +196,11 @@ public class GraphTest {
         boolean directed1 = true;
         Graph instance = new Graph(new Edge[0], directed1, 4, 5, GraphType.RANDOM);
         instance.addEdges(edges);
-        List l0 = new ArrayList();
-        List l1 = new ArrayList();
-        List l2 = new ArrayList();
-        List l3 = new ArrayList();
-        List l4 = new ArrayList();
+        List<Integer> l0 = new ArrayList<>();
+        List<Integer> l1 = new ArrayList<>();
+        List<Integer> l2 = new ArrayList<>();
+        List<Integer> l3 = new ArrayList<>();
+        List<Integer> l4 = new ArrayList<>();
         l0.add(4);
         l1.add(0);
         l2.add(1);
