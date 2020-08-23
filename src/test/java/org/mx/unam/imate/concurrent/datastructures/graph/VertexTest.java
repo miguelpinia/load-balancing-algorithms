@@ -3,11 +3,11 @@ package org.mx.unam.imate.concurrent.datastructures.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -17,7 +17,7 @@ public class VertexTest {
 
     private Vertex vertex;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         vertex = new Vertex(true, 100);
         vertex.addNeighbour(101);
@@ -26,7 +26,7 @@ public class VertexTest {
         vertex.addChild(99);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         vertex = null;
     }
@@ -34,7 +34,7 @@ public class VertexTest {
     /**
      * Test of isDirected method, of class Vertex.
      */
-    @DisplayName("Test if the vertex is directed")
+    @DisplayName("Test if the vertex is part of a directed graph")
     @Test
     public void testIsDirected() {
         boolean expResult = true;
