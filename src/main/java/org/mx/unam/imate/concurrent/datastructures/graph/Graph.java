@@ -54,7 +54,7 @@ public class Graph {
         numEdges++;
         if (directed) {
             boolean isRoot = dest == root;
-            vertices[dest].addChild(isRoot ? -1 : src);
+            vertices[dest].addChild(src);
         } else {
             vertices[dest].addNeighbour(src);
             numEdges++;
