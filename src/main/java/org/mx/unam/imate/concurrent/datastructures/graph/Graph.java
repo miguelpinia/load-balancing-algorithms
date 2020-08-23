@@ -6,15 +6,14 @@ import org.mx.unam.imate.concurrent.datastructures.Edge;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 
 /**
- * This implementation use a All vertices are represented as integers
- * with values between 0 and the total of vertices less one.
+ * This implementation use a All vertices are represented as integers with
+ * values between 0 and the total of vertices less one.
  *
  * For undirected graphs, we implemented the graph using adjancency lists, which
  * works better for sparese graphs.
  *
- * In the case of directed graphs, add a list to store the childs of
- * each vertex. This allow us know the vertices that reach to some
- * vertex.
+ * In the case of directed graphs, add a list to store the childs of each
+ * vertex. This allow us know the vertices that reach to some vertex.
  *
  * @author miguel
  */
@@ -48,6 +47,9 @@ public class Graph {
     private void _addEdge(Edge edge) {
         int src = edge.getSrc();
         int dest = edge.getDest();
+        if (dest == -1) {
+            return;
+        }
         vertices[src].addNeighbour(dest);
         numEdges++;
         if (directed) {
