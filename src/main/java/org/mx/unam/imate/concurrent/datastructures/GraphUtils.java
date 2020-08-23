@@ -517,8 +517,9 @@ public class GraphUtils {
                 return directed ? directedRandom(shape, 6) : random(shape, 6);
             case KGRAPH:
                 return directed ? directedKGraph(shape, 3) : kgraph(shape, 3);
+            default:
+                return null;
         }
-        return null;
     }
 
     public static int[] stubSpanning(Graph graph, int steps) {
