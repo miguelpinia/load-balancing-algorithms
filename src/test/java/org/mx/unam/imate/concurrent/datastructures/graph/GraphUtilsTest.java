@@ -5,13 +5,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mx.unam.imate.concurrent.datastructures.Edge;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
 
 /**
@@ -20,20 +19,54 @@ import org.mx.unam.imate.concurrent.datastructures.GraphType;
  */
 public class GraphUtilsTest {
 
-    @BeforeClass
+    private static Edge[] edgesCycle;
+    private static Edge[] edgesTree;
+    private static Edge[] edgesDisconnected;
+
+    @BeforeAll
     public static void setUpClass() throws Exception {
+        edgesCycle = new Edge[16];
+        edgesTree = new Edge[14];
+        edgesDisconnected = new Edge[4];
+        edgesDisconnected[0] = new Edge(0, 1);
+        edgesDisconnected[1] = new Edge(1, 2);
+        edgesDisconnected[2] = new Edge(3, 4);
+        edgesDisconnected[3] = new Edge(4, 5);
+
+        edgesCycle[0] = new Edge(0, 1);
+        edgesCycle[1] = new Edge(0, 2);
+        edgesCycle[2] = new Edge(1, 3);
+        edgesCycle[3] = new Edge(1, 4);
+        edgesCycle[4] = new Edge(2, 5);
+        edgesCycle[5] = new Edge(2, 6);
+        edgesCycle[6] = new Edge(3, 7);
+        edgesCycle[7] = new Edge(3, 8);
+        edgesCycle[8] = new Edge(4, 9);
+        edgesCycle[9] = new Edge(4, 10);
+        edgesCycle[10] = new Edge(5, 11);
+        edgesCycle[11] = new Edge(5, 12);
+        edgesCycle[12] = new Edge(6, 13);
+        edgesCycle[13] = new Edge(6, 14);
+        edgesCycle[14] = new Edge(7, 8);
+        edgesCycle[15] = new Edge(13, 14);
+        edgesTree[0] = new Edge(0, 1);
+        edgesTree[1] = new Edge(0, 2);
+        edgesTree[2] = new Edge(1, 3);
+        edgesTree[3] = new Edge(1, 4);
+        edgesTree[4] = new Edge(2, 5);
+        edgesTree[5] = new Edge(2, 6);
+        edgesTree[6] = new Edge(3, 7);
+        edgesTree[7] = new Edge(3, 8);
+        edgesTree[8] = new Edge(4, 9);
+        edgesTree[9] = new Edge(4, 10);
+        edgesTree[10] = new Edge(5, 11);
+        edgesTree[11] = new Edge(5, 12);
+        edgesTree[12] = new Edge(6, 13);
+        edgesTree[13] = new Edge(6, 14);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() throws Exception {
-    }
-
-    @After
-    public void tearDown() throws Exception {
     }
 
     /**
@@ -132,6 +165,7 @@ public class GraphUtilsTest {
         Graph result = GraphUtils.torus2D(shape);
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_2D, result.getType());
+        Assertions.assertEquals(100, result.getNumberVertices());
         Assertions.assertFalse(result.isDirected());
         for (int k = 0; k < 10; k++) {
             int randomVertex = random.nextInt(shape * shape);
@@ -162,6 +196,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_2D, result.getType());
         Assertions.assertTrue(result.isDirected());
+        Assertions.assertEquals(100, result.getNumberVertices());
         for (int k = 0; k < 10; k++) {
             int randomVertex = random.nextInt(shape * shape);
             int j = randomVertex % shape;
@@ -189,6 +224,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_2D_60, result.getType());
         Assertions.assertFalse(result.isDirected());
+        Assertions.assertEquals(100, result.getNumberVertices());
         for (int k = 0; k < 10; k++) {
             int randomVertex = random.nextInt(shape * shape);
             int j = randomVertex % shape;
@@ -225,6 +261,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_2D_60, result.getType());
         Assertions.assertTrue(result.isDirected());
+        Assertions.assertEquals(100, result.getNumberVertices());
         for (int k = 0; k < 10; k++) {
             int randomVertex = random.nextInt(shape * shape);
             int j = randomVertex % shape;
@@ -259,6 +296,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_3D, result.getType());
         Assertions.assertFalse(result.isDirected());
+        Assertions.assertEquals(1000, result.getNumberVertices());
         for (int m = 0; m < 10; m++) {
             int randomVertex = random.nextInt(shape * shape);
             int k = randomVertex % shape;
@@ -291,6 +329,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_3D, result.getType());
         Assertions.assertTrue(result.isDirected());
+        Assertions.assertEquals(1000, result.getNumberVertices());
         for (int m = 0; m < 10; m++) {
             int randomVertex = random.nextInt(shape * shape);
             int k = randomVertex % shape;
@@ -320,6 +359,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_3D_40, result.getType());
         Assertions.assertFalse(result.isDirected());
+        Assertions.assertEquals(1000, result.getNumberVertices());
         for (int m = 0; m < 10; m++) {
             int randomVertex = random.nextInt(shape * shape);
             int k = randomVertex % shape;
@@ -359,6 +399,7 @@ public class GraphUtilsTest {
         Random random = new Random(System.currentTimeMillis());
         Assertions.assertEquals(GraphType.TORUS_3D_40, result.getType());
         Assertions.assertTrue(result.isDirected());
+        Assertions.assertEquals(1000, result.getNumberVertices());
         for (int m = 0; m < 10; m++) {
             int randomVertex = random.nextInt(shape * shape);
             int k = randomVertex % shape;
@@ -457,6 +498,41 @@ public class GraphUtilsTest {
     @DisplayName("Test if the graph generated has the correct type")
     @Test
     public void testGraphType() {
+        GraphType random = GraphType.RANDOM;
+        GraphType torus2D = GraphType.TORUS_2D;
+        GraphType torus2D60 = GraphType.TORUS_2D_60;
+        GraphType torus3D = GraphType.TORUS_3D;
+        GraphType torus3D40 = GraphType.TORUS_3D_40;
+        GraphType kGraph = GraphType.KGRAPH;
+        boolean directed = true;
+        boolean undirected = false;
+
+        Graph randomGraph = GraphUtils.random(10, 6);
+        Graph directedRandomGraph = GraphUtils.directedRandom(10, 6);
+        Graph torus2DGraph = GraphUtils.torus2D(10);
+        Graph directedTorus2DGraph = GraphUtils.directedTorus2D(10);
+        Graph torus2D60Graph = GraphUtils.torus2D60(10);
+        Graph directedTorus2D60Graph = GraphUtils.directedTorus2D60(10);
+        Graph torus3DGraph = GraphUtils.torus3D(10);
+        Graph directedTorus3DGraph = GraphUtils.directedTorus3D(10);
+        Graph torus3D40Graph = GraphUtils.torus3D40(10);
+        Graph directedTorus3D40Graph = GraphUtils.directedTorus3D40(10);
+        Graph kGraphKGraph = GraphUtils.kGraph(10, 6);
+//        Graph directedKGraphGraph = GraphUtils.directedKGraph(10, 6);
+
+        Assertions.assertEquals(random, randomGraph.getType());
+        Assertions.assertEquals(random, directedRandomGraph.getType());
+        Assertions.assertEquals(torus2D, torus2DGraph.getType());
+        Assertions.assertEquals(torus2D, directedTorus2DGraph.getType());
+        Assertions.assertEquals(torus2D60, torus2D60Graph.getType());
+        Assertions.assertEquals(torus2D60, directedTorus2D60Graph.getType());
+        Assertions.assertEquals(torus3D, torus3DGraph.getType());
+        Assertions.assertEquals(torus3D, directedTorus3DGraph.getType());
+        Assertions.assertEquals(torus3D40, torus3D40Graph.getType());
+        Assertions.assertEquals(torus3D40, directedTorus3D40Graph.getType());
+//        Assertions.assertEquals(kGraph, kGraphKGraph.getType());
+//        Assertions.assertEquals(kGraph, directedKGraphGraph.getType());
+
     }
 
     /**
@@ -465,6 +541,57 @@ public class GraphUtilsTest {
     @DisplayName("Test if the stub generated is correct")
     @Test
     public void testStubSpanning() {
+        Graph result = GraphUtils.random(1000, 6);
+        int[] stub = GraphUtils.stubSpanning(result, 10);
+        for (int i = 1; i < 10; i++) {
+            Assertions.assertTrue(result.getNeighbours(stub[i - 1]).contains(stub[i]));
+        }
+    }
+
+    /**
+     * Test of hasCycle method, of class GraphUtils.
+     */
+    @DisplayName("Test if the graph has a cycle")
+    @Test
+    public void testHasCycle() {
+        Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
+        Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
+        Assertions.assertTrue(GraphUtils.hasCycle(graphCycle));
+        Assertions.assertFalse(GraphUtils.hasCycle(graphTree));
+    }
+
+    /**
+     * Test of isTree method, of class GraphUtils.
+     */
+    @DisplayName("Test if the graph is a tree")
+    @Test
+    public void testIsTree() {
+        Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
+        Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
+        Assertions.assertTrue(GraphUtils.isTree(graphTree));
+        Assertions.assertFalse(GraphUtils.isTree(graphCycle));
+    }
+
+    /**
+     * Test of detectType method, of class GraphUtils.
+     */
+    @Test
+    public void testDetectType() {
+        Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
+        Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
+        Graph graphDisconnected = new Graph(edgesDisconnected, false, 0, 6, GraphType.RANDOM);
+        String tree = GraphUtils.detectType(graphTree);
+        String cycle = GraphUtils.detectType(graphCycle);
+        String disconnected = GraphUtils.detectType(graphDisconnected);
+        Assertions.assertNotSame(GraphUtils.CYCLE, tree);
+        Assertions.assertNotSame(GraphUtils.CYCLE, disconnected);
+        Assertions.assertNotSame(GraphUtils.DISCONNECTED, cycle);
+        Assertions.assertNotSame(GraphUtils.DISCONNECTED, tree);
+        Assertions.assertNotSame(GraphUtils.IS_TREE, cycle);
+        Assertions.assertNotSame(GraphUtils.IS_TREE, disconnected);
+        Assertions.assertEquals(GraphUtils.CYCLE, cycle);
+        Assertions.assertEquals(GraphUtils.IS_TREE, tree);
+        Assertions.assertEquals(GraphUtils.DISCONNECTED, disconnected);
     }
 
 }
