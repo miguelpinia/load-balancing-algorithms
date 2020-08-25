@@ -1,9 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
+
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -11,18 +8,19 @@ package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
  */
 public class ExperimentSpanningTreeTest {
 
-//    /**
-//     * Test of experiment method, of class SpanningTree.
-//     */
-//    @Test
-//    public void testExperiment() {
-//        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 128, true, 10);
+    /**
+     * Test of experiment method, of class SpanningTree.
+     */
+    @Test
+    public void testExperiment() {
+//        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 8, 128, true, 10, false);
 //        System.out.println("\n\nexperimento de Chase-Lev con 8 hilos y 10 repeticiones");
+//        Graph graph = GraphUtils.torus2D(100);
 //        SpanningTree instance = new SpanningTree(params);
-//        List<Report> reports = instance.experiment();
+//        List<Report> reports = instance.experiment(graph);
 //        instance.statistics(reports);
-//    }
-//
+    }
+
 //    @Test
 //    public void testExperimentChaseLev1() {
 //        Parameters params = new Parameters(GraphType.TORUS_2D, AlgorithmsType.CHASELEV, 1000, 1, 128, true, 10);
