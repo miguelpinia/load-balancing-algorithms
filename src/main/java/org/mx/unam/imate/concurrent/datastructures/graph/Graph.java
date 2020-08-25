@@ -23,14 +23,11 @@ public class Graph {
 
     private final boolean directed;
     private final Integer root;
-    // reemplazar con un get
-    private final Integer numVertices;
     private Integer numEdges;
 
     private final GraphType type;
 
     public Graph(Edge[] edges, boolean directed, Integer root, Integer numVertices, GraphType type) {
-        this.numVertices = numVertices;
         this.directed = directed;
         this.root = root;
         this.numEdges = 0;
@@ -53,7 +50,6 @@ public class Graph {
         vertices[src].addNeighbour(dest);
         numEdges++;
         if (directed) {
-            boolean isRoot = dest == root;
             vertices[dest].addChild(src);
         } else {
             vertices[dest].addNeighbour(src);
@@ -98,7 +94,7 @@ public class Graph {
     }
 
     public int getNumberVertices() {
-        return numVertices;
+        return vertices.length;
     }
 
     public int getNumberEdges() {
@@ -111,10 +107,6 @@ public class Graph {
 
     public boolean isDirected() {
         return directed;
-    }
-
-    public int getNumEdges() {
-        return numEdges;
     }
 
 }

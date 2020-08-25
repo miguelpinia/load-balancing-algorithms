@@ -184,7 +184,7 @@ public class GraphTest {
     @DisplayName("Get the number of edges that contains the graph and test if it is correct")
     @Test
     public void testGetNumEdges() {
-        Assertions.assertEquals(8, graph.getNumEdges());
+        Assertions.assertEquals(8, graph.getNumberEdges());
     }
 
     /**
