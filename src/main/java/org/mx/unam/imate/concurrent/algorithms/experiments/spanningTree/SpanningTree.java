@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
 import java.util.ArrayList;
@@ -14,12 +9,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.output.GeneralSpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
-import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
 
 /**
  *
@@ -42,19 +36,19 @@ public class SpanningTree {
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             Graph tree = spanningTree(graph, roots, report);
-            assert (tree.isTree());
+            assert (GraphUtils.isTree(tree));
             reports.add(report);
         }
         return reports;
     }
 
-    private Graph spanningTree(Graph graph, int[] roots, Report report) {
+    public Graph spanningTree(Graph graph, int[] roots, Report report) {
         Thread[] threads = new Thread[params.getNumThreads()];
-        AtomicIntegerArray colors = new AtomicIntegerArray(graph.getNumVertices());
-        AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParent(graph.getNumVertices()));
+        AtomicIntegerArray colors = new AtomicIntegerArray(graph.getNumberVertices());
+        AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParents(graph.getNumberVertices()));
         WorkStealingStruct[] structs = new WorkStealingStruct[params.getNumThreads()];
         int[] processors = new int[params.getNumThreads()];
-        AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumVertices());
+        AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
         AtomicInteger counter = new AtomicInteger(0);
 
         for (int i = 0; i < params.getNumThreads(); i++) {
@@ -77,13 +71,13 @@ public class SpanningTree {
             try {
                 thread.join();
             } catch (InterruptedException ex) {
-                Logger.getLogger(GeneralSpanningTree.class.getName())
+                Logger.getLogger(SpanningTree.class.getName())
                         .log(Level.SEVERE, ex.getMessage(), ex);
             }
         }
         executionTime = System.nanoTime() - executionTime;
         report.setExecutionTime(executionTime);
-        for (int i = 0; i < graph.getNumVertices(); i++) {
+        for (int i = 0; i < graph.getNumberVertices(); i++) {
             if (colors.get(i) != 0) {
                 processors[colors.get(i) - 1]++;
             }
@@ -92,7 +86,7 @@ public class SpanningTree {
         for (int i = 1; i < roots.length; i++) {
             parents.set(roots[i], roots[i - 1]);
         }
-        Graph tree = GraphUtils.buildFromParents(parents);
+        Graph tree = GraphUtils.buildFromParents(parents, graph.getRoot(), graph.isDirected());
         return tree;
     }
 

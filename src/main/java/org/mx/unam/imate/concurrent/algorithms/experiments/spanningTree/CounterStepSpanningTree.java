@@ -1,17 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
+import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
-import org.mx.unam.imate.concurrent.datastructures.Node;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 
 /**
  *
@@ -53,14 +48,15 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         int v, w, pos;
         int stolenItem;
         int thread;
+        Iterator<Integer> it;
         do {
             while (!struct.isEmpty()) {
                 v = struct.take();
                 report.takesIncrement();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
-                    Node ptr = graph.getVertices()[v];
-                    while (ptr != null) {
-                        w = ptr.getVal();
+                    it = graph.getNeighbours(v).iterator();
+                    while (it.hasNext()) {
+                        w = it.next();
                         if (colors.get(w) == 0) {
                             colors.set(w, label);
                             parents.set(w, v);
@@ -71,7 +67,6 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                             }
                             report.putsIncrement();
                         }
-                        ptr = ptr.getNext();
                     }
                 }
             }
@@ -84,7 +79,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                     report.putsIncrement();
                 }
             }
-        } while (counter.get() < graph.getNumVertices());
+        } while (counter.get() < graph.getNumberVertices());
 
     }
 
@@ -99,14 +94,15 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         int v, w, pos;
         int stolenItem;
         int thread;
+        Iterator<Integer> it;
         do {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
                 report.takesIncrement();
                 if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
-                    Node ptr = graph.getVertices()[v];
-                    while (ptr != null) {
-                        w = ptr.getVal();
+                    it = graph.getNeighbours(v).iterator();
+                    while (it.hasNext()) {
+                        w = it.next();
                         if (colors.get(w) == 0) {
                             colors.set(w, label);
                             parents.set(w, v);
@@ -117,7 +113,6 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                             }
                             report.putsIncrement();
                         }
-                        ptr = ptr.getNext();
                     }
                 }
             }
@@ -130,7 +125,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                     report.putsIncrement();
                 }
             }
-        } while (counter.get() < graph.getNumVertices());
+        } while (counter.get() < graph.getNumberVertices());
     }
 
 }

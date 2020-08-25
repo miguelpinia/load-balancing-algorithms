@@ -38,9 +38,9 @@ import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.Spanning
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
-import org.mx.unam.imate.concurrent.datastructures.GraphUtils;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
 
 /**
  * Indicar la gráfica, realizar el experimento de uno hasta el total de

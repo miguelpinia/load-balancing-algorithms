@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 
 /**
  *

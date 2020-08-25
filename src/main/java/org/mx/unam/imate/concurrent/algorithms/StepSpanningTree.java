@@ -1,18 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms;
-
-import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-import org.mx.unam.imate.concurrent.datastructures.Graph;
+import org.mx.unam.imate.concurrent.algorithms.utils.Report;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 
 /**
- *
  * @author miguel
  */
 public interface StepSpanningTree extends Runnable {
