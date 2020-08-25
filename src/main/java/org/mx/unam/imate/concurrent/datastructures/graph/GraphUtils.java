@@ -53,6 +53,17 @@ public class GraphUtils {
     }
 
     /**
+     * Initialize a array with -1 for store the value of each parent of each
+     * index.
+     *
+     * @param length
+     * @return
+     */
+    public static int[] initializeParents(int length) {
+        return initializeArray(length, -1);
+    }
+
+    /**
      * Build a graph from the parents of each node.
      *
      * @param parents The parents of each node (index).
@@ -82,7 +93,7 @@ public class GraphUtils {
         for (int i = 0; i < parents.length(); i++) {
             edges[i] = new Edge(i, parents.get(i));
         }
-        Graph graph = new Graph(edges, directed, root, parents.length() + 1, GraphType.RANDOM);
+        Graph graph = new Graph(edges, directed, root, parents.length(), GraphType.RANDOM);
         return graph;
     }
 
@@ -632,8 +643,7 @@ public class GraphUtils {
      */
     private static boolean isCyclicUtil(Graph graph, boolean visited[]) {
         int root = graph.getRoot();
-        int[] parents = new int[visited.length];
-        Arrays.fill(parents, -1);
+        int[] parents = initializeArray(visited.length, -1);
         Queue queue = new Queue();
         visited[root] = true;
         queue.enqueue(root);

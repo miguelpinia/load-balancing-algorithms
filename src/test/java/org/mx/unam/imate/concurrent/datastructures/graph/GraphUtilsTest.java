@@ -572,9 +572,19 @@ public class GraphUtilsTest {
         Assertions.assertFalse(GraphUtils.isTree(graphCycle));
     }
 
+    @DisplayName("Prueba extra de árbol")
+    @Test
+    public void testTreeExp() {
+        int foo[] = {4, 21, 1, 23, 3, 0, 5, 2, -1, 8, 5, 10, 7, 8, 13, 10, 15, 16, 13, 18, 24, 20, 21, 18, 4};
+        Graph tree = GraphUtils.buildFromParents(foo, 8, false);
+        System.out.println("Raíz: " + tree.getRoot() + "; " + foo[tree.getRoot()] + ", " + GraphUtils.detectType(tree));
+        Assertions.assertTrue(GraphUtils.isTree(tree));
+    }
+
     /**
      * Test of detectType method, of class GraphUtils.
      */
+    @DisplayName("Test if the graph has the property of to be a cycle, a disconnected graph or a tree.")
     @Test
     public void testDetectType() {
         Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
