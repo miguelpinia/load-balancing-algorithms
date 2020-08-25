@@ -7,8 +7,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
+import org.mx.unam.imate.concurrent.Utils;
 import org.mx.unam.imate.concurrent.datastructures.Edge;
 import org.mx.unam.imate.concurrent.datastructures.GraphType;
+import org.mx.unam.imate.concurrent.datastructures.Queue;
 import org.mx.unam.imate.concurrent.datastructures.Stack;
 
 /**
@@ -16,6 +18,10 @@ import org.mx.unam.imate.concurrent.datastructures.Stack;
  * @author miguel
  */
 public class GraphUtils {
+
+    public static final String CYCLE = "CYCLE_DETECTED";
+    public static final String DISCONNECTED = "DISCONNECTED_COMPONENTS";
+    public static final String IS_TREE = "IS_TREE";
 
     /**
      * Test if a val is in array.
@@ -549,6 +555,14 @@ public class GraphUtils {
         return graph;
     }
 
+    /**
+     * Returns a graph built with the parameters given.
+     *
+     * @param shape Númber of vertices, this number depend of graph type.
+     * @param type The graph type.
+     * @param directed If the graph is directed.
+     * @return The graph with the options passed.
+     */
     public static Graph graphType(int shape, GraphType type, boolean directed) {
         switch (type) {
             case TORUS_2D:
@@ -568,12 +582,20 @@ public class GraphUtils {
         }
     }
 
-    public static int[] stubSpanning(Graph graph, int steps) {
+    /**
+     * Return an array with a subset of (size) connected vertices of the given
+     * graph.
+     *
+     * @param graph The graph to get the
+     * @param size The size for the generated array.
+     * @return A int[] with a subset of connected vertices.
+     */
+    public static int[] stubSpanning(Graph graph, int size) {
         Random random = new Random(System.currentTimeMillis());
-        int[] stubSpanning = new int[steps];
+        int[] stubSpanning = new int[size];
         int randomVal = random.nextInt(graph.getNumberVertices());
         if (graph.getType() == GraphType.KGRAPH) {
-            for (int i = 0; i < steps; i++) {
+            for (int i = 0; i < size; i++) {
                 stubSpanning[i] = MOD(randomVal + i, graph.getNumberVertices());
             }
             return stubSpanning;
@@ -583,13 +605,13 @@ public class GraphUtils {
         Stack stack = new Stack();
         stack.push(randomVal);
         int idx, tmpVal;
-        while (i < steps) {
+        while (i < size) {
             idx = stack.pop();
             neighbours = graph.getNeighbours(idx);
             Iterator<Integer> it = neighbours.iterator();
             while (it.hasNext()) {
                 tmpVal = it.next();
-                if (!stack.inStack(tmpVal) && inArray(tmpVal, stubSpanning)) {
+                if (!stack.inStack(tmpVal) && !inArray(tmpVal, stubSpanning)) {
                     stack.push(tmpVal);
                 }
 
@@ -599,6 +621,92 @@ public class GraphUtils {
             }
         }
         return stubSpanning;
+    }
+
+    /**
+     * Utility method for test if the given graph has a cycle.
+     *
+     * @param graph
+     * @param visited
+     * @return
+     */
+    private static boolean isCyclicUtil(Graph graph, boolean visited[]) {
+        int root = graph.getRoot();
+        int[] parents = new int[visited.length];
+        Arrays.fill(parents, -1);
+        Queue queue = new Queue();
+        visited[root] = true;
+        queue.enqueue(root);
+        int u;
+        while (!queue.isEmpty()) {
+            u = queue.dequeue();
+            Iterator<Integer> it = graph.getNeighbours(u).iterator();
+            while (it.hasNext()) {
+                Integer v = it.next();
+                if (!visited[v]) {
+                    visited[v] = true;
+                    queue.enqueue(v);
+                    parents[v] = u;
+                } else if (parents[u] != v) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test if the given graph has a cycle.
+     *
+     * @param graph Graph to test.
+     * @return True if the graph has a cycle, false otherwise.
+     */
+    public static boolean hasCycle(Graph graph) {
+        boolean visited[] = new boolean[graph.getNumberVertices()];
+        Arrays.fill(visited, false);
+        return isCyclicUtil(graph, visited);
+    }
+
+    /**
+     * Test if the given graph is a tree.
+     *
+     * @param graph Graph to test.
+     * @return True if the graph
+     */
+    public static boolean isTree(Graph graph) {
+        int numVertices = graph.getNumberVertices();
+        boolean visited[] = new boolean[numVertices];
+        Arrays.fill(visited, false);
+        if (isCyclicUtil(graph, visited)) {
+            return false;
+        }
+        // Verify if there are not islands in the graph.
+        for (int u = 0; u < numVertices; u++) {
+            if (u != graph.getRoot() && !visited[u]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Detect if the given graph has a cycle, is disconnected or is a tree.
+     *
+     * @param graph Graph to test
+     * @return A String ("CYCLE_DETECTED", "DISCONNECTED_COMPONENTS" or
+     * "IS_TREE") indicating the type detected.
+     */
+    public static String detectType(Graph graph) {
+        int numVertices = graph.getNumberVertices();
+        boolean visited[] = new boolean[numVertices];
+        Arrays.fill(visited, false);
+        if (isCyclicUtil(graph, visited)) {
+            return CYCLE;
+        }
+        if (!Utils.all(visited)) {
+            return DISCONNECTED;
+        }
+        return IS_TREE;
     }
 
     static class DirectedVertex {
