@@ -8,7 +8,7 @@ import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.Spanning
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.GraphType;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
 

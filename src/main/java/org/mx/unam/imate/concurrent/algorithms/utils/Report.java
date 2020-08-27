@@ -3,7 +3,7 @@ package org.mx.unam.imate.concurrent.algorithms.utils;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.datastructures.GraphType;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 /**
  * Esta clase llevará contadores de las operaciones que se realizan en los

@@ -1,7 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.datastructures.GraphType;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 /**
  *

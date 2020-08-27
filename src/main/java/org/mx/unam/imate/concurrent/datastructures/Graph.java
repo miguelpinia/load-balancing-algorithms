@@ -1,5 +1,7 @@
 package org.mx.unam.imate.concurrent.datastructures;
 
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
+
 import java.util.Arrays;
 
 /**

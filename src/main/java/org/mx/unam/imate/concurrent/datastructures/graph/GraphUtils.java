@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.Utils;
 import org.mx.unam.imate.concurrent.datastructures.Edge;
-import org.mx.unam.imate.concurrent.datastructures.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.Queue;
 import org.mx.unam.imate.concurrent.datastructures.Stack;
 

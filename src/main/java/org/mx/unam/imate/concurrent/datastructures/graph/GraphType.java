@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.datastructures;
+package org.mx.unam.imate.concurrent.datastructures.graph;
 
 /**
  *
