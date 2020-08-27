@@ -18,7 +18,11 @@ public class TaskArrayWithSize {
         return size;
     }
 
-    public int[] getArray() {
-        return array;
+    public int get(int position) {
+        return array[position];
+    }
+
+    public void set(int position, int value) {
+        array[position] = value;
     }
 }
