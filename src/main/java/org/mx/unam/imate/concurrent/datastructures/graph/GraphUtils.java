@@ -244,6 +244,8 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular el vecino.");
             }
         }
         edges = Arrays.copyOf(edges, current);
@@ -388,6 +390,8 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular los vecinos");
             }
 
         }
@@ -434,6 +438,8 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular los vecinos");
             }
         }
         edges = Arrays.copyOf(edges, current);
