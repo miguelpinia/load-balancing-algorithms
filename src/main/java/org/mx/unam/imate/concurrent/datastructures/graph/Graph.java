@@ -47,12 +47,12 @@ public class Graph {
             return;
         }
         vertices[src].addNeighbour(dest);
-        numEdges++;
+        this.numEdges++;
         if (directed) {
             vertices[dest].addChild(src);
         } else {
             vertices[dest].addNeighbour(src);
-            numEdges++;
+            this.numEdges++;
         }
 
     }

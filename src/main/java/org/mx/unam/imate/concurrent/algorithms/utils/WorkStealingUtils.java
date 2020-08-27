@@ -1,9 +1,9 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -35,7 +35,7 @@ public class WorkStealingUtils {
     }
 
     public static void report(Graph graph, AtomicIntegerArray parents, AtomicIntegerArray color, int roots[]) {
-        try (PrintWriter pw = new PrintWriter(new File("/tmp/report.txt"))) {
+        try (PrintWriter pw = new PrintWriter("/tmp/report.txt", StandardCharsets.UTF_8.displayName())) {
             int numberVertices = graph.getNumberVertices();
             pw.println("=========Graph=========");
             Integer next;
