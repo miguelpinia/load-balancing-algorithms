@@ -3,8 +3,9 @@ package org.mx.unam.imate.concurrent.main;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +31,9 @@ public class Main {
         }
 
         GraphType type = GraphType.valueOf(props.get("graphType"));
-        int vertexSize = Integer.valueOf(props.get("vertexSize"));
+        int vertexSize = Integer.parseInt(props.get("vertexSize"));
         StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(props.get("stepSpanningType"));
-        int iterations = Integer.valueOf(props.get("iterations"));
+        int iterations = Integer.parseInt(props.get("iterations"));
         boolean directed = Boolean.valueOf(props.get("directed"));
         TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed);
         battery.compareAlgs();
@@ -42,12 +43,13 @@ public class Main {
         Map<String, String> props = new HashMap<>();
         BufferedReader br;
         try {
-            br = new BufferedReader(new FileReader(f));
+            br = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8);
             String line;
             while ((line = br.readLine()) != null) {
                 String data[] = line.split(":");
                 props.put(data[0].trim(), data[1].trim());
             }
+            br.close();
         } catch (FileNotFoundException ex) {
             System.out.println("Archivo no encontrado, cerrando el programa");
             System.exit(0);
