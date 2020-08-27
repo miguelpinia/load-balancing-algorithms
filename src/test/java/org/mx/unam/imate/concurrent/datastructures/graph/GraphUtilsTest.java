@@ -79,8 +79,8 @@ public class GraphUtilsTest {
         int[] array = {19, 20, 14, 100, 220, 300, 150};
         boolean expResult1 = true;
         boolean expResult2 = false;
-        boolean result1 = org.mx.unam.imate.concurrent.datastructures.GraphUtils.inArray(val1, array);
-        boolean result2 = org.mx.unam.imate.concurrent.datastructures.GraphUtils.inArray(val2, array);
+        boolean result1 = GraphUtils.inArray(val1, array);
+        boolean result2 = GraphUtils.inArray(val2, array);
         Assertions.assertEquals(expResult1, result1);
         Assertions.assertEquals(expResult2, result2);
     }
