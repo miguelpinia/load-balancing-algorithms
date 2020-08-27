@@ -1,5 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
@@ -58,7 +60,7 @@ public class Report implements Comparable<Report> {
         this.executionTime = executionTime;
     }
 
-    public void setProcessors(int[] processors) {
+    public void setProcessors(int... processors) {
         this.processors = processors;
     }
 
@@ -87,7 +89,7 @@ public class Report implements Comparable<Report> {
     }
 
     public int[] getProcessors() {
-        return processors;
+        return processors.clone();
     }
 
     public AlgorithmsType getAlgType() {
@@ -106,6 +108,52 @@ public class Report implements Comparable<Report> {
             return - 1;
         }
         return 0;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.takes);
+        hash = 97 * hash + Objects.hashCode(this.puts);
+        hash = 97 * hash + Objects.hashCode(this.steals);
+        hash = 97 * hash + (int) (this.executionTime ^ (this.executionTime >>> 32));
+        hash = 97 * hash + Arrays.hashCode(this.processors);
+        hash = 97 * hash + Objects.hashCode(this.graphType);
+        hash = 97 * hash + Objects.hashCode(this.algType);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Report other = (Report) obj;
+        if (this.executionTime != other.executionTime) {
+            return false;
+        }
+        if (!Objects.equals(this.takes, other.takes)) {
+            return false;
+        }
+        if (!Objects.equals(this.puts, other.puts)) {
+            return false;
+        }
+        if (!Objects.equals(this.steals, other.steals)) {
+            return false;
+        }
+        if (!Arrays.equals(this.processors, other.processors)) {
+            return false;
+        }
+        if (this.graphType != other.graphType) {
+            return false;
+        }
+        return this.algType == other.algType;
     }
 
 }
