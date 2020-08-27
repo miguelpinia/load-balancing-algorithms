@@ -93,11 +93,11 @@ public class SpanningTree {
     public Result statistics(List<Report> reports) {
         Collections.sort(reports);
 
-        System.out.println(String.format("\n\nGraph:\t%s\nAlgorithm:\t%s\n",
+        System.out.println(String.format("%n%nGraph:\t%s%nAlgorithm:\t%s%n",
                 reports.get(0).getGraphType(),
                 reports.get(0).getAlgType()));
         reports.forEach((r) -> {
-            System.out.println(String.format("Execution time: %d\nTakes: %d\nPuts: %d\nSteals: %d\n",
+            System.out.println(String.format("Execution time: %d%nTakes: %d%nPuts: %d%nSteals: %d%n",
                     r.getExecutionTime(), r.getTakes(), r.getPuts(), r.getSteals()));
         });
         long best = reports.get(0).getExecutionTime();
