@@ -22,7 +22,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
             WorkStealingStruct[] structs, Report report, boolean specialExecution,
             AtomicIntegerArray visited, AtomicInteger counter) {
-        super(graph, root, color, parent, label, numThreads, struct, structs, report);
+        super(graph, root, color, parent, label, numThreads, struct, report, structs);
         this.specialExecution = specialExecution;
         this.visited = visited;
         this.counter = counter;

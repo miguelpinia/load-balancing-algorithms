@@ -27,7 +27,7 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
 
     public AbstractStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            WorkStealingStruct[] structs, Report report) {
+            Report report, WorkStealingStruct... structs) {
         this.graph = graph;
         this.root = root;
         this.color = color;
