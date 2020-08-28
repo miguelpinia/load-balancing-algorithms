@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.experiments.TestBattery;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StepSpanningTreeType;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 public class Main {

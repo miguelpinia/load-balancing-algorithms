@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
+package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;

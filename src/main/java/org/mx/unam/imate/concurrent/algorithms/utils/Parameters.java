@@ -1,7 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StepSpanningTreeType;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 /**

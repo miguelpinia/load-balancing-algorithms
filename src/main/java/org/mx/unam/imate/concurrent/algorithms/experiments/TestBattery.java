@@ -35,7 +35,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.SpanningTree;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StepSpanningTreeType;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
