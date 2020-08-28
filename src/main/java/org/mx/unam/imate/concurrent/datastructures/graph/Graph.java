@@ -2,7 +2,6 @@ package org.mx.unam.imate.concurrent.datastructures.graph;
 
 import java.util.List;
 
-import org.mx.unam.imate.concurrent.datastructures.Edge;
 
 /**
  * This implementation use a All vertices are represented as integers with
