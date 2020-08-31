@@ -21,7 +21,8 @@ public class Result {
     public Result() {
     }
 
-    public Result(GraphType graphType, AlgorithmsType algType, long median, double average, double averageTakes, double averagePuts, double averageSteals, long best) {
+    public Result(GraphType graphType, AlgorithmsType algType, long median, double average,
+            double averageTakes, double averagePuts, double averageSteals, long best) {
         this.graphType = graphType;
         this.algType = algType;
         this.median = median;

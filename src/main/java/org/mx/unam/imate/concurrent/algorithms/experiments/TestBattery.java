@@ -34,12 +34,12 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.SpanningTree;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StatisticsST;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
 
 /**
@@ -76,9 +76,9 @@ public class TestBattery {
         {
             System.out.println("Realizando ejecución de calentamiento :D");
             types.forEach((type) -> {
-                SpanningTree st = new SpanningTree(new Parameters(graphType, type,
-                        vertexSize, 8, 128, false, 1, stepType, directed));
-                st.experiment(graph);
+                Parameters params = new Parameters(graphType, type,
+                        vertexSize, 8, 128, false, 1, stepType, directed);
+                StatisticsST.experiment(graph, params);
             });
         }
         System.out.println(String.format("Processors: %d", processorsNum));
@@ -142,15 +142,14 @@ public class TestBattery {
     }
 
     private Result getResult(Parameters params, Graph graph) {
-        SpanningTree st = new SpanningTree(params);
-        return st.statistics(st.experiment(graph));
+        return StatisticsST.statistics(StatisticsST.experiment(graph, params));
     }
 
     private Map<AlgorithmsType, List<Result>> buildLists() {
         Map<AlgorithmsType, List<Result>> lists = new HashMap<>();
-        for (AlgorithmsType type : types) {
+        types.forEach((type) -> {
             lists.put(type, new ArrayList<>());
-        }
+        });
         return lists;
     }
 

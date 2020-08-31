@@ -8,8 +8,8 @@ import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.Spanning
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
 
 /**
@@ -24,9 +24,9 @@ public class GeneralSpanningTreeTest {
         Parameters params = new Parameters(type, algType, shape, numThreads, structSize, report, 1, ssttype, directed);
         Graph graph = GraphUtils.graphType(shape, type, report);
         int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
-        SpanningTree st = new SpanningTree(params);
         Report r = new Report();
-        Graph tree = st.spanningTree(graph, roots, r);
+        SpanningTree st = new SpanningTree();
+        Graph tree = st.spanningTree(graph, roots, r, params);
         return tree;
     }
 
