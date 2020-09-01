@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
+package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 
 /**
  *

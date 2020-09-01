@@ -1,7 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.datastructures.GraphType;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 /**
  *
@@ -21,7 +21,8 @@ public class Result {
     public Result() {
     }
 
-    public Result(GraphType graphType, AlgorithmsType algType, long median, double average, double averageTakes, double averagePuts, double averageSteals, long best) {
+    public Result(GraphType graphType, AlgorithmsType algType, long median, double average,
+            double averageTakes, double averagePuts, double averageSteals, long best) {
         this.graphType = graphType;
         this.algType = algType;
         this.median = median;

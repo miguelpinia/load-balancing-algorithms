@@ -1,10 +1,15 @@
-package org.mx.unam.imate.concurrent.datastructures;
+package org.mx.unam.imate.concurrent.datastructures.graph;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+
+import org.mx.unam.imate.concurrent.Utils;
+import org.mx.unam.imate.concurrent.datastructures.Queue;
+import org.mx.unam.imate.concurrent.datastructures.Stack;
 
 /**
  *
@@ -12,6 +17,17 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
  */
 public class GraphUtils {
 
+    public static final String CYCLE = "CYCLE_DETECTED";
+    public static final String DISCONNECTED = "DISCONNECTED_COMPONENTS";
+    public static final String IS_TREE = "IS_TREE";
+
+    /**
+     * Test if a val is in array.
+     *
+     * @param val The value to search.
+     * @param array The array where it'll be searched the value.
+     * @return True if the value is in array, false otherwise.
+     */
     public static boolean inArray(int val, int[] array) {
         for (int i = 0; i < array.length; i++) {
             if (array[i] == val) {
@@ -21,35 +37,77 @@ public class GraphUtils {
         return false;
     }
 
-    public static int[] initializeParent(int numVertices) {
-        int parents[] = new int[numVertices];
-        Arrays.fill(parents, -1);
+    /**
+     * Initialize the array with the specified length and the defaultValue.
+     *
+     * @param length Length of the array.
+     * @param defaultValue Default value in the array.
+     * @return A array of length <b>length</b> with value <b>defaultValue</b>.
+     */
+    public static int[] initializeArray(int length, int defaultValue) {
+        int parents[] = new int[length];
+        Arrays.fill(parents, defaultValue);
         return parents;
     }
 
-    public static Graph buildFromParents(int[] parents) {
+    /**
+     * Initialize a array with -1 for store the value of each parent of each
+     * index.
+     *
+     * @param length
+     * @return
+     */
+    public static int[] initializeParents(int length) {
+        return initializeArray(length, -1);
+    }
+
+    /**
+     * Build a graph from the parents of each node.
+     *
+     * @param parents The parents of each node (index).
+     * @param root The root of the parents.
+     * @param directed If the graph is directed or not.
+     * @return A graph builded from the parents.
+     */
+    public static Graph buildFromParents(int[] parents, int root, boolean directed) {
         Edge[] edges = new Edge[parents.length];
         for (int i = 0; i < parents.length; i++) {
             edges[i] = new Edge(i, parents[i]);
         }
-        Graph graph = new Graph(edges, parents.length, GraphType.RANDOM, false);
+        Graph graph = new Graph(edges, directed, root, parents.length, GraphType.RANDOM);
         return graph;
     }
 
-    public static Graph buildFromParents(AtomicIntegerArray parents) {
+    /**
+     * Build a graph from the parents of each node.
+     *
+     * @param parents The parents of each node (index).
+     * @param root The root of the parents.
+     * @param directed If the graph is directed or not.
+     * @return A graph builded from the parents.
+     */
+    public static Graph buildFromParents(AtomicIntegerArray parents, int root, boolean directed) {
         Edge[] edges = new Edge[parents.length()];
         for (int i = 0; i < parents.length(); i++) {
             edges[i] = new Edge(i, parents.get(i));
         }
-        Graph graph = new Graph(edges, parents.length(), GraphType.RANDOM, false);
+        Graph graph = new Graph(edges, directed, root, parents.length(), GraphType.RANDOM);
         return graph;
     }
 
+    /**
+     * Calculate the mod: <b>a</b> ≡ <b>b</b>.
+     *
+     * @param a The first value of modulus.
+     * @param b Second value of modulus.
+     * @return The modulo of a with b.
+     */
     public static int MOD(int a, int b) {
         return ((a % b) + b) % b;
     }
 
     public static Graph torus2D(int shape) {
+        boolean directed = false;
         int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
         Edge[] edges = new Edge[numEdges];
@@ -78,11 +136,12 @@ public class GraphUtils {
             }
             edges[k] = new Edge(currentIdx, neighbor);
         }
-        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D, false);
+        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D);
         return newGraph;
     }
 
     public static Graph directedTorus2D(int shape) {
+        boolean directed = true;
         int numEdges = shape * shape * 2;
         int numVertices = shape * shape;
         Edge[] edges = new Edge[numEdges];
@@ -105,11 +164,12 @@ public class GraphUtils {
             }
             edges[k] = new Edge(currentIdx, neighbor);
         }
-        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D, true);
+        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D);
         return newGraph;
     }
 
     public static Graph torus2D60(int shape) {
+        boolean directed = false;
         Random rand = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
@@ -149,15 +209,16 @@ public class GraphUtils {
                     }
                     break;
                 default:
-                    neighbor = 0;
+                    break;
             }
         }
         edges = Arrays.copyOf(edges, current);
-        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D_60, false);
+        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D_60);
         return newGraph;
     }
 
     public static Graph directedTorus2D60(int shape) {
+        boolean directed = true;
         Random rand = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * 2;
         int numVertices = shape * shape;
@@ -182,14 +243,17 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular el vecino.");
             }
         }
         edges = Arrays.copyOf(edges, current);
-        Graph newGraph = new Graph(edges, numVertices, GraphType.TORUS_2D_60, false);
+        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D_60);
         return newGraph;
     }
 
     public static Graph torus3D(int shape) {
+        boolean directed = false;
         int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
         Edge[] edges = new Edge[numEdges];
@@ -229,11 +293,12 @@ public class GraphUtils {
             }
             edges[m] = new Edge(currentIdx, neighbor);
         }
-        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D, false);
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D);
         return graph;
     }
 
     public static Graph directedTorus3D(int shape) {
+        boolean directed = true;
         int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
         Edge[] edges = new Edge[numEdges];
@@ -264,11 +329,12 @@ public class GraphUtils {
             }
             edges[m] = new Edge(currentIdx, neighbor);
         }
-        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D, true);
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D);
         return graph;
     }
 
     public static Graph torus3D40(int shape) {
+        boolean directed = false;
         Random random = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
@@ -323,15 +389,18 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular los vecinos");
             }
 
         }
         edges = Arrays.copyOf(edges, current);
-        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D_40, false);
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D_40);
         return graph;
     }
 
     public static Graph directedTorus3D40(int shape) {
+        boolean directed = true;
         Random random = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
@@ -368,44 +437,17 @@ public class GraphUtils {
                         edges[current++] = new Edge(currentIdx, neighbor);
                     }
                     break;
+                default:
+                    System.out.println("Error al calcular los vecinos");
             }
         }
         edges = Arrays.copyOf(edges, current);
-        Graph graph = new Graph(edges, numVertices, GraphType.TORUS_3D_40, false);
-        return graph;
-    }
-
-    private static Graph myKGraph(int numberVertices, int vertexDegree, GraphType type) {
-        Random random = new Random(System.currentTimeMillis());
-        int numEdges = numberVertices * vertexDegree;
-        int numVertices = numberVertices;
-        Edge[] edges = new Edge[numEdges];
-        int randomVertex;
-        int i;
-        int j;
-        int current;
-        boolean inPrevious;
-        for (int k = 0; k < (numberVertices * vertexDegree); k++) {
-            i = k / (numberVertices * vertexDegree);
-            j = (k / vertexDegree) % numberVertices;
-            current = (i * numberVertices) + j;
-            do {
-                inPrevious = false;
-                randomVertex = random.nextInt(numberVertices);
-                for (int idx = 0; idx < k % vertexDegree; idx++) {
-                    if (edges[k] != null && randomVertex == edges[k].getDest()) {
-                        inPrevious = true;
-                        break;
-                    }
-                }
-            } while (randomVertex == current || inPrevious);
-            edges[k] = new Edge(current, randomVertex);
-        }
-        Graph graph = new Graph(edges, numVertices, type, false);
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D_40);
         return graph;
     }
 
     public static Graph random(int numberVertices, int vertexDegree) {
+        boolean directed = false;
         Random random = new Random(System.currentTimeMillis());
         int numEdges = numberVertices * vertexDegree;
         int numVertices = numberVertices;
@@ -431,55 +473,12 @@ public class GraphUtils {
             } while (randomVertex == current || inPrevious);
             edges[k] = new Edge(current, randomVertex);
         }
-        Graph graph = new Graph(edges, numVertices, GraphType.RANDOM, false);
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.RANDOM);
         return graph;
-    }
-
-    public static Graph kgraph(int numVertices, int k) {
-        return myKGraph(numVertices, k, GraphType.KGRAPH);
-    }
-
-    private static Graph myDirectedGraph(int numVertices, int degree) {
-        Random random = new Random(System.currentTimeMillis());
-        DirectedVertex[] vertices = new DirectedVertex[numVertices];
-        int randomVertex;
-        int intentos;
-        for (int i = 0; i < vertices.length; i++) {
-            vertices[i] = new DirectedVertex(degree);
-        }
-        for (int i = 0; i < numVertices; i++) {
-            for (int j = 0; j < degree; j++) {
-                randomVertex = random.nextInt(numVertices);
-                intentos = 0;
-                do {
-                    DirectedVertex v = vertices[randomVertex];
-                    if (v.canAddEntrada() && !v.inEntrada(i)) {
-                        vertices[i].addSalida(randomVertex);
-                        v.addEntrada(i);
-                        break;
-                    }
-                    randomVertex = (randomVertex + 1) % numVertices;
-                    intentos++;
-
-                } while (intentos < numVertices);
-            }
-        }
-        Edge[] edges = new Edge[numVertices * degree];
-        int edgeIdx = 0;
-        for (int i = 0; i < numVertices; i++) {
-            for (int j = 0; j < degree; j++) {
-                edges[edgeIdx++] = new Edge(i, vertices[i].getSalida()[j]);
-            }
-        }
-        Graph graph = new Graph(edges, numVertices, GraphType.KGRAPH, true);
-        return graph;
-    }
-
-    public static Graph directedKGraph(int numVertices, int k) {
-        return myDirectedGraph(numVertices, k);
     }
 
     public static Graph directedRandom(int numVertices, int degree) {
+        boolean directed = true;
         Random random = new Random(System.currentTimeMillis());
         List<Edge> edges = new ArrayList<>();
         int randomVertex;
@@ -499,10 +498,86 @@ public class GraphUtils {
         for (int i = 0; i < nEdges.length; i++) {
             nEdges[i] = edges.get(i);
         }
-        Graph graph = new Graph(nEdges, numVertices, GraphType.RANDOM, true);
+        Graph graph = new Graph(nEdges, directed, 0, numVertices, GraphType.RANDOM);
         return graph;
     }
 
+    public static Graph directedKGraph(int numVertices, int degree) {
+        boolean directed = true;
+        Random random = new Random(System.currentTimeMillis());
+        DirectedVertex[] vertices = new DirectedVertex[numVertices];
+        int randomVertex;
+        int intentos;
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = new DirectedVertex(degree);
+        }
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < degree; j++) {
+                randomVertex = random.nextInt(numVertices);
+                intentos = 0;
+                do {
+                    DirectedVertex v = vertices[randomVertex];
+                    DirectedVertex vi = vertices[i];
+                    if (vi.canAddSalida() && !vi.inSalida(randomVertex) && v.canAddEntrada() && !v.inEntrada(i)) {
+                        v.addEntrada(i);
+                        vi.addSalida(randomVertex);
+                        break;
+                    }
+                    randomVertex = (randomVertex + 1) % numVertices;
+                    intentos++;
+                } while (intentos < numVertices);
+            }
+        }
+        Edge[] edges = new Edge[numVertices * degree];
+        int edgeIdx = 0;
+        for (int i = 0; i < numVertices; i++) {
+            for (int j = 0; j < degree; j++) {
+                edges[edgeIdx++] = new Edge(i, vertices[i].getSalida()[j]);
+            }
+        }
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.KGRAPH);
+        return graph;
+    }
+
+    public static Graph kGraph(int numberVertices, int vertexDegree) {
+        boolean directed = false;
+        Random random = new Random(System.currentTimeMillis());
+        int numEdges = numberVertices * vertexDegree;
+        int numVertices = numberVertices;
+        Edge[] edges = new Edge[numEdges];
+        int randomVertex;
+        int i;
+        int j;
+        int current;
+        boolean inPrevious;
+        for (int k = 0; k < numEdges; k++) {
+            i = k / numEdges;
+            j = (k / vertexDegree) % numberVertices;
+            current = (i * numberVertices) + j;
+            do {
+                inPrevious = false;
+                randomVertex = random.nextInt(numberVertices);
+                for (int idx = 0; idx < k % vertexDegree; idx++) {
+                    if (edges[k] != null && randomVertex == edges[k].getDest()) {
+                        inPrevious = true;
+                        break;
+                    }
+                }
+            } while (randomVertex == current || inPrevious);
+            edges[k] = new Edge(current, randomVertex);
+        }
+        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.KGRAPH);
+        return graph;
+    }
+
+    /**
+     * Returns a graph built with the parameters given.
+     *
+     * @param shape Númber of vertices, this number depend of graph type.
+     * @param type The graph type.
+     * @param directed If the graph is directed.
+     * @return The graph with the options passed.
+     */
     public static Graph graphType(int shape, GraphType type, boolean directed) {
         switch (type) {
             case TORUS_2D:
@@ -516,41 +591,136 @@ public class GraphUtils {
             case RANDOM:
                 return directed ? directedRandom(shape, 6) : random(shape, 6);
             case KGRAPH:
-                return directed ? directedKGraph(shape, 3) : kgraph(shape, 3);
+                return directed ? directedKGraph(shape, 3) : kGraph(shape, 3);
+            default:
+                return null;
         }
-        return null;
     }
 
-    public static int[] stubSpanning(Graph graph, int steps) {
+    /**
+     * Return an array with a subset of (size) connected vertices of the given
+     * graph.
+     *
+     * @param graph The graph to get the
+     * @param size The size for the generated array.
+     * @return A int[] with a subset of connected vertices.
+     */
+    public static int[] stubSpanning(Graph graph, int size) {
         Random random = new Random(System.currentTimeMillis());
-        int[] stubSpanning = new int[steps];
-        int randomVal = random.nextInt(graph.getNumVertices());
+        int[] stubSpanning = new int[size];
+        int randomVal = random.nextInt(graph.getNumberVertices());
         if (graph.getType() == GraphType.KGRAPH) {
-            for (int i = 0; i < steps; i++) {
-                stubSpanning[i] = MOD(randomVal + i, graph.getNumVertices());
+            for (int i = 0; i < size; i++) {
+                stubSpanning[i] = MOD(randomVal + i, graph.getNumberVertices());
             }
             return stubSpanning;
         }
         int i = 0;
-        Node ptr;
+        List<Integer> neighbours;
         Stack stack = new Stack();
         stack.push(randomVal);
         int idx, tmpVal;
-        while (i < steps) {
+        while (i < size) {
             idx = stack.pop();
-            ptr = graph.getVertices()[idx];
-            while (ptr != null) {
-                tmpVal = ptr.getVal();
+            neighbours = graph.getNeighbours(idx);
+            Iterator<Integer> it = neighbours.iterator();
+            while (it.hasNext()) {
+                tmpVal = it.next();
                 if (!stack.inStack(tmpVal) && !inArray(tmpVal, stubSpanning)) {
                     stack.push(tmpVal);
                 }
-                ptr = ptr.getNext();
+
             }
             if (!inArray(idx, stubSpanning)) {
                 stubSpanning[i++] = idx;
             }
         }
         return stubSpanning;
+    }
+
+    /**
+     * Utility method for test if the given graph has a cycle.
+     *
+     * @param graph
+     * @param visited
+     * @return
+     */
+    private static boolean isCyclicUtil(Graph graph, boolean visited[]) {
+        int root = graph.getRoot();
+        int[] parents = initializeArray(visited.length, -1);
+        Queue queue = new Queue();
+        visited[root] = true;
+        queue.enqueue(root);
+        int u;
+        while (!queue.isEmpty()) {
+            u = queue.dequeue();
+            Iterator<Integer> it = graph.getNeighbours(u).iterator();
+            while (it.hasNext()) {
+                Integer v = it.next();
+                if (!visited[v]) {
+                    visited[v] = true;
+                    queue.enqueue(v);
+                    parents[v] = u;
+                } else if (parents[u] != v) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Test if the given graph has a cycle.
+     *
+     * @param graph Graph to test.
+     * @return True if the graph has a cycle, false otherwise.
+     */
+    public static boolean hasCycle(Graph graph) {
+        boolean visited[] = new boolean[graph.getNumberVertices()];
+        Arrays.fill(visited, false);
+        return isCyclicUtil(graph, visited);
+    }
+
+    /**
+     * Test if the given graph is a tree.
+     *
+     * @param graph Graph to test.
+     * @return True if the graph
+     */
+    public static boolean isTree(Graph graph) {
+        int numVertices = graph.getNumberVertices();
+        boolean visited[] = new boolean[numVertices];
+        Arrays.fill(visited, false);
+        if (isCyclicUtil(graph, visited)) {
+            return false;
+        }
+        // Verify if there are not islands in the graph.
+        for (int u = 0; u < numVertices; u++) {
+            if (u != graph.getRoot() && !visited[u]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Detect if the given graph has a cycle, is disconnected or is a tree.
+     *
+     * @param graph Graph to test
+     * @return A String ("CYCLE_DETECTED", "DISCONNECTED_COMPONENTS" or
+     * "IS_TREE") indicating the type detected.
+     */
+    public static String detectType(Graph graph) {
+        int numVertices = graph.getNumberVertices();
+        boolean visited[] = new boolean[numVertices];
+        Arrays.fill(visited, false);
+        if (isCyclicUtil(graph, visited)) {
+            return CYCLE;
+        }
+        if (!Utils.all(visited)) {
+            return DISCONNECTED;
+        }
+        return IS_TREE;
     }
 
     static class DirectedVertex {
@@ -563,8 +733,9 @@ public class GraphUtils {
 
         public DirectedVertex(int degree) {
             this.degree = degree;
-            entrada = new int[degree];
-            salida = new int[degree];
+            entrada = initializeArray(degree, -1);
+            salida = initializeArray(degree, -1);
+
             sizeEntrada = 0;
             sizeSalida = 0;
         }
@@ -620,5 +791,4 @@ public class GraphUtils {
         }
 
     }
-
 }
