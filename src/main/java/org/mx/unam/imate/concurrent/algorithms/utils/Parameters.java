@@ -21,6 +21,7 @@ public class Parameters {
     private int numIterExps;
     private StepSpanningTreeType stepSpanningTreeType;
     private boolean directed;
+    private boolean stealTime;
 
     public Parameters() {
     }
@@ -35,7 +36,7 @@ public class Parameters {
      * algoritmo <i>numThreads</i>, el tamaño de la estructura donde van a
      * almacenarse las tareas durante la ejecución del algoritmo
      * <i>structSize</i> y si se va a incluir un objeto que guarde información
-     * para realizar un reporte de la ejecución. Por defecto el número de
+     * para realizar un reporte de la ejecución.Por defecto el número de
      * iteraciones es uno y el algoritmo de stepSpanningTree toma en cuenta la
      * versión de doble colecta para terminar.
      *
@@ -45,8 +46,10 @@ public class Parameters {
      * @param numThreads El número de hilos.
      * @param structSize El tamaño de la estructura.
      * @param report Si se va a realizar un reporte.
+     * @param directed
+     * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, boolean directed) {
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, boolean directed, boolean stealTime) {
         this.type = type;
         this.shape = shape;
         this.report = report;
@@ -56,6 +59,7 @@ public class Parameters {
         this.numIterExps = 1;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
         this.directed = directed;
+        this.stealTime = stealTime;
     }
 
     /**
@@ -68,9 +72,8 @@ public class Parameters {
      * algoritmo <i>numThreads</i>, el tamaño de la estructura donde van a
      * almacenarse las tareas durante la ejecución del algoritmo
      * <i>structSize</i> y si se va a incluir un objeto que guarde información
-     * para realizar un reporte de la ejecución. El algoritmo de
-     * stepSpanningTree toma en cuenta la versión de doble colecta para
-     * terminar.
+     * para realizar un reporte de la ejecución.El algoritmo de stepSpanningTree
+     * toma en cuenta la versión de doble colecta para terminar.
      *
      * @param type El tipo de gráfica.
      * @param algType El tipo de algoritmo.
@@ -79,9 +82,11 @@ public class Parameters {
      * @param structSize El tamaño de la estructura.
      * @param report Si se va a realizar un reporte.
      * @param numIterExps El número de iteraciones para un experimento.
+     * @param directed
+     * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, boolean directed) {
-        this(type, algType, shape, numThreads, structSize, report, directed);
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, boolean directed, boolean stealTime) {
+        this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
     }
@@ -106,9 +111,11 @@ public class Parameters {
      * @param report Si se va a realizar un reporte.
      * @param numIterExps El número de iteraciones para un experimento.
      * @param stepSpanningTreeType El tipo de stepSpanningTree.
+     * @param directed
+     * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, boolean directed) {
-        this(type, algType, shape, numThreads, structSize, report, directed);
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, boolean directed, boolean stealTime) {
+        this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = stepSpanningTreeType;
     }
@@ -162,6 +169,10 @@ public class Parameters {
         return numIterExps;
     }
 
+    public boolean isStealTime() {
+        return stealTime;
+    }
+
     public boolean isDirected() {
         return directed;
     }
@@ -202,12 +213,17 @@ public class Parameters {
         this.stepSpanningTreeType = stepSpanningTreeType;
     }
 
+    public void setStealTime(boolean stealTime) {
+        this.stealTime = stealTime;
+    }
+
     @Override
     public String toString() {
         return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report
                 + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize="
                 + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType="
-                + stepSpanningTreeType + ", directed=" + directed + '}';
+                + stepSpanningTreeType + ", directed=" + directed + ", stealTime:" + stealTime
+                + '}';
     }
 
 }

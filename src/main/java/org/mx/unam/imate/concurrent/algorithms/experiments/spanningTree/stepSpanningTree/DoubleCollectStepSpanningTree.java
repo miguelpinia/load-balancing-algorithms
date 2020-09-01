@@ -17,8 +17,8 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
 
     public DoubleCollectStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            WorkStealingStruct[] structs, Report report, boolean specialExecution) {
-        super(graph, root, color, parent, label, numThreads, struct, report, structs);
+            WorkStealingStruct[] structs, Report report, boolean specialExecution, boolean stealTime) {
+        super(graph, root, color, parent, label, numThreads, struct, report, stealTime, structs);
         this.specialExecution = specialExecution;
     }
 
@@ -41,6 +41,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
         boolean firstTime = true;
         boolean workToSteal = false;
         Iterator<Integer> it;
+        long time;
         while (firstTime || workToSteal) {
             while (!struct.isEmpty()) {
                 v = struct.take();
@@ -67,8 +68,15 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                 for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
                     pos = (idx + thread) % numThreads;// Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                     if (pos != label) {
+                        time = System.nanoTime();
                         stolenItem = structs[(idx + thread) % numThreads].steal();
+                        time = System.nanoTime() - time;
                         report.stealsIncrement();
+                        if (stealTime) {
+                            report.setMinSteal(time);
+                            report.setMaxSteal(time);
+                            report.updateAvgSteal(time);
+                        }
                     }
                     if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                         struct.put(stolenItem);
@@ -91,6 +99,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
         boolean firstTime = true;
         boolean workToSteal = false;
         Iterator<Integer> it;
+        long time;
         while (firstTime || workToSteal) {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
@@ -117,8 +126,15 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                 for (int idx = 0; idx < numThreads * 2; idx++) {// Recorremos de forma circular a los hilos en búsqueda de algo que robar
                     pos = (idx + thread) % numThreads; // Hacemos un doble recorrido para simular una doble colecta (como en un snapshot).
                     if (pos != label) {
+                        time = System.nanoTime();
                         stolenItem = structs[(idx + thread) % numThreads].steal(label - 1);
+                        time = System.nanoTime() - time;
                         report.stealsIncrement();
+                        if (stealTime) {
+                            report.setMinSteal(time);
+                            report.setMaxSteal(time);
+                            report.updateAvgSteal(time);
+                        }
                     }
                     if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                         struct.put(stolenItem, label - 1);
