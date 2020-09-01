@@ -21,7 +21,7 @@ public class GeneralSpanningTreeTest {
     private static Graph generateTree(GraphType type, AlgorithmsType algType, int shape,
             int numThreads, int structSize, boolean report, boolean directed) {
         StepSpanningTreeType ssttype = StepSpanningTreeType.DOUBLE_COLLECT;
-        Parameters params = new Parameters(type, algType, shape, numThreads, structSize, report, 1, ssttype, directed);
+        Parameters params = new Parameters(type, algType, shape, numThreads, structSize, report, 1, ssttype, directed, true);
         Graph graph = GraphUtils.graphType(shape, type, report);
         int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
         Report r = new Report();

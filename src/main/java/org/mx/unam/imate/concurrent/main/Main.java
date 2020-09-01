@@ -35,7 +35,8 @@ public class Main {
         StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(props.get("stepSpanningType"));
         int iterations = Integer.parseInt(props.get("iterations"));
         boolean directed = Boolean.valueOf(props.get("directed"));
-        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed);
+        boolean stealTime = Boolean.valueOf(props.get("stealTime"));
+        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime);
         battery.compareAlgs();
     }
 
