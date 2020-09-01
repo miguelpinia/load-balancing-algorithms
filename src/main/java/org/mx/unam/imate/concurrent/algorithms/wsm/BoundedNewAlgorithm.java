@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -87,8 +82,8 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
             int x = Tasks.get(head[label]);
-            head[label]++;
             if (x != BOTTOM) {
+                head[label]++;
                 if (B[head[label]].getAndSet(false)) {
                     Head.set(head[label]);
                     return x;

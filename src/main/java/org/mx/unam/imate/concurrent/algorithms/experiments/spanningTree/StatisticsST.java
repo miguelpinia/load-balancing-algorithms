@@ -38,8 +38,8 @@ public class StatisticsST {
                 reports.get(0).getGraphType(),
                 reports.get(0).getAlgType()));
         reports.forEach((r) -> {
-            System.out.println(String.format("Execution time: %d%nTakes: %d%nPuts: %d%nSteals: %d%n",
-                    r.getExecutionTime(), r.getTakes(), r.getPuts(), r.getSteals()));
+            System.out.println(String.format("Execution time: %d%nTakes: %d%nPuts: %d%nSteals: %d%nMax Steal Time: %d%nMin Steal Time: %d%nAvg Steal Time: %d%n",
+                    r.getExecutionTime(), r.getTakes(), r.getPuts(), r.getSteals(), r.getMaxSteal(), r.getMinSteal(), r.getAvgSteal()));
         });
         long best = reports.get(0).getExecutionTime();
 

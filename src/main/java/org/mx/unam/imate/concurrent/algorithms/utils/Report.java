@@ -3,6 +3,7 @@ package org.mx.unam.imate.concurrent.algorithms.utils;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
@@ -36,12 +37,20 @@ public class Report implements Comparable<Report> {
 
     private GraphType graphType;
     private AlgorithmsType algType;
+    private final AtomicLong maxSteal;
+    private final AtomicLong minSteal;
+    private final AtomicLong avgSteal;
+    private final AtomicLong avgIter;
 
     public Report() {
         takes = new AtomicInteger(0);
         puts = new AtomicInteger(0);
         steals = new AtomicInteger(0);
         executionTime = 0L;
+        maxSteal = new AtomicLong();
+        minSteal = new AtomicLong(Long.MAX_VALUE);
+        avgSteal = new AtomicLong();
+        avgIter = new AtomicLong();
     }
 
     public void takesIncrement() {
@@ -98,6 +107,45 @@ public class Report implements Comparable<Report> {
 
     public GraphType getGraphType() {
         return graphType;
+    }
+
+    public long getMaxSteal() {
+        return maxSteal.get();
+    }
+
+    public long getMinSteal() {
+        return minSteal.get();
+    }
+
+    public long getAvgSteal() {
+        return avgSteal.get();
+    }
+
+    public void setMaxSteal(long time) {
+        long expectedValue = maxSteal.get();
+        if (expectedValue < time) {
+            maxSteal.compareAndSet(expectedValue, time);
+        }
+    }
+
+    public void setMinSteal(long time) {
+        long expectedValue = minSteal.get();
+        if (expectedValue > time) {
+            minSteal.compareAndSet(expectedValue, time);
+        }
+    }
+
+    public synchronized void updateAvgSteal(long time) {
+        if (avgIter.get() == 0) {
+            avgIter.incrementAndGet();
+            avgSteal.set(time);
+        } else {
+            long prevAvg = avgSteal.get();
+            long n = avgIter.get();
+            long avg = prevAvg + (time - prevAvg) / n;
+            avgSteal.compareAndSet(prevAvg, avg);
+            avgIter.incrementAndGet();
+        }
     }
 
     @Override

@@ -24,10 +24,11 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
     protected final WorkStealingStruct[] structs;
     protected final Report report;
     protected final Random random;
+    protected final boolean stealTime;
 
     public AbstractStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            Report report, WorkStealingStruct... structs) {
+            Report report, boolean stealTime, WorkStealingStruct... structs) {
         this.graph = graph;
         this.root = root;
         this.color = color;
@@ -38,6 +39,7 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
         this.structs = structs;
         this.report = report;
         this.random = new Random(System.currentTimeMillis());
+        this.stealTime = stealTime;
     }
 
     int pickRandomThread(int numThreads, int self) {

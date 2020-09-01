@@ -35,7 +35,7 @@ public class SpanningTree {
         for (int i = 0; i < params.getNumThreads(); i++) {
             AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
                     graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
-                    report, params.isSpecialExecution(), visited, counter);
+                    report, params.isSpecialExecution(), visited, counter, params.isStealTime());
 
             threads[i] = new Thread(step);
         }
