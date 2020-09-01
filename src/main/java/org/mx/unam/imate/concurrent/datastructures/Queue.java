@@ -1,45 +1,32 @@
 package org.mx.unam.imate.concurrent.datastructures;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author miguel
  */
 public class Queue {
 
-    private Node head;
-    private Node tail;
+    private final LinkedList<Integer> queue;
 
     public Queue() {
-        head = null;
-        tail = null;
+        queue = new LinkedList<>();
     }
 
     public void enqueue(int task) {
-        Node newNode = new Node(task, null);
-        if (tail == null) {
-            head = new Node(task, null);
-            tail = head;
-            return;
-        }
-        tail.setNext(newNode);
-        tail = newNode;
+        queue.add(task);
     }
 
     public int dequeue() {
-        if (head == null) {
+        if (queue.isEmpty()) {
             return -1;
         }
-        Node tmp = head;
-        head = head.getNext();
-        int val = tmp.getVal();
-        if (head == null) {
-            tail = null;
-        }
-        return val;
+        return queue.remove();
     }
 
     public boolean isEmpty() {
-        return head == null;
+        return queue.isEmpty();
     }
 
 }

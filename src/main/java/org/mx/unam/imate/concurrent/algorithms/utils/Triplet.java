@@ -55,4 +55,13 @@ public class Triplet {
         return this.tag == other.tag;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + this.head;
+        hash = 47 * hash + this.size;
+        hash = 47 * hash + this.tag;
+        return hash;
+    }
+
 }

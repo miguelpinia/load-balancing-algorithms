@@ -1,44 +1,48 @@
 package org.mx.unam.imate.concurrent.datastructures;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author miguel
  */
 public class Stack {
 
-    private Node top;
+    private final LinkedList<Integer> stack;
 
     public Stack() {
-        top = null;
+        stack = new LinkedList<>();
     }
 
     public boolean isEmpty() {
-        return top == null;
+        return stack.isEmpty();
     }
 
     public void push(int task) {
-        Node newNode = new Node(task, top);
-        top = newNode;
+        stack.add(task);
     }
 
     public int pop() {
-        if (top == null) {
+        if (stack.isEmpty()) {
             return -1;
         }
-        Node tmp = top;
-        int value = tmp.getVal();
-        top = top.getNext();
-        return value;
+        return stack.removeLast();
     }
 
     public boolean inStack(int val) {
-        Node tmp = top;
-        while (tmp != null) {
-            if (tmp.getVal() == val) {
-                return true;
-            }
-            tmp = tmp.getNext();
-        }
-        return false;
+        return stack.contains(val);
     }
+
+    public int peek() {
+        if (stack.isEmpty()) {
+            return -1;
+        }
+        return stack.peekLast();
+    }
+
+    @Override
+    public String toString() {
+        return "Stack{" + stack + '}';
+    }
+
 }

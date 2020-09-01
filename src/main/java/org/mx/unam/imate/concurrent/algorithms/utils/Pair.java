@@ -40,4 +40,12 @@ public class Pair {
         return this.g == other.g;
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + this.t;
+        hash = 97 * hash + this.g;
+        return hash;
+    }
+
 }

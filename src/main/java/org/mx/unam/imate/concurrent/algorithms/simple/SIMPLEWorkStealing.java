@@ -1,7 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.simple;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.datastructures.Node;
 
 /**
  *

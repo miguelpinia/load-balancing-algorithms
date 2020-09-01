@@ -40,7 +40,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             put(task);
         }
         unsafe.storeFence();
-        tasks.getArray()[t % tasks.getSize()] = task;
+        tasks.set(t % tasks.getSize(), task);
         tail.set(t + 1);
     }
 
@@ -51,27 +51,28 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
         if (h == t) {
             return EMPTY;
         }
-        int task = tasks.getArray()[h % tasks.getSize()];
+        int task = tasks.get(h % tasks.getSize());
         head.set(h + 1);
         return task;
     }
 
     @Override
     public int steal() {
-        //  TODO: Cambiar por versión iterativa (MAPA 2020-08-05)
-        int h = head.get();
-        unsafe.loadFence();
-        int t = tail.get();
-        if (h == t) {
-            return EMPTY;
+        while (true) {
+            int h = head.get();
+            unsafe.loadFence();
+            int t = tail.get();
+            if (h == t) {
+                return EMPTY;
+            }
+            TaskArrayWithSize a = tasks;
+            int task = a.get(h % a.getSize());
+            unsafe.loadFence();
+            if (head.compareAndSet(h, h + 1)) {
+                return task;
+            }
+
         }
-        TaskArrayWithSize a = tasks;
-        int task = a.getArray()[h % a.getSize()];
-        unsafe.loadFence();
-        if (!head.compareAndSet(h, h + 1)) {
-            steal();
-        }
-        return task;
     }
 
     public void expand() {
@@ -81,7 +82,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
         int h = head.get();
         int t = tail.get();
         for (int i = h; i < t; i++) {
-            a.getArray()[i % a.getSize()] = tasks.getArray()[i % tasks.getSize()];
+            a.set(i % a.getSize(), tasks.get(i % tasks.getSize()));
             unsafe.storeFence();
         }
         tasks = a;

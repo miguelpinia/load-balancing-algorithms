@@ -1,4 +1,4 @@
-package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
+package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.Graph;
+import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 
 /**
  *
@@ -27,7 +27,7 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
 
     public AbstractStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            WorkStealingStruct[] structs, Report report) {
+            Report report, WorkStealingStruct... structs) {
         this.graph = graph;
         this.root = root;
         this.color = color;

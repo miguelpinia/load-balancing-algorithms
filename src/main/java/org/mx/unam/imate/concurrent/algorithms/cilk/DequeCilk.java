@@ -78,7 +78,6 @@ public class DequeCilk implements WorkStealingStruct {
                     lock.unlock();
                 }
             }
-
         }
         return tasks.get(t % tasks.length());
     }
