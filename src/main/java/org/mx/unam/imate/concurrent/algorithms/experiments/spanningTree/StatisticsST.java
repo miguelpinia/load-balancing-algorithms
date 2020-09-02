@@ -67,16 +67,14 @@ public class StatisticsST {
 
 //        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
 //        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
-        System.out.println("Best time:\t" + best + " ns");
-        System.out.println("Best time:\t" + best / 1000000 + " ms");
-        System.out.println("Median time:\t" + median + " ns");
-        System.out.println("Median time:\t" + median / 1000000 + " ms");
-        System.out.println("Time Average:\t" + average + " ns");
-        System.out.println("Time Average:\t" + average / 1000000 + " ms");
-        System.out.println("Takes Average:\t" + averageTakes);
-        System.out.println("Puts Average:\t" + averagePuts);
-        System.out.println("Steals Average:\t" + averageSteals);
-
+        System.out.println(String.format("Best time (ns):\t%d", best));
+        System.out.println(String.format("Median time (ns):\t%d", median));
+        System.out.println(String.format("Median time (ms):\t%d", median / 1000000));
+        System.out.println(String.format("Time Average (ns):\t%.2f", average));
+        System.out.println(String.format("Time Average (ms):\t%.2f", average / 1000000));
+        System.out.println(String.format("Takes Average:\t%.2f", averageTakes));
+        System.out.println(String.format("Puts Average:\t%.2f", averagePuts));
+        System.out.println(String.format("Steals Average:\t%.2f", averageSteals));
         return new Result(reports.get(0).getGraphType(),
                 reports.get(0).getAlgType(), median, average,
                 averageTakes, averagePuts, averageSteals, best);
