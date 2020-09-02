@@ -1,10 +1,7 @@
 package org.mx.unam.imate.concurrent.main;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,28 +37,9 @@ public class Main {
         int iterations = (Integer) props.get("iterations");
         boolean directed = (Boolean) props.get("directed");
         boolean stealTime = (Boolean) props.get("stealTime");
-        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime);
+        boolean putSteals = (Boolean) props.get("putSteals");
+        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime, putSteals);
         battery.compareAlgs();
-    }
-
-    private static Map<String, String> readProperties(File f) {
-        Map<String, String> props = new HashMap<>();
-        BufferedReader br;
-        try {
-            br = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8);
-            String line;
-            while ((line = br.readLine()) != null) {
-                String data[] = line.split(":");
-                props.put(data[0].trim(), data[1].trim());
-            }
-            br.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println("Archivo no encontrado, cerrando el programa");
-            System.exit(0);
-        } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return props;
     }
 
     private static Map<String, Object> readJsonFile(File f) {
@@ -76,6 +54,7 @@ public class Main {
             props.put("iterations", obj.getInt("iterations"));
             props.put("directed", obj.getBoolean("directed"));
             props.put("stealTime", obj.getBoolean("stealTime"));
+            props.put("putSteals", obj.getBoolean("putSteals"));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }

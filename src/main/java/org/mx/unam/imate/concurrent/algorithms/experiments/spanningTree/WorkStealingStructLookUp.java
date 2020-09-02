@@ -19,6 +19,19 @@ import org.mx.unam.imate.concurrent.algorithms.wsm.NonBlockingWorkStealingMultFI
  */
 public class WorkStealingStructLookUp {
 
+    /**
+     * Factory for work-stealing algorithms. Supported types are: SIMPLE, CILK,
+     * CHASELEV, IDEMPOTENT_DEQUE, IDEMPOTENT_FIFO, IDEMPOTENT_LIFO, WS_NC_MULT,
+     * B_WS_NC_MULT, NBWSMULT_FIFO, B_NBWSMULT_FIFO. Currently, the size for the
+     * datastructure is fixed.
+     *
+     * @param type The type of algorithm. Supported types are: SIMPLE, CILK,
+     * CHASELEV, IDEMPOTENT_DEQUE, IDEMPOTENT_FIFO, IDEMPOTENT_LIFO, WS_NC_MULT,
+     * B_WS_NC_MULT, NBWSMULT_FIFO, B_NBWSMULT_FIFO.
+     * @param size The size for the data structure within of the algorithm.
+     * @param numThreads Number of threads with which information is shared.
+     * @return A new instance of the algorithm.
+     */
     public static WorkStealingStruct getWorkStealingStruct(AlgorithmsType type, int size, int numThreads) {
         switch (type) {
             case SIMPLE:
