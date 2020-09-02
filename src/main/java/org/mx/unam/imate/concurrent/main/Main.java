@@ -37,7 +37,8 @@ public class Main {
         int iterations = (Integer) props.get("iterations");
         boolean directed = (Boolean) props.get("directed");
         boolean stealTime = (Boolean) props.get("stealTime");
-        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime);
+        boolean putSteals = (Boolean) props.get("putSteals");
+        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime, putSteals);
         battery.compareAlgs();
     }
 
@@ -53,6 +54,7 @@ public class Main {
             props.put("iterations", obj.getInt("iterations"));
             props.put("directed", obj.getBoolean("directed"));
             props.put("stealTime", obj.getBoolean("stealTime"));
+            props.put("putSteals", obj.getBoolean("putSteals"));
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
