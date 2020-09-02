@@ -39,8 +39,8 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
         this.head = new int[numThreads];
         this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
-        int array[] = new int[size + 1];
-        this.B = new AtomicBoolean[size + 1];
+        int array[] = new int[size + 2];
+        this.B = new AtomicBoolean[size + 2];
         for (int i = 0; i < numThreads; i++) {
             head[i] = 1;
         }
