@@ -29,8 +29,6 @@ public class Main {
         for (Object alg : algs) {
             types.add(AlgorithmsType.valueOf((String) alg));
         }
-        System.out.println("types: " + types);
-
         GraphType type = GraphType.valueOf((String) props.get("graphType"));
         int vertexSize = (Integer) props.get("vertexSize");
         StepSpanningTreeType stepType = StepSpanningTreeType.valueOf((String) props.get("stepSpanningTree"));
