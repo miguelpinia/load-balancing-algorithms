@@ -14,5 +14,5 @@
   "iterations": 5,
   "directed": true,
   "stealTime": true,
-  "putSteals": true
+  "putSteals": false
 }
