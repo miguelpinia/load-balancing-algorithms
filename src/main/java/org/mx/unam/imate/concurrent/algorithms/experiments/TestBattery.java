@@ -34,9 +34,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StatisticsST;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
@@ -76,10 +74,11 @@ public class TestBattery {
 
     public void compareAlgs() {
         if (putSteals) {
+            Experiments exp = new Experiments();
             System.out.println("=====================================");
             System.out.println("= generating experiment puts-steals =");
             System.out.println("=====================================");
-            putSteals();
+            exp.putSteals(types);
 
         } else {
             int processorsNum = Runtime.getRuntime().availableProcessors();
@@ -142,45 +141,6 @@ public class TestBattery {
 
         }
 
-    }
-
-    private void putSteals() {
-        types.forEach((type) -> {
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, 1000000, 1);
-            long putTime;
-            long stealTime_;
-            String salida = "";
-            long time;
-            if (type == AlgorithmsType.WS_NC_MULT || type == AlgorithmsType.B_WS_NC_MULT
-                    || type == AlgorithmsType.NBWSMULT_FIFO || type == AlgorithmsType.B_NBWSMULT_FIFO) {
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.put(i, 0);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.steal(0);
-                }
-                stealTime_ = System.nanoTime() - time;
-                long total = putTime + stealTime_;
-                salida = String.format("Alg: %s%nSteal time: %d ns/ %.2f ms%nTotal time: %d ns/ %.2f ms%n", type, stealTime_, (float) (stealTime_ / 1000000f), total, (float) (total / 1000000f));
-            } else {
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.put(i);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.steal();
-                }
-                stealTime_ = System.nanoTime() - time;
-                long total = putTime + stealTime_;
-                salida = String.format("Alg: %s%nSteal time: %d ns/ %.2f ms%nTotal time: %d ns/ %.2f ms%n", type, stealTime_, (float) (stealTime_ / 1000000f), total, (float) (total / 1000000f));
-            }
-            System.out.println(salida);
-        });
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
