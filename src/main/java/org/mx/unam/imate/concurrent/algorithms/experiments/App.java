@@ -51,7 +51,7 @@ import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
  *
  * @author miguel
  */
-public class TestBattery {
+public class App {
 
     private static final String VERTEX_SIZE = "vertexSize";
     private static final String SPANNING_TREE_OPTIONS = "spanningTreeOptions";
@@ -68,8 +68,10 @@ public class TestBattery {
     private final List<AlgorithmsType> types;
     private final boolean putSteals;
     private final boolean putTakes;
+    private final boolean spanningTree;
 
-    public TestBattery(JSONObject object) {
+    public App(JSONObject object) {
+        this.spanningTree = object.has(SPANNING_TREE_OPTIONS);
         this.spanningTreeOptions = getOptionalValueJSONObj(object, SPANNING_TREE_OPTIONS);
         this.putSteals = getOptionalValueBool(object, PUT_STEALS);
         this.putTakes = getOptionalValueBool(object, PUT_TAKES);
@@ -109,7 +111,17 @@ public class TestBattery {
             Experiments exp = new Experiments();
             System.out.println(header);
             exp.putSteals(types);
-        } else {
+        }
+        if (putTakes) {
+            String header
+                    = "=====================================\n"
+                    + "= generating experiment puts-takes  =\n"
+                    + "=====================================\n";
+            Experiments exp = new Experiments();
+            System.out.println(header);
+            exp.putTakes(types);
+        }
+        if (spanningTree) {
             String header
                     = "=====================================\n"
                     + "=      comparing ws-algorithms      =\n"
@@ -331,7 +343,7 @@ public class TestBattery {
         try {
             ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
         } catch (IOException ex) {
-            Logger.getLogger(TestBattery.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

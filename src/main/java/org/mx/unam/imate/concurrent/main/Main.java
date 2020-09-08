@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.json.JSONObject;
-import org.mx.unam.imate.concurrent.algorithms.experiments.TestBattery;
+import org.mx.unam.imate.concurrent.algorithms.experiments.App;
 
 public class Main {
 
@@ -21,7 +21,7 @@ public class Main {
         File f = new File("config.json");
         JSONObject props = readProperties(f);
         System.out.println(header + props.toString(2));
-        TestBattery battery = new TestBattery(props);
+        App battery = new App(props);
         battery.compareAlgs();
     }
 
