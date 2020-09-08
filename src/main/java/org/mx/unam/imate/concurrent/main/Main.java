@@ -2,61 +2,39 @@ package org.mx.unam.imate.concurrent.main;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.experiments.TestBattery;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 public class Main {
 
     public static void main(String[] args) {
+        String header
+                = "=====================================\n"
+                + "=         reading properties        =\n"
+                + "=====================================\n";
         File f = new File("config.json");
-        Map<String, Object> props = readJsonFile(f);
-        System.out.println(props);
-        JSONArray algs = (JSONArray) props.get("algorithms");
-        List<AlgorithmsType> types = new ArrayList<>();
-        for (Object alg : algs) {
-            types.add(AlgorithmsType.valueOf((String) alg));
-        }
-        GraphType type = GraphType.valueOf((String) props.get("graphType"));
-        int vertexSize = (Integer) props.get("vertexSize");
-        StepSpanningTreeType stepType = StepSpanningTreeType.valueOf((String) props.get("stepSpanningTree"));
-        int iterations = (Integer) props.get("iterations");
-        boolean directed = (Boolean) props.get("directed");
-        boolean stealTime = (Boolean) props.get("stealTime");
-        boolean putSteals = (Boolean) props.get("putSteals");
-        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed, stealTime, putSteals);
+        JSONObject props = readProperties(f);
+        System.out.println(header + props.toString(2));
+        TestBattery battery = new TestBattery(props);
         battery.compareAlgs();
     }
 
-    private static Map<String, Object> readJsonFile(File f) {
-        Map<String, Object> props = new HashMap<>();
+    private static JSONObject readProperties(File f) {
         try {
-            String json = new String(Files.readAllBytes(Paths.get(f.getName())));
+            String json = new String(Files.readAllBytes(Paths.get(f.getName())), StandardCharsets.UTF_8.displayName());
             JSONObject obj = new JSONObject(json);
-            props.put("algorithms", obj.getJSONArray("algorithms"));
-            props.put("graphType", obj.getString("graphType"));
-            props.put("vertexSize", obj.getInt("vertexSize"));
-            props.put("stepSpanningTree", obj.getString("stepSpanningType"));
-            props.put("iterations", obj.getInt("iterations"));
-            props.put("directed", obj.getBoolean("directed"));
-            props.put("stealTime", obj.getBoolean("stealTime"));
-            props.put("putSteals", obj.getBoolean("putSteals"));
+            return obj;
         } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file", ex);
         }
-        return props;
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file");
+        return null;
     }
 
 }
