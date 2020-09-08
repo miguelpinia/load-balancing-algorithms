@@ -8,11 +8,13 @@
     "WS_NC_MULT",
     "B_WS_NC_MULT"
   ],
-  "graphType": "TORUS_3D_40",
-  "vertexSize": 100,
-  "stepSpanningType": "COUNTER",
-  "iterations": 5,
-  "directed": true,
-  "stealTime": true,
+  "spanningTreeOptions": {
+    "graphType": "TORUS_3D_40",
+    "vertexSize": 100,
+    "stepSpanningType": "COUNTER",
+    "iterations": 5,
+    "directed": true,
+    "stealTime": true
+  },
   "putSteals": false
 }

@@ -33,13 +33,14 @@ import org.jfree.chart.util.ShapeUtils;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StatisticsST;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
+import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
@@ -50,137 +51,164 @@ import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
  *
  * @author miguel
  */
-public class TestBattery {
+public class App {
 
-    private final GraphType graphType;
-    private final Integer vertexSize;
-    private final StepSpanningTreeType stepType;
-    private final Integer iterations;
+    private static final String VERTEX_SIZE = "vertexSize";
+    private static final String SPANNING_TREE_OPTIONS = "spanningTreeOptions";
+    private static final String GRAPH_TYPE = "graphType";
+    private static final String STEP_SPANNING_TYPE = "stepSpanningType";
+    private static final String ITERATIONS = "iterations";
+    private static final String DIRECTED = "directed";
+    private static final String STEAL_TIME = "stealTime";
+    private static final String PUT_STEALS = "putSteals";
+    private static final String PUT_TAKES = "putTakes";
+    private static final String ALGORITHMS = "algorithms";
+
+    private final JSONObject spanningTreeOptions;
     private final List<AlgorithmsType> types;
-    private final boolean directed;
-    private final boolean stealTime;
     private final boolean putSteals;
+    private final boolean putTakes;
+    private final boolean spanningTree;
 
-    public TestBattery(GraphType graphType, int vertexSize, StepSpanningTreeType stepType,
-            int iterations, List<AlgorithmsType> types, boolean directed, boolean stealTime,
-            boolean putSteals) {
-        this.graphType = graphType;
-        this.vertexSize = vertexSize;
-        this.stepType = stepType;
-        this.iterations = iterations;
-        this.types = types;
-        this.directed = directed;
-        this.stealTime = stealTime;
-        this.putSteals = putSteals;
+    public App(JSONObject object) {
+        this.spanningTree = object.has(SPANNING_TREE_OPTIONS);
+        this.spanningTreeOptions = getOptionalValueJSONObj(object, SPANNING_TREE_OPTIONS);
+        this.putSteals = getOptionalValueBool(object, PUT_STEALS);
+        this.putTakes = getOptionalValueBool(object, PUT_TAKES);
+        this.types = processJSONArray(object.getJSONArray(ALGORITHMS));
+    }
+
+    private boolean getOptionalValueBool(JSONObject object, String key) {
+        return object.has(key) ? object.getBoolean(key) : false;
+    }
+
+    private JSONObject getOptionalValueJSONObj(JSONObject object, String key) {
+        return object.has(key) ? object.getJSONObject(key) : new JSONObject();
+    }
+
+    private JSONArray getAlgorithms(List<AlgorithmsType> types) {
+        JSONArray array = new JSONArray();
+        types.forEach((type) -> {
+            array.put(type.name());
+        });
+        return array;
+    }
+
+    private List<AlgorithmsType> processJSONArray(JSONArray array) {
+        List<AlgorithmsType> algs = new ArrayList<>();
+        for (Object object : array) {
+            algs.add(AlgorithmsType.valueOf(object.toString()));
+        }
+        return algs;
     }
 
     public void compareAlgs() {
         if (putSteals) {
-            System.out.println("=====================================");
-            System.out.println("= generating experiment puts-steals =");
-            System.out.println("=====================================");
-            putSteals();
-
-        } else {
-            int processorsNum = Runtime.getRuntime().availableProcessors();
-            Map<AlgorithmsType, List<Result>> lists = buildLists();
-            XYSeriesCollection medianDataset = new XYSeriesCollection();
-            XYSeriesCollection bestDataset = new XYSeriesCollection();
-            XYSeriesCollection averageDataset = new XYSeriesCollection();
-            Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
-            {
-                System.out.println("Realizando ejecución de calentamiento :D");
-                types.forEach((type) -> {
-                    Parameters params = new Parameters(graphType, type,
-                            vertexSize, 8, 128, false, 1, stepType, directed, stealTime);
-                    StatisticsST.experiment(graph, params);
-                });
-            }
-            System.out.println(String.format("Processors: %d", processorsNum));
-            for (int i = 0; i < processorsNum; i++) {
-                System.out.println("Threads: " + (i + 1));
-                for (AlgorithmsType type : types) {
-                    lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize,
-                            (i + 1), 128, false, iterations, stepType, directed, stealTime), graph));
-                }
-            }
-
-            long chaseLevMedian = lists.get(AlgorithmsType.CHASELEV).get(0).getMedian();
-            long chaseLevBest = lists.get(AlgorithmsType.CHASELEV).get(0).getBest();
-            double chaseLevAverage = lists.get(AlgorithmsType.CHASELEV).get(0).getAverage();
-
-            types.stream().map((type) -> {
-                medianDataset.addSeries(getMedianSeries(lists.get(type), chaseLevMedian,
-                        processorsNum, getAlgName(type)));
-                return type;
-            }).map((type) -> {
-                bestDataset.addSeries(getBestSeries(lists.get(type), chaseLevBest,
-                        processorsNum, getAlgName(type)));
-                return type;
-            }).forEachOrdered((type) -> {
-                averageDataset.addSeries(getAverageSeries(lists.get(type), chaseLevAverage,
-                        processorsNum, getAlgName(type)));
-            });
-//        lists.entrySet().forEach((entry) -> {
-//            medianDataset.addSeries(getMedianSeries(entry.getValue(), chaseLevMedian, processorsNum, entry.getKey().toString()));
-//            bestDataset.addSeries(getBestSeries(entry.getValue(), chaseLevBest, processorsNum, entry.getKey().toString()));
-//            averageDataset.addSeries(getAverageSeries(entry.getValue(), chaseLevAverage, processorsNum, entry.getKey().toString()));
-//        });
-
-            generateSpeedUpChart("SpeedUp comparison (Median) " + graphType
-                    + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
-                    "Medians-" + graphType + "-" + stepType + "-" + vertexSize,
-                    processorsNum, medianDataset, 3.5);
-            generateSpeedUpChart("SpeedUp comparison (Best) " + graphType
-                    + (directed ? " directed" : " undirected"), "Processors",
-                    "SpeedUp", "Best-" + graphType + "-" + stepType + "-" + vertexSize,
-                    processorsNum, bestDataset, 3.5);
-            generateSpeedUpChart("SpeedUp comparison (Average) " + graphType
-                    + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
-                    "Average-" + graphType + "-" + stepType + "-" + vertexSize,
-                    processorsNum, averageDataset, 3.5);
-
+            String header
+                    = "=====================================\n"
+                    + "= generating experiment puts-steals =\n"
+                    + "=====================================\n";
+            Experiments exp = new Experiments();
+            System.out.println(header);
+            exp.putSteals(types);
+        }
+        if (putTakes) {
+            String header
+                    = "=====================================\n"
+                    + "= generating experiment puts-takes  =\n"
+                    + "=====================================\n";
+            Experiments exp = new Experiments();
+            System.out.println(header);
+            exp.putTakes(types);
+        }
+        if (spanningTree) {
+            String header
+                    = "=====================================\n"
+                    + "=      comparing ws-algorithms      =\n"
+                    + "=====================================\n";
+            System.out.println(header);
+            compare(spanningTreeOptions);
         }
 
     }
 
-    private void putSteals() {
-        types.forEach((type) -> {
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, 1000000, 1);
-            long putTime;
-            long stealTime_;
-            String salida = "";
-            long time;
-            if (type == AlgorithmsType.WS_NC_MULT || type == AlgorithmsType.B_WS_NC_MULT
-                    || type == AlgorithmsType.NBWSMULT_FIFO || type == AlgorithmsType.B_NBWSMULT_FIFO) {
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.put(i, 0);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.steal(0);
-                }
-                stealTime_ = System.nanoTime() - time;
-                long total = putTime + stealTime_;
-                salida = String.format("Alg: %s%nSteal time: %d ns/ %.2f ms%nTotal time: %d ns/ %.2f ms%n", type, stealTime_, (float) (stealTime_ / 1000000f), total, (float) (total / 1000000f));
-            } else {
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.put(i);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
-                    alg.steal();
-                }
-                stealTime_ = System.nanoTime() - time;
-                long total = putTime + stealTime_;
-                salida = String.format("Alg: %s%nSteal time: %d ns/ %.2f ms%nTotal time: %d ns/ %.2f ms%n", type, stealTime_, (float) (stealTime_ / 1000000f), total, (float) (total / 1000000f));
+    private JSONObject compare(JSONObject stProps) {
+        JSONObject results = new JSONObject();
+        int vertexSize = stProps.getInt(VERTEX_SIZE);
+        GraphType graphType = GraphType.valueOf(stProps.getString(GRAPH_TYPE));
+        boolean directed = stProps.getBoolean(DIRECTED);
+        StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(stProps.getString(STEP_SPANNING_TYPE));
+        boolean stealTime = stProps.getBoolean(STEAL_TIME);
+        int iterations = stProps.getInt(ITERATIONS);
+        int processorsNum = Runtime.getRuntime().availableProcessors();
+        Map<AlgorithmsType, List<Result>> lists = buildLists();
+        XYSeriesCollection medianDataset = new XYSeriesCollection();
+        XYSeriesCollection bestDataset = new XYSeriesCollection();
+        XYSeriesCollection averageDataset = new XYSeriesCollection();
+        Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
+        {
+            System.out.println("Performing warm-up execution :D");
+            types.forEach((type) -> {
+                Parameters params = new Parameters(graphType, type,
+                        vertexSize, 8, 128, false, 1, stepType, directed, stealTime);
+                StatisticsST.experiment(graph, params);
+            });
+        }
+        results.put("processors", processorsNum);
+        results.put("algorithms", getAlgorithms(types));
+        results.put("directed", directed);
+        results.put("graphType", graphType.name());
+        results.put("iterations", iterations);
+        results.put("stealTime", stealTime);
+        results.put("stepSpanningTree", stepType.name());
+        results.put("vertexSize", vertexSize);
+        System.out.println(String.format("Processors: %d", processorsNum));
+        JSONObject execs = new JSONObject();
+        for (int i = 0; i < processorsNum; i++) {
+            System.out.println("Threads: " + (i + 1));
+            JSONObject iter = new JSONObject();
+            for (AlgorithmsType type : types) {
+                JSONObject exec = new JSONObject();
+                lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize,
+                        (i + 1), 128, false, iterations, stepType, directed, stealTime), graph, exec));
+                iter.put(type.name(), exec);
             }
-            System.out.println(salida);
+            execs.put(String.format("thread-%d", i), iter);
+        }
+        results.put("executions", execs);
+
+        long chaseLevMedian = lists.get(AlgorithmsType.CHASELEV).get(0).getMedian();
+        long chaseLevBest = lists.get(AlgorithmsType.CHASELEV).get(0).getBest();
+        double chaseLevAverage = lists.get(AlgorithmsType.CHASELEV).get(0).getAverage();
+
+        types.stream().map((type) -> {
+            medianDataset.addSeries(getMedianSeries(lists.get(type), chaseLevMedian,
+                    processorsNum, getAlgName(type)));
+            return type;
+        }).map((type) -> {
+            bestDataset.addSeries(getBestSeries(lists.get(type), chaseLevBest,
+                    processorsNum, getAlgName(type)));
+            return type;
+        }).forEachOrdered((type) -> {
+            averageDataset.addSeries(getAverageSeries(lists.get(type), chaseLevAverage,
+                    processorsNum, getAlgName(type)));
         });
+
+        generateSpeedUpChart("SpeedUp comparison (Median) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
+                "Medians-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, medianDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Best) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors",
+                "SpeedUp", "Best-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, bestDataset, 3.5);
+        generateSpeedUpChart("SpeedUp comparison (Average) " + graphType
+                + (directed ? " directed" : " undirected"), "Processors", "SpeedUp",
+                "Average-" + graphType + "-" + stepType + "-" + vertexSize,
+                processorsNum, averageDataset, 3.5);
+//        System.out.println(results.toString(2));
+        WorkStealingUtils.saveJsonObjectToFile(results, "experiment-1.json");
+        return results;
     }
 
     private double medianNormalized(long chaseLevMedian, int processorNum, List<Result> results) {
@@ -198,8 +226,8 @@ public class TestBattery {
         return chaseLevAverage / average;
     }
 
-    private Result getResult(Parameters params, Graph graph) {
-        return StatisticsST.statistics(StatisticsST.experiment(graph, params));
+    private Result getResult(Parameters params, Graph graph, JSONObject results) {
+        return StatisticsST.statistics(StatisticsST.experiment(graph, params), results);
     }
 
     private Map<AlgorithmsType, List<Result>> buildLists() {
@@ -315,7 +343,7 @@ public class TestBattery {
         try {
             ChartUtils.saveChartAsJPEG(XYChart, xylineChart, width, height);
         } catch (IOException ex) {
-            Logger.getLogger(TestBattery.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(App.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
