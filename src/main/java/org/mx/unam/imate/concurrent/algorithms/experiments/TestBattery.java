@@ -74,12 +74,13 @@ public class TestBattery {
 
     public void compareAlgs() {
         if (putSteals) {
+            String header
+                    = "=====================================\n"
+                    + "= generating experiment puts-steals =\n"
+                    + "=====================================\n";
             Experiments exp = new Experiments();
-            System.out.println("=====================================");
-            System.out.println("= generating experiment puts-steals =");
-            System.out.println("=====================================");
+            System.out.println(header);
             exp.putSteals(types);
-
         } else {
             int processorsNum = Runtime.getRuntime().availableProcessors();
             Map<AlgorithmsType, List<Result>> lists = buildLists();
