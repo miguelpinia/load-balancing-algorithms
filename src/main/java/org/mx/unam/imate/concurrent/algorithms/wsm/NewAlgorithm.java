@@ -75,14 +75,15 @@ public class NewAlgorithm implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         head[label] = Math.max(head[label], Head.get());
-        int x = Tasks.get(head[label]);
-        if (x != BOTTOM) {
-            head[label]++;
-            Head.set(head[label]);
-            return x;
-        } else {
-            return EMPTY;
+        if (head[label] < Tasks.length()) {
+            int x = Tasks.get(head[label]);
+            if (x != BOTTOM) {
+                head[label]++;
+                Head.set(head[label]);
+                return x;
+            }
         }
+        return EMPTY;
     }
 
     @Override
