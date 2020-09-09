@@ -62,6 +62,7 @@ public class App {
     private static final String STEAL_TIME = "stealTime";
     private static final String PUT_STEALS = "putSteals";
     private static final String PUT_TAKES = "putTakes";
+    private static final String PUTS_TAKES_STEALS = "putsTakesSteals";
     private static final String ALGORITHMS = "algorithms";
 
     private final JSONObject spanningTreeOptions;
@@ -69,12 +70,16 @@ public class App {
     private final boolean putSteals;
     private final boolean putTakes;
     private final boolean spanningTree;
+    private final boolean putsTakesSteals;
+    private final JSONObject ptsOptions;
 
     public App(JSONObject object) {
         this.spanningTree = object.has(SPANNING_TREE_OPTIONS);
         this.spanningTreeOptions = getOptionalValueJSONObj(object, SPANNING_TREE_OPTIONS);
         this.putSteals = getOptionalValueBool(object, PUT_STEALS);
         this.putTakes = getOptionalValueBool(object, PUT_TAKES);
+        this.putsTakesSteals = object.has(PUTS_TAKES_STEALS);
+        this.ptsOptions = getOptionalValueJSONObj(object, PUTS_TAKES_STEALS);
         this.types = processJSONArray(object.getJSONArray(ALGORITHMS));
     }
 
@@ -120,6 +125,17 @@ public class App {
             Experiments exp = new Experiments();
             System.out.println(header);
             exp.putTakes(types);
+        }
+        if (putsTakesSteals) {
+            String header
+                    = "============================================\n"
+                    + "= generating experiment puts-takes-steals  =\n"
+                    + "============================================\n";
+            Experiments exp = new Experiments();
+            System.out.println(header);
+            int workers = ptsOptions.getInt("workers");
+            int stealers = ptsOptions.getInt("stealers");
+            exp.putTakesSteals(types, workers, stealers);
         }
         if (spanningTree) {
             String header
