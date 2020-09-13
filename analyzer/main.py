@@ -3,91 +3,21 @@ from datetime import datetime
 from distutils.util import strtobool
 from pprint import pprint
 
+
 import re
 import sys
+import json
 
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
 
-def num_processors(data):
-    regex = r"(Processors:) (\d+)"
-    match = re.search(regex, data)
-    if match is not None:
-        return match.group(2)
-    return None
-
-
-def chunks(lst, processors):
-    for i in range(0, len(lst), processors):
-        yield lst[i: i + processors]
-
-
-def get_info_execution(info):
-    results = info[1:-1].split(', ')
-    results = [val.strip().split('=') for val in results]
-    results = {key: value for [key, value] in results}
-    results['algorithms'] = literal_eval(
-        results['algorithms'])  # results['algorithms'].split(',')
-    results['directed'] = strtobool(results['directed'])
-    results['iterations'] = int(results['iterations'])
-    results['vertexSize'] = int(results['vertexSize'])
-    results['putSteals'] = strtobool(results['putSteals'])
-    results['stealTime'] = strtobool(results['stealTime'])
-    return results
-
-
-def parse_file(path_file):
-    with open(path_file, 'r') as log:
-        data = log.read()
-        processors = int(num_processors(data))
-        info = data.split('\n')
-        idx_threads = [
-            info.index('Threads: {}'.format(thread))
-            for thread in range(1, int(processors) + 1)]
-        results = get_info_execution(info[0])
-        results['processors'] = processors
-        execs = {}
-        for thread in range(1, processors + 1):
-            dict_thread = {}
-            pos = idx_threads[thread - 1]
-            algs = {alg: info.index('Algorithm:\t{}'.format(alg), pos)
-                    for alg in results['algorithms']}
-            for key in algs:
-                datos = list(filter(lambda x: x != '',
-                                    info[algs[key] + 2:algs[key] + 51]))
-                statistics = info[algs[key] + 42:algs[key] + 48:2] + \
-                    info[algs[key] + 48:algs[key] + 51]
-                statistics = {output[0]: float(output[1].strip())
-                              for line in statistics if (output := line.split(':'))
-                              is not None}
-                datos = [datos[i:i + 7] for i in range(0, len(datos) - 8, 7)]
-                datos = {idx: {output[0]: float(output[1].strip())
-                               for val in line if (output := val.split(':'))
-                               is not None}
-                         for idx, line in enumerate(datos)}
-                dict_thread[key] = {'datos': datos, 'statistics': statistics}
-            execs['thread-{}'.format(thread)] = dict_thread
-        results['executions'] = execs
-        pprint(results)
-        return results
-
-
-def process_data(results):
-    procs = results['processors']
-    execs = results['executions']
-    iters = results['iterations']
-    algs = results['algorithms']
-    vals = {alg: [] for alg in algs}
-    width = 0.2
-    for proc in range(1, procs + 1):
-        thread = execs['thread-{}'.format(proc)]
-        for alg in algs:
-            data_alg = thread[alg]
-            data_execs = data_alg['datos']
-            vals[alg].append([data_execs[i] for i in range(iters)])
-    return vals
+def read_json(path_file):
+    """Read the json from the `path_file`"""
+    with open(path_file) as f:
+        data = json.load(f)
+        return data
 
 
 def stats(results):
@@ -97,15 +27,16 @@ def stats(results):
     algs = results['algorithms']
     vals = {alg: {} for alg in algs}
     width = 0.2
-    for proc in range(1, procs + 1):
+    for proc in range(0, procs):
         thread = execs['thread-{}'.format(proc)]
         for alg in algs:
             data_alg = thread[alg]
-            data_execs = data_alg['datos']
-            exec_time = [data_execs[i]['Execution time'] for i in range(iters)]
-            takes = [data_execs[i]['Takes'] for i in range(iters)]
-            puts = [data_execs[i]['Puts'] for i in range(iters)]
-            steals = [data_execs[i]['Steals'] for i in range(iters)]
+            data_execs = data_alg['data']
+            exec_time = [data_execs[str(i)]['executionTime']
+                         for i in range(iters)]
+            takes = [data_execs[str(i)]['takes'] for i in range(iters)]
+            puts = [data_execs[str(i)]['puts'] for i in range(iters)]
+            steals = [data_execs[str(i)]['steals'] for i in range(iters)]
             vals[alg][proc] = {
                 'median': {'time': np.median(exec_time),
                            'takes': np.median(takes),
@@ -129,7 +60,7 @@ def stats(results):
 def get_data(result_type, stat_type, vals, procs):
     return [d[result_type]
             for d in [d1[stat_type]
-                      for d1 in [vals[i] for i in range(1, procs + 1)]]]
+                      for d1 in [vals[i] for i in range(0, procs)]]]
 
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
@@ -161,7 +92,6 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         ax.set_title('{} {}'.format(actions[i], stat_type).title())
         ax.grid()
         ax.legend()
-    # plt.gca().set_position([0, 0, 1, 1])
     plt.gcf().set_size_inches(19.2, 10.8)
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
@@ -170,16 +100,14 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
                                          stat_type, current_time),
         dpi=200)
     plt.close('all')
-    # plt.show()
 
 
 if __name__ == '__main__':
     filename = sys.argv[1]
-    results = parse_file(sys.argv[1])
+    results = read_json(filename)
+    alg_filter = None
     if len(sys.argv) > 2:
         alg_filter = ['B_WS_NC_MULT', 'WS_NC_MULT', 'IDEMPOTENT_FIFO', 'CILK']
-    else:
-        alg_filter = None
     generate_graph_stats(results, 'average', alg_filter)
     generate_graph_stats(results, 'median', alg_filter)
     generate_graph_stats(results, 'range', alg_filter)
