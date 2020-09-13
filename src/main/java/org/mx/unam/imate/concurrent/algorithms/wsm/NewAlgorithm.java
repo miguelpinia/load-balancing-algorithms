@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
 import java.util.concurrent.atomic.AtomicInteger;
@@ -80,14 +75,15 @@ public class NewAlgorithm implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         head[label] = Math.max(head[label], Head.get());
-        int x = Tasks.get(head[label]);
-        if (x != BOTTOM) {
-            head[label]++;
-            Head.set(head[label]);
-            return x;
-        } else {
-            return EMPTY;
+        if (head[label] < Tasks.length()) {
+            int x = Tasks.get(head[label]);
+            if (x != BOTTOM) {
+                head[label]++;
+                Head.set(head[label]);
+                return x;
+            }
         }
+        return EMPTY;
     }
 
     @Override

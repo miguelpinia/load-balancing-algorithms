@@ -1,63 +1,40 @@
 package org.mx.unam.imate.concurrent.main;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.experiments.TestBattery;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
+import org.json.JSONObject;
+import org.mx.unam.imate.concurrent.algorithms.experiments.App;
 
 public class Main {
 
     public static void main(String[] args) {
-        File f = new File("properties.props");
-        Map<String, String> props = readProperties(f);
-        System.out.println(props);
-        String data[] = props.get("algorithms").split(";");
-        List<AlgorithmsType> types = new ArrayList<>();
-        for (String stringType : data) {
-            types.add(AlgorithmsType.valueOf(stringType));
-        }
-
-        GraphType type = GraphType.valueOf(props.get("graphType"));
-        int vertexSize = Integer.parseInt(props.get("vertexSize"));
-        StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(props.get("stepSpanningType"));
-        int iterations = Integer.parseInt(props.get("iterations"));
-        boolean directed = Boolean.valueOf(props.get("directed"));
-        TestBattery battery = new TestBattery(type, vertexSize, stepType, iterations, types, directed);
+        String header
+                = "=====================================\n"
+                + "=         reading properties        =\n"
+                + "=====================================\n";
+        File f = new File("config.json");
+        JSONObject props = readProperties(f);
+        System.out.println(header + props.toString(2));
+        App battery = new App(props);
         battery.compareAlgs();
     }
 
-    private static Map<String, String> readProperties(File f) {
-        Map<String, String> props = new HashMap<>();
-        BufferedReader br;
+    private static JSONObject readProperties(File f) {
         try {
-            br = Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8);
-            String line;
-            while ((line = br.readLine()) != null) {
-                String data[] = line.split(":");
-                props.put(data[0].trim(), data[1].trim());
-            }
-            br.close();
-        } catch (FileNotFoundException ex) {
-            System.out.println("Archivo no encontrado, cerrando el programa");
-            System.exit(0);
+            String json = new String(Files.readAllBytes(Paths.get(f.getName())), StandardCharsets.UTF_8.displayName());
+            JSONObject obj = new JSONObject(json);
+            return obj;
         } catch (IOException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file", ex);
         }
-        return props;
-
+        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file");
+        return null;
     }
 
 }

@@ -1,0 +1,30 @@
+{
+  "algorithms": [
+    "CILK",
+    "CHASELEV",
+    "IDEMPOTENT_LIFO",
+    "IDEMPOTENT_FIFO",
+    "IDEMPOTENT_DEQUE",
+    "WS_NC_MULT",
+    "B_WS_NC_MULT"
+  ],
+  "spanningTreeOptions": {
+    "graphType": "TORUS_3D_40",
+    "vertexSize": 100,
+    "stepSpanningType": "COUNTER",
+    "iterations": 5,
+    "directed": true,
+    "stealTime": true
+  },
+  "putSteals": {
+    "operations": 1000000
+  },
+  "putTakes": {
+    "operations": 1000000
+  },
+  "putsTakesSteals": {
+    "workers": 2,
+    "stealers": 1,
+    "operations": 1000000
+  }
+}

@@ -1,7 +1,9 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -10,6 +12,8 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 import sun.misc.Unsafe;
 
@@ -65,6 +69,24 @@ public class WorkStealingUtils {
             Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+    }
+
+    public static void saveJsonObjectToFile(JSONObject jo, String path) {
+        try (PrintWriter saveFile = new PrintWriter(path, StandardCharsets.UTF_8.displayName())) {
+            saveFile.println(jo.toString(2));
+            saveFile.flush();
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    public static void saveJsonArrayToFile(JSONArray ja, String path) {
+        try (PrintWriter saveFile = new PrintWriter(path, StandardCharsets.UTF_8.displayName())) {
+            saveFile.println(ja.toString(2));
+            saveFile.flush();
+        } catch (FileNotFoundException | UnsupportedEncodingException ex) {
+            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }

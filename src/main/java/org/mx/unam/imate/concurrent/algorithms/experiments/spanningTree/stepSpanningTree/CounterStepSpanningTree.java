@@ -21,8 +21,8 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
     public CounterStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
             WorkStealingStruct[] structs, Report report, boolean specialExecution,
-            AtomicIntegerArray visited, AtomicInteger counter) {
-        super(graph, root, color, parent, label, numThreads, struct, report, structs);
+            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime) {
+        super(graph, root, color, parent, label, numThreads, struct, report, stealTime, structs);
         this.specialExecution = specialExecution;
         this.visited = visited;
         this.counter = counter;
@@ -49,6 +49,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         int stolenItem;
         int thread;
         Iterator<Integer> it;
+        long time;
         do {
             while (!struct.isEmpty()) {
                 v = struct.take();
@@ -72,11 +73,18 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             }
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
+                time = System.nanoTime();
                 stolenItem = structs[thread].steal();
+                time = System.nanoTime() - time;
                 report.stealsIncrement();
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                     struct.put(stolenItem);
                     report.putsIncrement();
+                }
+                if (stealTime) {
+                    report.setMinSteal(time);
+                    report.setMaxSteal(time);
+                    report.updateAvgSteal(time);
                 }
             }
         } while (counter.get() < graph.getNumberVertices());
@@ -95,6 +103,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         int stolenItem;
         int thread;
         Iterator<Integer> it;
+        long time;
         do {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
@@ -118,11 +127,18 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             }
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
+                time = System.nanoTime();
                 stolenItem = structs[thread].steal(label - 1);
+                time = System.nanoTime() - time;
                 report.stealsIncrement();
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                     struct.put(stolenItem, label - 1);
                     report.putsIncrement();
+                }
+                if (stealTime) {
+                    report.setMinSteal(time);
+                    report.setMaxSteal(time);
+                    report.updateAvgSteal(time);
                 }
             }
         } while (counter.get() < graph.getNumberVertices());
