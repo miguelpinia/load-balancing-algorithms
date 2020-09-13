@@ -66,6 +66,8 @@ public class App {
     private static final String ALGORITHMS = "algorithms";
 
     private final JSONObject spanningTreeOptions;
+    private final JSONObject putStealsOptions;
+    private final JSONObject putTakesOptions;
     private final List<AlgorithmsType> types;
     private final boolean putSteals;
     private final boolean putTakes;
@@ -76,8 +78,10 @@ public class App {
     public App(JSONObject object) {
         this.spanningTree = object.has(SPANNING_TREE_OPTIONS);
         this.spanningTreeOptions = getOptionalValueJSONObj(object, SPANNING_TREE_OPTIONS);
-        this.putSteals = getOptionalValueBool(object, PUT_STEALS);
-        this.putTakes = getOptionalValueBool(object, PUT_TAKES);
+        this.putSteals = object.has(PUT_STEALS);
+        this.putStealsOptions = getOptionalValueJSONObj(object, PUT_STEALS);
+        this.putTakes = object.has(PUT_TAKES);
+        this.putTakesOptions = getOptionalValueJSONObj(object, PUT_TAKES);
         this.putsTakesSteals = object.has(PUTS_TAKES_STEALS);
         this.ptsOptions = getOptionalValueJSONObj(object, PUTS_TAKES_STEALS);
         this.types = processJSONArray(object.getJSONArray(ALGORITHMS));
@@ -115,7 +119,10 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            exp.putSteals(types);
+            int operations = putStealsOptions.getInt("operations");
+            JSONArray results = exp.putSteals(types, operations);
+            System.out.println(results.toString(2));
+            WorkStealingUtils.saveJsonArrayToFile(results, "putsSteals.json");
         }
         if (putTakes) {
             String header
@@ -124,7 +131,10 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            exp.putTakes(types);
+            int operations = putTakesOptions.getInt("operations");
+            JSONArray results = exp.putTakes(types, operations);
+            System.out.println(results.toString(2));
+            WorkStealingUtils.saveJsonArrayToFile(results, "putsTakes.json");
         }
         if (putsTakesSteals) {
             String header
@@ -135,7 +145,10 @@ public class App {
             System.out.println(header);
             int workers = ptsOptions.getInt("workers");
             int stealers = ptsOptions.getInt("stealers");
-            exp.putTakesSteals(types, workers, stealers);
+            int operations = ptsOptions.getInt("operations");
+            JSONObject results = exp.putTakesSteals(types, workers, stealers, operations);
+            System.out.println(results.toString(2));
+            WorkStealingUtils.saveJsonObjectToFile(results, "putsTakesSteals.json");
         }
         if (spanningTree) {
             String header
