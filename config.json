@@ -16,5 +16,15 @@
     "directed": true,
     "stealTime": true
   },
-  "putSteals": false
+  "putSteals": {
+    "operations": 1000000
+  },
+  "putTakes": {
+    "operations": 1000000
+  },
+  "putsTakesSteals": {
+    "workers": 2,
+    "stealers": 1,
+    "operations": 1000000
+  }
 }
