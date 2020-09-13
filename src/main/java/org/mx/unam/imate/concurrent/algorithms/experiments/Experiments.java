@@ -9,7 +9,6 @@ import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.WorkStealingStructLookUp;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 
 /**
  *
@@ -24,22 +23,22 @@ public class Experiments {
                 || type == AlgorithmsType.NBWSMULT_FIFO || type == AlgorithmsType.B_NBWSMULT_FIFO;
     }
 
-    public JSONArray putSteals(List<AlgorithmsType> types) {
+    public JSONArray putSteals(List<AlgorithmsType> types, int operations) {
         JSONArray results = new JSONArray();
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, 1000000, 1);
+            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, 1);
             long putTime;
             long stealTime_;
             long time;
             if (isOurWS(type)) {
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.put(i, 0);
                 }
                 putTime = System.nanoTime() - time;
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.steal(0);
                 }
                 stealTime_ = System.nanoTime() - time;
@@ -50,12 +49,12 @@ public class Experiments {
                 result.put("total_time_ns", total);
             } else {
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.put(i);
                 }
                 putTime = System.nanoTime() - time;
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.steal();
                 }
                 stealTime_ = System.nanoTime() - time;
@@ -67,27 +66,26 @@ public class Experiments {
             }
             results.put(result);
         });
-        System.out.println(results.toString(2));
-        WorkStealingUtils.saveJsonArrayToFile(results, "putsSteals.json");
+
         return results;
     }
 
-    public JSONArray putTakes(List<AlgorithmsType> types) {
+    public JSONArray putTakes(List<AlgorithmsType> types, int operations) {
         JSONArray results = new JSONArray();
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, 1000000, 1);
+            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, 1);
             long putTime;
             long takestime;
             long time;
             if (isOurWS(type)) {
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.put(i, 0);
                 }
                 putTime = System.nanoTime() - time;
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.take(0);
                 }
                 takestime = System.nanoTime() - time;
@@ -99,12 +97,12 @@ public class Experiments {
                 results.put(result);
             } else {
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.put(i);
                 }
                 putTime = System.nanoTime() - time;
                 time = System.nanoTime();
-                for (int i = 0; i < 1000000; i++) {
+                for (int i = 0; i < operations; i++) {
                     alg.steal();
                 }
                 takestime = System.nanoTime() - time;
@@ -116,12 +114,10 @@ public class Experiments {
                 results.put(result);
             }
         });
-        System.out.println(results.toString(2));
-        WorkStealingUtils.saveJsonArrayToFile(results, "putsTakes.json");
         return results;
     }
 
-    public JSONObject putTakesSteals(List<AlgorithmsType> types, int numWorkers, int numStealers) {
+    public JSONObject putTakesSteals(List<AlgorithmsType> types, int numWorkers, int numStealers, int operations) {
         JSONObject output = new JSONObject();
         output.put("workers", numWorkers);
         output.put("stealers", numStealers);
@@ -135,7 +131,7 @@ public class Experiments {
             long takeTime = 0;
             long stealTime = 0;
             for (int i = 0; i < workers.length; i++) {
-                workers[i] = WorkStealingStructLookUp.getWorkStealingStruct(type, 1000000, totalThreads);
+                workers[i] = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, totalThreads);
             }
             if (isOurWS(type)) {
                 // Hacemos puts
@@ -170,7 +166,7 @@ public class Experiments {
             } else {
                 putTime = System.nanoTime();
                 for (WorkStealingStruct worker : workers) {
-                    for (int i = 0; i < 1000000; i++) {
+                    for (int i = 0; i < operations; i++) {
                         worker.put(i);
                     }
                 }
@@ -199,8 +195,6 @@ public class Experiments {
             results.put(result);
         });
         output.put("results", results);
-        System.out.println(output.toString(2));
-        WorkStealingUtils.saveJsonObjectToFile(output, "putsTakesSteals.json");
         return output;
     }
 

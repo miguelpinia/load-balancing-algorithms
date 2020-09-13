@@ -1,8 +1,11 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
@@ -75,11 +78,13 @@ public class StatisticsST {
             steals.add(reporte.getSteals());
         });
 
+        Function<Double, Double> rounding = a -> BigDecimal.valueOf(a).setScale(4, RoundingMode.HALF_DOWN).doubleValue();
+
         long median = median(values2Median);
-        double average = values2Median.stream().mapToDouble(a -> a).average().getAsDouble();
-        double averageTakes = takes.stream().mapToDouble(a -> a).average().getAsDouble();
-        double averagePuts = puts.stream().mapToDouble(a -> a).average().getAsDouble();
-        double averageSteals = steals.stream().mapToDouble(a -> a).average().getAsDouble();
+        double average = rounding.apply(values2Median.stream().mapToDouble(a -> a).average().getAsDouble());
+        double averageTakes = rounding.apply(takes.stream().mapToDouble(a -> a).average().getAsDouble());
+        double averagePuts = rounding.apply(puts.stream().mapToDouble(a -> a).average().getAsDouble());
+        double averageSteals = rounding.apply(steals.stream().mapToDouble(a -> a).average().getAsDouble());
 
         JSONObject stats = new JSONObject();
         stats.put("bestTime", best);
@@ -91,15 +96,15 @@ public class StatisticsST {
         results.put("statistics", stats);
 //        System.out.println("Gráfica:\t" + reports.get(0).getGraphType());
 //        System.out.println("Algoritmo:\t" + reports.get(0).getAlgType());
-        System.out.println(String.format("Best time (ns):\t%d", best));
-        System.out.println(String.format("Best time (ms):\t%d", best / 1000000));
+        System.out.println(String.format("Best time (ns):\t\t%d", best));
+        System.out.println(String.format("Best time (ms):\t\t%.2f", (double) best / 1000000));
         System.out.println(String.format("Median time (ns):\t%d", median));
-        System.out.println(String.format("Median time (ms):\t%d", median / 1000000));
+        System.out.println(String.format("Median time (ms):\t%.2f", (double) median / 1000000));
         System.out.println(String.format("Time Average (ns):\t%.2f", average));
         System.out.println(String.format("Time Average (ms):\t%.2f", average / 1000000));
-        System.out.println(String.format("Takes Average:\t%.2f", averageTakes));
-        System.out.println(String.format("Puts Average:\t%.2f", averagePuts));
-        System.out.println(String.format("Steals Average:\t%.2f", averageSteals));
+        System.out.println(String.format("Takes Average:\t\t%.2f", averageTakes));
+        System.out.println(String.format("Puts Average:\t\t%.2f", averagePuts));
+        System.out.println(String.format("Steals Average:\t\t%.2f", averageSteals));
         return new Result(reports.get(0).getGraphType(),
                 reports.get(0).getAlgType(), median, average,
                 averageTakes, averagePuts, averageSteals, best);
