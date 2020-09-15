@@ -23,11 +23,14 @@ public class Experiments {
                 || type == AlgorithmsType.NBWSMULT_FIFO || type == AlgorithmsType.B_NBWSMULT_FIFO;
     }
 
-    public JSONArray putSteals(List<AlgorithmsType> types, int operations) {
+    public JSONArray putSteals(List<AlgorithmsType> types, JSONObject options) {
+        int operations = options.getInt("operations");
+        int size = options.getInt("size");
         JSONArray results = new JSONArray();
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, 1);
+            WorkStealingStruct alg = WorkStealingStructLookUp
+                .getWorkStealingStruct(type, size, 1);
             long putTime;
             long stealTime_;
             long time;
@@ -45,7 +48,7 @@ public class Experiments {
                 long total = putTime + stealTime_;
                 result.put("Alg", type);
                 result.put("put_time_ns", putTime);
-                result.put("take_time_ns", stealTime_);
+                result.put("steal_time_ns", stealTime_);
                 result.put("total_time_ns", total);
             } else {
                 time = System.nanoTime();
@@ -61,7 +64,7 @@ public class Experiments {
                 long total = putTime + stealTime_;
                 result.put("Alg", type);
                 result.put("put_time_ns", putTime);
-                result.put("take_time_ns", stealTime_);
+                result.put("steal_time_ns", stealTime_);
                 result.put("total_time_ns", total);
             }
             results.put(result);
@@ -70,11 +73,14 @@ public class Experiments {
         return results;
     }
 
-    public JSONArray putTakes(List<AlgorithmsType> types, int operations) {
+    public JSONArray putTakes(List<AlgorithmsType> types, JSONObject options) {
+        int operations = options.getInt("operations");
+        int size = options.getInt("size");
         JSONArray results = new JSONArray();
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, 1);
+            WorkStealingStruct alg = WorkStealingStructLookUp
+                .getWorkStealingStruct(type, size, 1);
             long putTime;
             long takestime;
             long time;
@@ -117,10 +123,16 @@ public class Experiments {
         return results;
     }
 
-    public JSONObject putTakesSteals(List<AlgorithmsType> types, int numWorkers, int numStealers, int operations) {
+    public JSONObject putTakesSteals(List<AlgorithmsType> types, JSONObject options) {
+        int numWorkers = options.getInt("workers");
+        int numStealers = options.getInt("stealers");
+        int operations = options.getInt("operations");
+        int size = options.getInt("size");
         JSONObject output = new JSONObject();
         output.put("workers", numWorkers);
         output.put("stealers", numStealers);
+        output.put("operations", operations);
+        output.put("structSize", size);
         JSONArray results = new JSONArray();
         types.forEach(type -> {
             JSONObject result = new JSONObject();
@@ -131,7 +143,8 @@ public class Experiments {
             long takeTime = 0;
             long stealTime = 0;
             for (int i = 0; i < workers.length; i++) {
-                workers[i] = WorkStealingStructLookUp.getWorkStealingStruct(type, operations, totalThreads);
+                workers[i] = WorkStealingStructLookUp
+                    .getWorkStealingStruct(type, size, totalThreads);
             }
             if (isOurWS(type)) {
                 // Hacemos puts
@@ -159,9 +172,9 @@ public class Experiments {
                     stealTime += aux;
                 }
                 result.put("algorithm", type.name());
-                result.put("putTime", putTime);
-                result.put("takeTime", takeTime);
-                result.put("stealTime", stealTime);
+                result.put("put_time", putTime);
+                result.put("take_time", takeTime);
+                result.put("steal_time", stealTime);
                 result.put("total", putTime + takeTime + stealTime);
             } else {
                 putTime = System.nanoTime();
@@ -187,9 +200,9 @@ public class Experiments {
                     stealTime += aux;
                 }
                 result.put("algorithm", type.name());
-                result.put("putTime", putTime);
-                result.put("takeTime", takeTime);
-                result.put("stealTime", stealTime);
+                result.put("put_time", putTime);
+                result.put("take_time", takeTime);
+                result.put("steal_time", stealTime);
                 result.put("total", putTime + takeTime + stealTime);
             }
             results.put(result);
