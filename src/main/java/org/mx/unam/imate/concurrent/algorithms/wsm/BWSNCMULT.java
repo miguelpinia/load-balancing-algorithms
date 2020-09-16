@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -11,19 +12,20 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class NewAlgorithm implements WorkStealingStruct {
+public class BWSNCMULT implements WorkStealingStruct {
 
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
-    private static final int TOP = -3;
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
+    private final AtomicInteger Tail;
     private AtomicIntegerArray Tasks;
+    private AtomicBoolean[] B;
 
-    private final int[] tail;
     private final int[] head;
+    private int tail;
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -32,19 +34,22 @@ public class NewAlgorithm implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public NewAlgorithm(int size, int numThreads) {
-        this.tail = new int[numThreads];
+    public BWSNCMULT(int size, int numThreads) {
+        this.tail = 0;
         this.head = new int[numThreads];
+        this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
-        int array[] = new int[size + 1];
+        int array[] = new int[size + 2];
+        this.B = new AtomicBoolean[size + 2];
         for (int i = 0; i < numThreads; i++) {
-            tail[i] = 0;
             head[i] = 1;
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = BOTTOM;
+            B[i] = new AtomicBoolean(true);
         }
         this.Tasks = new AtomicIntegerArray(array); // Inicializar las tareas a bottom.
+
     }
 
     @Override
@@ -54,23 +59,23 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail[label] == Tasks.length() - 1) {
-            System.out.println("Expansión WS_NC_MULT: " + Tasks.length() + ", " + tail[label]);
+        if (Tasks.length() - 1 == tail) {
+            System.out.println("Expansión B_WS_NC_MUTL: " + Tasks.length() + ", " + tail);
             expand();
             put(task, label);
         }
-        tail[label] = tail[label] + 1;
-        Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
+        tail = tail + 1;
+        Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
         return true;
     }
 
     @Override
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail[label]) {
+        if (head[label] <= tail) {
             int x = Tasks.get(head[label]);
+            Head.set(head[label] + 1);
             head[label]++;
-            Head.set(head[label]);
             return x;
         } else {
             return EMPTY;
@@ -79,32 +84,43 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public int steal(int label) {
-        head[label] = Math.max(head[label], Head.get());
-        if (head[label] < Tasks.length()) {
+        while (true) {
+            head[label] = Math.max(head[label], Head.get());
             int x = Tasks.get(head[label]);
             if (x != BOTTOM) {
                 head[label]++;
-                Head.set(head[label]);
-                return x;
+                if (B[head[label]].getAndSet(false)) {
+                    Head.set(head[label]);
+                    return x;
+                }
+            } else {
+                return EMPTY;
             }
         }
-        return EMPTY;
+    }
+
+    public void expand() {
+        int size = Tasks.length();
+        AtomicIntegerArray a = new AtomicIntegerArray(size * 2);
+        AtomicBoolean[] b = new AtomicBoolean[size * 2];
+        unsafe.storeFence();
+        for (int i = 0; i < b.length; i++) {
+            b[i] = new AtomicBoolean(true);
+            unsafe.storeFence();
+        }
+        for (int i = 0; i < size; i++) {
+            a.set(i, Tasks.get(i));
+            b[i] = B[i];
+            unsafe.storeFence();
+        }
+        Tasks = a;
+        B = b;
+        unsafe.storeFence();
     }
 
     @Override
     public void put(int task) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    public void expand() {
-        AtomicIntegerArray a = new AtomicIntegerArray(2 * Tasks.length());
-        unsafe.storeFence();
-        for (int i = 0; i < Tasks.length(); i++) {
-            a.set(i, Tasks.get(i));
-            unsafe.storeFence();
-        }
-        Tasks = a;
-        unsafe.storeFence();
     }
 
     @Override
@@ -119,7 +135,7 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean isEmpty(int label) {
-        return head[label] > tail[label];
+        return head[label] > tail;
     }
 
 }
