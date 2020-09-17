@@ -178,13 +178,53 @@ def barchart_puts_takes_steals(path_file):
     plt.show()
 
 
+def main():
+    """#  TODO: Update description (MAPA 2020-09-17)"""
+    desc = '''
+    Herramienta para el estudio de algoritmos de
+    work-stealing. Actualmente permite realizar los gráficos de
+    comparación de los siguientes experimentos:\n
+    \n
+    - Spanning tree\n
+    - Puts-takes\n
+    - Puts-steals\n
+    - Puts-takes-steals\n'''
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument(
+        '-st',
+        '--spanningTree',
+        dest='filest',
+        help='''Genera la gráfica de estadísticas del Spanning Tree'''
+    )
+    parser.add_argument(
+        '-t',
+        '--putsTakes',
+        dest='filept',
+        help='''Genera la gráfica de puts y takes''')
+    parser.add_argument(
+        '-s',
+        '--putsSteals',
+        dest='fileps',
+        help='''Genera la gráfica de puts y steals''')
+    parser.add_argument(
+        '-ts',
+        '--putsTakesSteals',
+        dest='filepts',
+        help='''Genera la gráfica de puts, takes y steals''')
+    args = parser.parse_args()
+    if args.filept:
+        barchart_puts_takes(args.filept)
+    if args.fileps:
+        barchart_puts_steals(args.fileps)
+    if args.filepts:
+        barchart_puts_takes_steals(args.filepts)
+    if args.filest:
+        results = read_json(args.filest)
+        generate_graph_stats(results, 'average')
+        generate_graph_stats(results, 'median')
+        generate_graph_stats(results, 'range')
+        generate_graph_stats(results, 'std')
+
+
 if __name__ == '__main__':
-    filename = sys.argv[1]
-    results = read_json(filename)
-    alg_filter = None
-    if len(sys.argv) > 2:
-        alg_filter = ['B_WS_NC_MULT', 'WS_NC_MULT', 'IDEMPOTENT_FIFO', 'CILK']
-    generate_graph_stats(results, 'average', alg_filter)
-    generate_graph_stats(results, 'median', alg_filter)
-    generate_graph_stats(results, 'range', alg_filter)
-    generate_graph_stats(results, 'std', alg_filter)
+    main()
