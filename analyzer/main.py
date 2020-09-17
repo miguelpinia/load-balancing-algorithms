@@ -87,24 +87,95 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         'Graph: {}, Statistics type: {}'.format(
             results['graphType'],
             stat_type))
-    x = np.arange(1, procs + 1)
     actions = ['takes', 'puts', 'steals', 'time']
     for i, ax in enumerate(axes.flat):
         for alg in algs:
-            ax.plot(x, data[actions[i]][alg], '-o', label=alg)
+            ax.plot(np.arange(1, procs + 1),
+                    data[actions[i]][alg], '-o', label=alg)
             if i == 3:
                 ax.set_ylabel('Nanoseconds')
         ax.set_title('{} {}'.format(actions[i], stat_type).title())
         ax.grid()
         ax.legend()
     plt.gcf().set_size_inches(19.2, 10.8)
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
+    current_time = datetime.now().strftime("%H:%M:%S")
     plt.savefig(
         'statistics-{}-{}-{}.png'.format(results['graphType'],
                                          stat_type, current_time),
         dpi=200)
     plt.close('all')
+
+
+def barchart_puts_steals(path_file):
+    """Generate barcharts comparing put and steal times"""
+    json_data = read_json(path_file)
+    algs = list(map(lambda d: d['Alg'], json_data))
+    steals = list(map(lambda d: d['steal_time'], json_data))
+    puts = list(map(lambda d: d['put_time'], json_data))
+    total = list(map(lambda d: d['total_time'], json_data))
+    ind = np.arange(len(algs))
+    width = 0.35
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - (2 * width / 3), puts, width, label='Puts')
+    ax.bar(ind, steals, width, label='Steals')
+    ax.bar(ind + (2 * width / 3), total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts and steals')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def barchart_puts_takes(path_file):
+    """Generate barcharts comparing put and takes times"""
+    json_data = read_json(path_file)
+    algs = list(map(lambda d: d['Alg'], json_data))
+    takes = list(map(lambda d: d['take_time'], json_data))
+    puts = list(map(lambda d: d['put_time'], json_data))
+    total = list(map(lambda d: d['total_time'], json_data))
+    ind = np.arange(len(algs))
+    width = 0.25
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - width, puts, width, label='Puts')
+    ax.bar(ind, takes, width, label='Takes')
+    ax.bar(ind + width, total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts and takes')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def barchart_puts_takes_steals(path_file):
+    """Generate barcharts comparing put, takes and steal times"""
+    json_data = read_json(path_file)
+    info = json_data['results']
+    algs = list(map(lambda d: d['Alg'], info))
+    takes = list(map(lambda d: d['take_time'], info))
+    steals = list(map(lambda d: d['steal_time'], info))
+    puts = list(map(lambda d: d['put_time'], info))
+    total = list(map(lambda d: d['total_time'], info))
+    ind = np.arange(len(algs))
+    width = 0.2
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - (3 * width / 2), puts, width, label='Puts')
+    ax.bar(ind - (width / 2), takes, width, label='Takes')
+    ax.bar(ind + (width / 2), steals, width, label='Steals')
+    ax.bar(ind + (3 * width / 2), total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts, takes and steals')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
 
 
 if __name__ == '__main__':
