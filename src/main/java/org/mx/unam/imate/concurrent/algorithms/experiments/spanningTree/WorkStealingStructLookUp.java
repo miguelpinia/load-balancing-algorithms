@@ -8,9 +8,9 @@ import org.mx.unam.imate.concurrent.algorithms.idempotent.IdempotentWorkStealing
 import org.mx.unam.imate.concurrent.algorithms.idempotent.IdempotentWorkStealingFIFO;
 import org.mx.unam.imate.concurrent.algorithms.idempotent.IdempotentWorkStealingLIFO;
 import org.mx.unam.imate.concurrent.algorithms.simple.SIMPLEWorkStealing;
-import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedNewAlgorithm;
+import org.mx.unam.imate.concurrent.algorithms.wsm.BWSNCMULT;
 import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedNonBlockingWorkStealingMultFIFO;
-import org.mx.unam.imate.concurrent.algorithms.wsm.NewAlgorithm;
+import org.mx.unam.imate.concurrent.algorithms.wsm.WSNCMULT;
 import org.mx.unam.imate.concurrent.algorithms.wsm.NonBlockingWorkStealingMultFIFO;
 
 /**
@@ -47,9 +47,9 @@ public class WorkStealingStructLookUp {
             case IDEMPOTENT_LIFO:
                 return new IdempotentWorkStealingLIFO(size);
             case WS_NC_MULT:
-                return new NewAlgorithm(size, numThreads);
+                return new WSNCMULT(size, numThreads);
             case B_WS_NC_MULT:
-                return new BoundedNewAlgorithm(size, numThreads);
+                return new BWSNCMULT(size, numThreads);
             case NBWSMULT_FIFO:
                 return new NonBlockingWorkStealingMultFIFO(size, numThreads);
             case B_NBWSMULT_FIFO:

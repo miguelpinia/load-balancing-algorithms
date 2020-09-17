@@ -1,14 +1,18 @@
-from ast import literal_eval
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Generate charts
+Author: Miguel Angel Piña Avelino
+email: miguel_pinia@ciencias.unam.mx
+twitter: @miguelpinia
+"""
+
+import argparse
 from datetime import datetime
-from distutils.util import strtobool
-from pprint import pprint
 
-
-import re
-import sys
 import json
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,12 +25,12 @@ def read_json(path_file):
 
 
 def stats(results):
+    """Calculate statistics from results json"""
     procs = results['processors']
     execs = results['executions']
     iters = results['iterations']
     algs = results['algorithms']
     vals = {alg: {} for alg in algs}
-    width = 0.2
     for proc in range(0, procs):
         thread = execs['thread-{}'.format(proc)]
         for alg in algs:
@@ -58,21 +62,22 @@ def stats(results):
 
 
 def get_data(result_type, stat_type, vals, procs):
+    """Get the specified data from vals"""
     return [d[result_type]
             for d in [d1[stat_type]
                       for d1 in [vals[i] for i in range(0, procs)]]]
 
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
+    """#  TODO: Update description (MAPA 2020-09-17)"""
     if alg_filter is not None:
         algs = [alg for alg in results['algorithms'] if alg in alg_filter]
     else:
         algs = results['algorithms']
     procs = results['processors']
-    st = stats(results)
     data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}}
     for alg in algs:
-        vals = st[alg]
+        vals = stats(results)[alg]
         data['takes'][alg] = get_data('takes', stat_type, vals, procs)
         data['puts'][alg] = get_data('puts', stat_type, vals, procs)
         data['steals'][alg] = get_data('steals', stat_type, vals, procs)
@@ -82,19 +87,18 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         'Graph: {}, Statistics type: {}'.format(
             results['graphType'],
             stat_type))
-    x = np.arange(1, procs + 1)
     actions = ['takes', 'puts', 'steals', 'time']
     for i, ax in enumerate(axes.flat):
         for alg in algs:
-            ax.plot(x, data[actions[i]][alg], '-o', label=alg)
+            ax.plot(np.arange(1, procs + 1),
+                    data[actions[i]][alg], '-o', label=alg)
             if i == 3:
                 ax.set_ylabel('Nanoseconds')
         ax.set_title('{} {}'.format(actions[i], stat_type).title())
         ax.grid()
         ax.legend()
     plt.gcf().set_size_inches(19.2, 10.8)
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
+    current_time = datetime.now().strftime("%H:%M:%S")
     plt.savefig(
         'statistics-{}-{}-{}.png'.format(results['graphType'],
                                          stat_type, current_time),
@@ -102,13 +106,125 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
     plt.close('all')
 
 
+def barchart_puts_steals(path_file):
+    """Generate barcharts comparing put and steal times"""
+    json_data = read_json(path_file)
+    algs = list(map(lambda d: d['Alg'], json_data))
+    steals = list(map(lambda d: d['steal_time'], json_data))
+    puts = list(map(lambda d: d['put_time'], json_data))
+    total = list(map(lambda d: d['total_time'], json_data))
+    ind = np.arange(len(algs))
+    width = 0.35
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - (2 * width / 3), puts, width, label='Puts')
+    ax.bar(ind, steals, width, label='Steals')
+    ax.bar(ind + (2 * width / 3), total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts and steals')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def barchart_puts_takes(path_file):
+    """Generate barcharts comparing put and takes times"""
+    json_data = read_json(path_file)
+    algs = list(map(lambda d: d['Alg'], json_data))
+    takes = list(map(lambda d: d['take_time'], json_data))
+    puts = list(map(lambda d: d['put_time'], json_data))
+    total = list(map(lambda d: d['total_time'], json_data))
+    ind = np.arange(len(algs))
+    width = 0.25
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - width, puts, width, label='Puts')
+    ax.bar(ind, takes, width, label='Takes')
+    ax.bar(ind + width, total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts and takes')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def barchart_puts_takes_steals(path_file):
+    """Generate barcharts comparing put, takes and steal times"""
+    json_data = read_json(path_file)
+    info = json_data['results']
+    algs = list(map(lambda d: d['Alg'], info))
+    takes = list(map(lambda d: d['take_time'], info))
+    steals = list(map(lambda d: d['steal_time'], info))
+    puts = list(map(lambda d: d['put_time'], info))
+    total = list(map(lambda d: d['total_time'], info))
+    ind = np.arange(len(algs))
+    width = 0.2
+    fig, ax = plt.subplots()
+    ax.grid(linestyle='--', linewidth=0.2)
+    ax.bar(ind - (3 * width / 2), puts, width, label='Puts')
+    ax.bar(ind - (width / 2), takes, width, label='Takes')
+    ax.bar(ind + (width / 2), steals, width, label='Steals')
+    ax.bar(ind + (3 * width / 2), total, width, label='Total')
+    ax.set_ylabel('Time')
+    ax.set_title('Time done by puts, takes and steals')
+    ax.set_xticks(ind)
+    ax.set_xticklabels(algs)
+    ax.legend()
+    fig.tight_layout()
+    plt.show()
+
+
+def main():
+    """#  TODO: Update description (MAPA 2020-09-17)"""
+    desc = '''
+    Herramienta para el estudio de algoritmos de
+    work-stealing. Actualmente permite realizar los gráficos de
+    comparación de los siguientes experimentos:\n
+    \n
+    - Spanning tree\n
+    - Puts-takes\n
+    - Puts-steals\n
+    - Puts-takes-steals\n'''
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument(
+        '-st',
+        '--spanningTree',
+        dest='filest',
+        help='''Genera la gráfica de estadísticas del Spanning Tree'''
+    )
+    parser.add_argument(
+        '-t',
+        '--putsTakes',
+        dest='filept',
+        help='''Genera la gráfica de puts y takes''')
+    parser.add_argument(
+        '-s',
+        '--putsSteals',
+        dest='fileps',
+        help='''Genera la gráfica de puts y steals''')
+    parser.add_argument(
+        '-ts',
+        '--putsTakesSteals',
+        dest='filepts',
+        help='''Genera la gráfica de puts, takes y steals''')
+    args = parser.parse_args()
+    if args.filept:
+        barchart_puts_takes(args.filept)
+    if args.fileps:
+        barchart_puts_steals(args.fileps)
+    if args.filepts:
+        barchart_puts_takes_steals(args.filepts)
+    if args.filest:
+        results = read_json(args.filest)
+        generate_graph_stats(results, 'average')
+        generate_graph_stats(results, 'median')
+        generate_graph_stats(results, 'range')
+        generate_graph_stats(results, 'std')
+
+
 if __name__ == '__main__':
-    filename = sys.argv[1]
-    results = read_json(filename)
-    alg_filter = None
-    if len(sys.argv) > 2:
-        alg_filter = ['B_WS_NC_MULT', 'WS_NC_MULT', 'IDEMPOTENT_FIFO', 'CILK']
-    generate_graph_stats(results, 'average', alg_filter)
-    generate_graph_stats(results, 'median', alg_filter)
-    generate_graph_stats(results, 'range', alg_filter)
-    generate_graph_stats(results, 'std', alg_filter)
+    main()

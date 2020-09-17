@@ -11,7 +11,7 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class NewAlgorithm implements WorkStealingStruct {
+public class WSNCMULT implements WorkStealingStruct {
 
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
@@ -20,7 +20,7 @@ public class NewAlgorithm implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final AtomicIntegerArray Tasks;
+    private AtomicIntegerArray Tasks;
 
     private final int[] tail;
     private final int[] head;
@@ -32,7 +32,7 @@ public class NewAlgorithm implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public NewAlgorithm(int size, int numThreads) {
+    public WSNCMULT(int size, int numThreads) {
         this.tail = new int[numThreads];
         this.head = new int[numThreads];
         this.Head = new AtomicInteger(1);
@@ -54,6 +54,11 @@ public class NewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
+        if (tail[label] == Tasks.length() - 1) {
+            System.out.println("Expansión WS_NC_MULT: " + Tasks.length() + ", " + tail[label]);
+            expand();
+            put(task, label);
+        }
         tail[label] = tail[label] + 1;
         Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
         return true;
@@ -89,6 +94,17 @@ public class NewAlgorithm implements WorkStealingStruct {
     @Override
     public void put(int task) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void expand() {
+        AtomicIntegerArray a = new AtomicIntegerArray(2 * Tasks.length());
+        unsafe.storeFence();
+        for (int i = 0; i < Tasks.length(); i++) {
+            a.set(i, Tasks.get(i));
+            unsafe.storeFence();
+        }
+        Tasks = a;
+        unsafe.storeFence();
     }
 
     @Override

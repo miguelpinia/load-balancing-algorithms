@@ -12,7 +12,7 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class BoundedNewAlgorithm implements WorkStealingStruct {
+public class BWSNCMULT implements WorkStealingStruct {
 
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
@@ -21,8 +21,8 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
 
     private final AtomicInteger Head;
     private final AtomicInteger Tail;
-    private final AtomicIntegerArray Tasks;
-    private final AtomicBoolean[] B;
+    private AtomicIntegerArray Tasks;
+    private AtomicBoolean[] B;
 
     private final int[] head;
     private int tail;
@@ -34,7 +34,7 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public BoundedNewAlgorithm(int size, int numThreads) {
+    public BWSNCMULT(int size, int numThreads) {
         this.tail = 0;
         this.head = new int[numThreads];
         this.Tail = new AtomicInteger(0);
@@ -59,6 +59,11 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
+        if (Tasks.length() - 1 == tail) {
+            System.out.println("Expansión B_WS_NC_MUTL: " + Tasks.length() + ", " + tail);
+            expand();
+            put(task, label);
+        }
         tail = tail + 1;
         Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
         return true;
@@ -92,6 +97,25 @@ public class BoundedNewAlgorithm implements WorkStealingStruct {
                 return EMPTY;
             }
         }
+    }
+
+    public void expand() {
+        int size = Tasks.length();
+        AtomicIntegerArray a = new AtomicIntegerArray(size * 2);
+        AtomicBoolean[] b = new AtomicBoolean[size * 2];
+        unsafe.storeFence();
+        for (int i = 0; i < b.length; i++) {
+            b[i] = new AtomicBoolean(true);
+            unsafe.storeFence();
+        }
+        for (int i = 0; i < size; i++) {
+            a.set(i, Tasks.get(i));
+            b[i] = B[i];
+            unsafe.storeFence();
+        }
+        Tasks = a;
+        B = b;
+        unsafe.storeFence();
     }
 
     @Override
