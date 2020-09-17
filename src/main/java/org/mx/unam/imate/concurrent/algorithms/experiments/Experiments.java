@@ -59,9 +59,9 @@ public class Experiments {
             }
             long total = putTime + stealTime_;
             result.put("Alg", type);
-            result.put("put_time_ns", putTime);
-            result.put("steal_time_ns", stealTime_);
-            result.put("total_time_ns", total);
+            result.put("put_time", putTime);
+            result.put("steal_time", stealTime_);
+            result.put("total_time", total);
             results.put(result);
         });
 
@@ -104,9 +104,9 @@ public class Experiments {
             }
             long total = putTime + takestime;
             result.put("Alg", type);
-            result.put("put_time_ns", putTime);
-            result.put("take_time_ns", takestime);
-            result.put("total_time_ns", total);
+            result.put("put_time", putTime);
+            result.put("take_time", takestime);
+            result.put("total_time", total);
             results.put(result);
         });
         return results;
@@ -185,11 +185,11 @@ public class Experiments {
                 }
             }
             long total = putTime + takeTime + stealTime;
-            result.put("algorithm", type.name());
+            result.put("Alg", type.name());
             result.put("put_time", putTime);
             result.put("take_time", takeTime);
             result.put("steal_time", stealTime);
-            result.put("total", total);
+            result.put("total_time", total);
             results.put(result);
         });
         output.put("results", results);
