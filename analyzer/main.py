@@ -1,14 +1,18 @@
-from ast import literal_eval
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""
+Generate charts
+Author: Miguel Angel Piña Avelino
+email: miguel_pinia@ciencias.unam.mx
+twitter: @miguelpinia
+"""
+
+import argparse
 from datetime import datetime
-from distutils.util import strtobool
-from pprint import pprint
 
-
-import re
-import sys
 import json
 
-import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -21,12 +25,12 @@ def read_json(path_file):
 
 
 def stats(results):
+    """Calculate statistics from results json"""
     procs = results['processors']
     execs = results['executions']
     iters = results['iterations']
     algs = results['algorithms']
     vals = {alg: {} for alg in algs}
-    width = 0.2
     for proc in range(0, procs):
         thread = execs['thread-{}'.format(proc)]
         for alg in algs:
@@ -58,21 +62,22 @@ def stats(results):
 
 
 def get_data(result_type, stat_type, vals, procs):
+    """Get the specified data from vals"""
     return [d[result_type]
             for d in [d1[stat_type]
                       for d1 in [vals[i] for i in range(0, procs)]]]
 
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
+    """#  TODO: Update description (MAPA 2020-09-17)"""
     if alg_filter is not None:
         algs = [alg for alg in results['algorithms'] if alg in alg_filter]
     else:
         algs = results['algorithms']
     procs = results['processors']
-    st = stats(results)
     data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}}
     for alg in algs:
-        vals = st[alg]
+        vals = stats(results)[alg]
         data['takes'][alg] = get_data('takes', stat_type, vals, procs)
         data['puts'][alg] = get_data('puts', stat_type, vals, procs)
         data['steals'][alg] = get_data('steals', stat_type, vals, procs)
