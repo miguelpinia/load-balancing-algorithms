@@ -114,12 +114,12 @@ def barchart_puts_steals(path_file):
     puts = list(map(lambda d: d['put_time'], json_data))
     total = list(map(lambda d: d['total_time'], json_data))
     ind = np.arange(len(algs))
-    width = 0.35
+    width = 0.25
     fig, ax = plt.subplots()
     ax.grid(linestyle='--', linewidth=0.2)
-    ax.bar(ind - (2 * width / 3), puts, width, label='Puts')
+    ax.bar(ind - width, puts, width, label='Puts')
     ax.bar(ind, steals, width, label='Steals')
-    ax.bar(ind + (2 * width / 3), total, width, label='Total')
+    ax.bar(ind + width, total, width, label='Total')
     ax.set_ylabel('Time')
     ax.set_title('Time done by puts and steals')
     ax.set_xticks(ind)
