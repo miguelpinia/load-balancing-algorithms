@@ -55,7 +55,6 @@ public class WSNCMULT implements WorkStealingStruct {
     @Override
     public boolean put(int task, int label) {
         if (tail[label] == Tasks.length() - 1) {
-            System.out.println("Expansión WS_NC_MULT: " + Tasks.length() + ", " + tail[label]);
             expand();
             put(task, label);
         }

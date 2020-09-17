@@ -60,7 +60,6 @@ public class BWSNCMULT implements WorkStealingStruct {
     @Override
     public boolean put(int task, int label) {
         if (Tasks.length() - 1 == tail) {
-            System.out.println("Expansión B_WS_NC_MUTL: " + Tasks.length() + ", " + tail);
             expand();
             put(task, label);
         }
