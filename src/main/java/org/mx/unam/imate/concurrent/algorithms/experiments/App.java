@@ -119,8 +119,7 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            int operations = putStealsOptions.getInt("operations");
-            JSONArray results = exp.putSteals(types, operations);
+            JSONArray results = exp.putSteals(types, putStealsOptions);
             System.out.println(results.toString(2));
             WorkStealingUtils.saveJsonArrayToFile(results, "putsSteals.json");
         }
@@ -131,8 +130,7 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            int operations = putTakesOptions.getInt("operations");
-            JSONArray results = exp.putTakes(types, operations);
+            JSONArray results = exp.putTakes(types, putTakesOptions);
             System.out.println(results.toString(2));
             WorkStealingUtils.saveJsonArrayToFile(results, "putsTakes.json");
         }
@@ -143,10 +141,7 @@ public class App {
                     + "============================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            int workers = ptsOptions.getInt("workers");
-            int stealers = ptsOptions.getInt("stealers");
-            int operations = ptsOptions.getInt("operations");
-            JSONObject results = exp.putTakesSteals(types, workers, stealers, operations);
+            JSONObject results = exp.putTakesSteals(types, ptsOptions);
             System.out.println(results.toString(2));
             WorkStealingUtils.saveJsonObjectToFile(results, "putsTakesSteals.json");
         }
