@@ -45,7 +45,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         // Inicializar valores de la estructura de datos
         tasks = new ArrayList<>();// ArrayList?
         this.arrayLength = arrayLength;
-        tasks.add(new NodeArrayInt(arrayLength + 1, BOTTOM));
+        tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
         nodes++;
         length = nodes * arrayLength;
     }
@@ -71,7 +71,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         }
         tail[label] = tail[label] + 1;
         // Equivalent to Tasks[tail].write(task)
-        tasks.get(nodes).setItem(tail[label] % arrayLength, task);
+        tasks.get(nodes - 1).setItem(tail[label] % arrayLength, task);
         return true;
     }
 
@@ -80,7 +80,8 @@ public class WSNCMULTLA implements WorkStealingStruct {
         head[label] = Math.max(head[label], Head.get());
         if (head[label] <= tail[label]) {
             int node = head[label] / arrayLength;
-            int x = tasks.get(node).get(head[label] % arrayLength);
+            int position = head[label] % arrayLength;
+            int x = tasks.get(node).get(position);
             head[label]++;
             Head.set(head[label]);
             return x;
@@ -94,7 +95,8 @@ public class WSNCMULTLA implements WorkStealingStruct {
         head[label] = Math.max(head[label], Head.get());
         if (head[label] < length) {
             int node = head[label] / arrayLength;
-            int x = tasks.get(node).get(head[label] % arrayLength);
+            int position = head[label] % arrayLength;
+            int x = tasks.get(node).get(position);
             if (x != BOTTOM) {
                 head[label]++;
                 Head.set(head[label]);

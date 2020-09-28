@@ -161,8 +161,16 @@ public class Parameters {
     }
 
     public boolean isSpecialExecution() {
-        return (algType == AlgorithmsType.NBWSMULT_FIFO || algType == AlgorithmsType.B_NBWSMULT_FIFO
-                || algType == AlgorithmsType.WS_NC_MULT || algType == AlgorithmsType.B_WS_NC_MULT);
+        switch (algType) {
+            case NBWSMULT_FIFO:
+            case B_NBWSMULT_FIFO:
+            case WS_NC_MULT:
+            case B_WS_NC_MULT:
+            case WS_NC_MULT_LA:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public int getNumIterExps() {
