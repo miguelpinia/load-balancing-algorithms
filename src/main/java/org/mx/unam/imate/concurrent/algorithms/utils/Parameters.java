@@ -215,11 +215,11 @@ public class Parameters {
 
     @Override
     public String toString() {
-        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report
-                + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize="
-                + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType="
-                + stepSpanningTreeType + ", directed=" + directed + ", stealTime:" + stealTime
-                + '}';
+        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report="
+                + report + ", numThreads=" + numThreads + ", algType=" + algType
+                + ", structSize=" + structSize + ", numIterExps=" + numIterExps
+                + ", stepSpanningTreeType=" + stepSpanningTreeType + ", directed="
+                + directed + ", stealTime=" + stealTime + '}';
     }
 
 }
