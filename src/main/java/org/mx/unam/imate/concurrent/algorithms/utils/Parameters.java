@@ -141,18 +141,6 @@ public class Parameters {
     }
 
     public int getStructSize() {
-        switch (getType()) {
-            case TORUS_2D:
-            case TORUS_2D_60:
-                this.structSize = shape * shape;
-                break;
-            case TORUS_3D:
-            case TORUS_3D_40:
-                this.structSize = shape * shape * shape;
-                break;
-            default:
-                this.structSize = shape;
-        }
         return structSize;
     }
 
