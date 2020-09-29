@@ -130,6 +130,11 @@ public class WSNCMULTLA implements WorkStealingStruct {
             return items.get(idx);
         }
 
+        @Override
+        public String toString() {
+            return "NodeArrayInt{" + "length=" + length + ", items=" + items.toString() + '}';
+        }
+
     }
 
     @Override
