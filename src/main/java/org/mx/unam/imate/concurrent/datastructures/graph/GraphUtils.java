@@ -652,21 +652,39 @@ public class GraphUtils {
         visited[root] = true;
         queue.enqueue(root);
         int u;
-        while (!queue.isEmpty()) {
-            u = queue.dequeue();
-            Iterator<Integer> it = graph.getNeighbours(u).iterator();
-            while (it.hasNext()) {
-                Integer v = it.next();
-                if (!visited[v]) {
-                    visited[v] = true;
-                    queue.enqueue(v);
-                    parents[v] = u;
-                } else if (parents[u] != v) {
-                    return true;
+        if (graph.isDirected()) {
+            while (!queue.isEmpty()) {
+                u = queue.dequeue();
+                Iterator<Integer> it = graph.getChilds(u).iterator();
+                while (it.hasNext()) {
+                    Integer v = it.next();
+                    if (!visited[v]) {
+                        visited[v] = true;
+                        queue.enqueue(v);
+                        parents[v] = u;
+                    } else if (parents[u] != v) {
+                        return true;
+                    }
                 }
             }
+            return false;
+        } else {
+            while (!queue.isEmpty()) {
+                u = queue.dequeue();
+                Iterator<Integer> it = graph.getNeighbours(u).iterator();
+                while (it.hasNext()) {
+                    Integer v = it.next();
+                    if (!visited[v]) {
+                        visited[v] = true;
+                        queue.enqueue(v);
+                        parents[v] = u;
+                    } else if (parents[u] != v) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
-        return false;
     }
 
     /**
