@@ -63,7 +63,7 @@ public class SpanningTree {
         for (int i = 1; i < roots.length; i++) {
             parents.set(roots[i], roots[i - 1]);
         }
-        Graph tree = GraphUtils.buildFromParents(parents, graph.getRoot(), graph.isDirected());
+        Graph tree = GraphUtils.buildFromParents(parents, roots[0], graph.isDirected());
         return tree;
     }
 
