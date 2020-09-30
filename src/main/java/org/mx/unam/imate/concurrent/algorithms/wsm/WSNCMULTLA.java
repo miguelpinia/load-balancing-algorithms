@@ -67,7 +67,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail[label] == length - 1) {
             expand();
-            put(task, label);
+            return put(task, label);
         }
         tail[label] = tail[label] + 1;
         // Equivalent to Tasks[tail].write(task)
