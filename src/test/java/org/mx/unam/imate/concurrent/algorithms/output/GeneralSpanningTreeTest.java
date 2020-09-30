@@ -777,7 +777,6 @@ public class GeneralSpanningTreeTest {
     //////////////////////////////////////
     // Pruebas de algoritmo WSNCMULT_LA //
     //////////////////////////////////////
-
     @DisplayName("Test the execution of spanning tree for torus 2D using WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeWSNCMULTLATorus2D() {
@@ -813,7 +812,6 @@ public class GeneralSpanningTreeTest {
 //        String result = GraphUtils.detectType(tree);
 //        Assertions.assertEquals(GraphUtils.IS_TREE, result);
 //    }
-
     @DisplayName("Test the execution of spanning tree for torus 3D using WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeWSNCMULTLATorus3D() {
@@ -849,7 +847,6 @@ public class GeneralSpanningTreeTest {
 //        String result = GraphUtils.detectType(tree);
 //        Assertions.assertEquals(GraphUtils.IS_TREE, result);
 //    }
-
     @DisplayName("Test the execution of spanning tree for random graph using WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeWSNCMULTLARandom() {
@@ -867,11 +864,9 @@ public class GeneralSpanningTreeTest {
 //        String result = GraphUtils.detectType(tree);
 //        Assertions.assertEquals(GraphUtils.IS_TREE, result);
 //    }
-
-    // ////////////////////////////////////////////////////////////////
-    // // Test for the bounded version of WS_NC with list of arrays. //
-    // ////////////////////////////////////////////////////////////////
-
+    ////////////////////////////////////////////////////////////////
+    // Test for the bounded version of WS_NC with list of arrays. //
+    ////////////////////////////////////////////////////////////////
     @DisplayName("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeBWSNCMULTLATorus2D() {
@@ -907,7 +902,6 @@ public class GeneralSpanningTreeTest {
     //     String result = GraphUtils.detectType(tree);
     //     Assertions.assertEquals(GraphUtils.IS_TREE, result);
     // }
-
     @DisplayName("Test the execution of spanning tree for torus 3D using B_WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeBWSNCMULTLATorus3D() {
@@ -943,7 +937,6 @@ public class GeneralSpanningTreeTest {
 //        String result = GraphUtils.detectType(tree);
 //        Assertions.assertEquals(GraphUtils.IS_TREE, result);
 //    }
-
     @DisplayName("Test the execution of spanning tree for random graph using B_WS_NC_MULT_LA algorithm")
     @Test
     public void testSpanningTreeBWSNCMULTLARandom() {
@@ -958,6 +951,190 @@ public class GeneralSpanningTreeTest {
     // public void testSpanningTreeBWSNCMULTLADirectedRandom() {
     //     System.out.println("Test the execution of spanning tree for directed random graph using B_WS_NC_MULT_LA algorithm");
     //     Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_WS_NC_MULT_LA, 1000000, 8, 4096, false, true);
+    //     String result = GraphUtils.detectType(tree);
+    //     Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    // }
+    ////////////////////////////////////////////////////////////////
+    // Test for the new bounded version of WS_NC using one array. //
+    ////////////////////////////////////////////////////////////////
+    @DisplayName("Test the execution of spanning tree for torus 2D using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTTorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NEW_B_WS_NC_MULT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTDirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NEW_B_WS_NC_MULT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTTorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NEW_B_WS_NC_MULT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTDirectedTorus2D60() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D60 using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NEW_B_WS_NC_MULT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTTorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NEW_B_WS_NC_MULT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTDirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NEW_B_WS_NC_MULT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTTorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NEW_B_WS_NC_MULT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTDirectedTorus3D40() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D40 using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NEW_B_WS_NC_MULT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for random graph using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTRandom() {
+        System.out.println("Test the execution of spanning tree for random graph using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_B_WS_NC_MULT, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed random graph using NEW_B_WS_NC_MULT algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTDirectedRandom() {
+        System.out.println("Test the execution of spanning tree for directed random graph using NEW_B_WS_NC_MULT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_B_WS_NC_MULT, 1000000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // Test for the new bounded version of WS_NC using one array list of arrays. //
+    ///////////////////////////////////////////////////////////////////////////////
+
+    @DisplayName("Test the execution of spanning tree for torus 2D using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLATorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLADirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLATorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+//    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using NEW_B_WS_NC_MULT_LA algorithm")
+//    @Test
+//    public void testSpanningTreeNEWBWSNCMULTLADirectedTorus2D60() {
+//        System.out.println("Test the execution of spanning tree for directed torus 2D60 using NEW_B_WS_NC_MULT_LA algorithm");
+//        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000, 8, 4096, false, true);
+//        String result = GraphUtils.detectType(tree);
+//        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+//    }
+    @DisplayName("Test the execution of spanning tree for torus 3D using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLATorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLADirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLATorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+//    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using NEW_B_WS_NC_MULT_LA algorithm")
+//    @Test
+//    public void testSpanningTreeNEWBWSNCMULTLADirectedTorus3D40() {
+//        System.out.println("Test the execution of spanning tree for directed torus 3D40 using NEW_B_WS_NC_MULT_LA algorithm");
+//        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 100, 8, 4096, false, true);
+//        String result = GraphUtils.detectType(tree);
+//        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+//    }
+    @DisplayName("Test the execution of spanning tree for random graph using NEW_B_WS_NC_MULT_LA algorithm")
+    @Test
+    public void testSpanningTreeNEWBWSNCMULTLARandom() {
+        System.out.println("Test the execution of spanning tree for random graph using NEW_B_WS_NC_MULT_LA algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    // @DisplayName("Test the execution of spanning tree for directed random graph using NEW_B_WS_NC_MULT_LA algorithm")
+    // @Test
+    // public void testSpanningTreeNEWBWSNCMULTLADirectedRandom() {
+    //     System.out.println("Test the execution of spanning tree for directed random graph using NEW_B_WS_NC_MULT_LA algorithm");
+    //     Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000000, 8, 4096, false, true);
     //     String result = GraphUtils.detectType(tree);
     //     Assertions.assertEquals(GraphUtils.IS_TREE, result);
     // }
