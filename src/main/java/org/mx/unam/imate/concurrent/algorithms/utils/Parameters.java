@@ -156,6 +156,8 @@ public class Parameters {
             case B_WS_NC_MULT:
             case WS_NC_MULT_LA:
             case B_WS_NC_MULT_LA:
+            case NEW_B_WS_NC_MULT:
+            case NEW_B_WS_NC_MULT_LA:
                 return true;
             default:
                 return false;

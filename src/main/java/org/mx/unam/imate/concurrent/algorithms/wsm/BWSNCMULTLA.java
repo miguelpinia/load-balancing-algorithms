@@ -84,12 +84,12 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
         if (head[label] <= tail) {
-            int h = head[label];
-            int node = h / arrayLength;
-            int position = h % arrayLength;
+//            int h = head[label];
+            int node = head[label] / arrayLength;
+            int position = head[label] % arrayLength;
             int x = tasks.get(node).get(position);
-            Head.set(h + 1);
-            head[label] = h + 1;
+            Head.set(head[label] + 1);
+            head[label]++;
             return x;
         } else {
             return EMPTY;
@@ -98,17 +98,21 @@ public class BWSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public int steal(int label) {
-        int h = 0;
         while (true) {
-            h = Math.max(head[label], Head.get());
-            int node = h / arrayLength;
-            int position = h % arrayLength;
-            int x = tasks.get(node).get(position);
-            if (x != BOTTOM) {
-                head[label] = h + 1;
-                if (B.get(node).getAtomicBoolean(position).getAndSet(false)) {
-                    Head.set(h + 1);
-                    return x;
+            head[label] = Math.max(head[label], Head.get());
+            int h = head[label];
+            if (h < length) {
+                int node = h / arrayLength;
+                int position = h % arrayLength;
+                int x = tasks.get(node).get(position);
+                if (x != BOTTOM) {
+                    head[label] = h + 1;
+                    if (B.get(node).getAtomicBoolean(position).getAndSet(false)) {
+                        Head.set(h + 1);
+                        return x;
+                    }
+                } else {
+                    return EMPTY;
                 }
             } else {
                 return EMPTY;
