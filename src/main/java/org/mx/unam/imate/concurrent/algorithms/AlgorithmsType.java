@@ -17,5 +17,6 @@ public enum AlgorithmsType {
     WS_NC_MULT,
     WS_NC_MULT_LA,
     B_NBWSMULT_FIFO,
-    B_WS_NC_MULT
+    B_WS_NC_MULT,
+    B_WS_NC_MULT_LA
 }
