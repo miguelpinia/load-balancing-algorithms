@@ -65,11 +65,16 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
+        // length = 110
+        // tail = 99
         if (tail[label] == length - 1) {
             expand();
-            return put(task, label);
+            // ..., [a, b, c, ...], [-2, -2, -2, ...]
+            // return put(task, label); // Revisar que pasa cuando lo quito
+            // [ -2, a, b, c, d, ...]
         }
         tail[label] = tail[label] + 1;
+        // id owner: 1, tail = [0, 10000, 0, 0, 0, 0, 0]
         // Equivalent to Tasks[tail].write(task)
         tasks.get(nodes - 1).setItem(tail[label] % arrayLength, task);
         return true;
