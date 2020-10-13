@@ -30,13 +30,13 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     private int tail;
 
     public New_BWSNCMULTLA(int size, int numThreads) {
-        this.tail = 0;
-        this.head = new int[numThreads];
-        this.Head = new AtomicInteger(1);
+        this.tail = -1;
         this.nodes = 0;
         this.arrayLength = size;
+        this.Head = new AtomicInteger(0);
+        this.head = new int[numThreads];
         for (int i = 0; i < numThreads; i++) {
-            head[i] = 1;
+            head[i] = 0;
         }
         tasks = new ArrayList<>();
         tasks.add(new NodeArrayItem(arrayLength, BOTTOM));
@@ -47,7 +47,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     public void expand() {
         tasks.add(new NodeArrayItem(arrayLength, BOTTOM));
         unsafe.storeFence();
-        nodes = nodes + 1;
+        nodes++;
         length = nodes * arrayLength;
         unsafe.storeFence();
     }
@@ -59,11 +59,10 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail == length) {
+        if (tail == (length - 1)) {
             expand();
-            return put(task, label);
         }
-        tail = tail + 1;
+        tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
         return true;
     }
@@ -72,12 +71,12 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
         int h = head[label];
-        if (head[label] <= tail) {
-            int node = head[label] / arrayLength;
-            int position = head[label] % arrayLength;
+        if (h <= tail) {
+            int node = h / arrayLength;
+            int position = h % arrayLength;
             int x = tasks.get(node).getValue(position);
-            Head.set(head[label] + 1);
-            head[label]++;
+            Head.set(h + 1);
+            head[label] = h + 1;
             return x;
         } else {
             return EMPTY;
@@ -87,8 +86,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         while (true) {
-            head[label] = Math.max(head[label], Head.get());
-            int h = head[label];
+            int h = Math.max(head[label], Head.get());
             if (h < length) {
                 int node = h / arrayLength;
                 int position = h % arrayLength;
@@ -167,7 +165,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
         }
 
         public boolean setItem(int idx, int value) {
-            if (idx <= 0 || idx >= length) {
+            if (idx < 0 || idx  >= length) {
                 return false;
             }
             tasks.get(idx).setValue(value);
