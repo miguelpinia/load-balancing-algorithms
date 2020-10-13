@@ -1,0 +1,142 @@
+#+title: Algoritmos concurrentes
+#+author: Miguel Piña
+#+date: [2020-10-12 lun 12:56]
+o
+* Proyecto
+
+** Pruebas
+
+   Las pruebas son implementadas usando junit, hay multiples pruebas para
+   verificar distintos aspectos de la aplicacíón. Por ejemplo, en el caso de las
+   gráficas, se verifican que las propiedades de las gráficas se mantengan. Por
+   ejemplo, que si una gráfica dice ser dirigida, esta cumpla dicha propiedad,
+   si es un árbol, que se verifique que es un árbol. Así como los tipos de
+   gráficas generadas, se busca que estas mantengan sus propiedades topológicas
+   de acuerdo al tipo que son.
+
+   En el caso de los algoritmos de work-stealing, la forma en que son probados
+   es ejecutando el algoritmo de spanning-tree, utilizando gráficas de 1,000,000
+   de vertices y con distintas topologías. La versión del algoritmo de árbol
+   generador es la descrita en el artículo de David Bader (A fast, parallel
+   spanning tree algorithm for symetric multiprocessors).
+
+
+** Pruebas, concurrencia y correctez
+
+* Algoritmos de work-stealing
+
+** Compilación y ejecución del proyecto.
+
+*** Compilación rápida
+
+    Para compilar el proyecto, basta con compilarlo usando maven de la forma
+    usual:
+
+    #+begin_src bash :results output
+      mvn clean install
+    #+end_src
+
+    En promedio tarda de 2 a 4 minutos dependiendo del tipo de procesador de la
+    máquina. Durante este proceso, se compila, se ejecutan las pruebas unitarias
+    de la aplicación y se crea un archivo comprimido con todas las dependencias,
+    de modo que sea un programa stand-alone.
+
+*** Compilación rápida
+
+    En caso de querer quererse saltar la ejecución de las pruebas, ya sea para
+    probar cambios rápidos o por alguna otra razón, la instrucción para ejecutar
+    esto es la siguiente:
+
+    #+begin_src bash :results silent
+      mvn clean compile assembly:single
+    #+end_src
+
+    El cuál generá un archivo jar dentro de la carpeta *build/* nombrado
+    =concurrentAlgorithms-version-jar-with-dependencies.jar=, con todo lo
+    necesario para ejecutarse dentro de si.
+
+*** Ejecución
+
+    Para la ejecución del programa genenerado por este proyecto es necesario
+    incluir un archivo de tipo =json=, nombrado =config.json=, el cuál tiene por
+    llaves a a lo siguiente:
+
+    - algorithms :: Una lista de cadenas. Los valores permitidos para esas
+      cadenas son: "CILK", "CHASELEV", "IDEMPOTENT_LIFO", "IDEMPOTENT_FIFO",
+      "IDEMPOTENT_DEQUE", "WS_NC_MULT", "B_WS_NC_MULT". Estos algoritmos serán
+      evaluados en los siguientes experimentos (si son declarados):
+      =spanningTree=, =putSteals=, =putTakes=, =putTakesSteals=.
+
+    - spanningTreeOptions :: Un objeto utilizado para configurar la ejecución
+      del experimento de árbol generador. Este objeto cuenta con las siguientes
+      llaves:
+      - graphType :: Una cadena que representa el tipo de gráfica que se
+       utilizará para realizar el experimento. Las opciones disponibles de
+       gráficas son: "TORUS_2D", "TORUS_2D_60", "TORUS_3D", "TORUS_3D_40",
+       "RANDOM". Se tiene planeada una gráfica más, que es la KGRAPH, no
+       disponible oficialmente aún.
+      - vertexSize :: El número de vértices que contendrá la gráfica. Este
+        número debe ser tratado con cuidado, ya que es dependiente del tipo
+        gráfica. Es decir, para las gráficas tipo toro 2D, este número es la
+        raíz cuadrado del total de elementos esperados en la gráfica. Mientras
+        que en los toros 3D, el número es la raíz cúbica del total de
+        elementos. En el caso de la gráfica aleatoria, es el total de
+        elementos.
+      - stepSpanningTree :: El tipo de variante de árbol generador, basadas en
+        la forma de terminación del algoritmo. La primera es "COUNTER", que
+        lleva el conteo de todos los nodos procesados, cuando encuentra que ya
+        han sido revisados, termina la ejecución. La segunda variante es
+        "DOUBLE_COLLECT", la cuál simula una doble colecta para verificar que ya
+        no hay más trabajos por realizar.
+      - iterations :: El número de veces que se repetirá el experimento. Por
+        defecto son 5 iteraciones.
+      - directed :: Indica si la gráfica es dirigida o no.
+      - stealTime :: Si tomará el conteó de la ejecución de los steals.
+
+    - putSteals :: Objeto utilizado para configurar la ejecución del experimento
+      de realizar una cantidad determina de =puts= y la correspondiente cantidad
+      de =steals=. Este objeto cuenta con las siguientes llaves:
+      - operations :: El número de operaciones a ejecutar.
+      - size :: El tamaño inicial de las estructuras de datos asociadas a los
+        algoritmos de work-stealing.
+
+    - putTakes :: Objecto utilizado para configurar la ejecución del experimento
+      de realizar una cantidad determinada de =puts= y la correspondiente cantidad
+      de =takes=. Este objeto cuenta con las siguientes llaves:
+      - operations :: El número de operaciones a ejecutar.
+      - size :: El tamaño inicial de las estructuras de datos asociadas a los
+        algoritmos de work-stealing.
+
+    - putsTakesSteals :: Objeto utilizado para configurar la ejecución del
+      experimento de puts, takes & steals. La forma en que opera este
+      experimento es la siguiente: Se define un número de workers, que es el
+      número de instancias del algoritmo de workstealing. Se cuenta el tiempo
+      total que toma a todas las instancias realizar la ejecución de
+      puts. Después de que han terminado de insertar los elementos, se realiza
+      una etapa de take&steal. Se cuenta el tiempo en que todos los =workers=
+      realizan un take y posteriormente, dependiendo del número de stealers, se
+      realiza ese mismo número de =steals=. Todo esto se repite hasta que ya no
+      hayan datos que procesar. Este objeto cuenta con las siguientes llaves:
+      - workers :: El número de instancias que ejecutan el algoritmo de
+       workstealing.
+      - stealers :: El número de ladrones en el experimento. Este número es
+        menor o igual que el total de =workers=.
+      - operations :: El número de operaciones a ejecutar.
+      - size :: El tamaño inicial de las estructuras de datos asociadas a los
+        algoritmos de work-stealing.
+
+    Para ejecutar los experimentos, escribimos la siguiente instrucción (con el
+    jar y el archivo =.json= en la misma carpeta.
+
+    #+begin_src bash :results output
+      java -jar concurrentAlgorithms-version-jar-with-dependencies.jar
+    #+end_src
+
+    Una forma de hacer la compilación y ejecución del proyecto (con =config.json=
+    en la raíz) sería:
+
+    #+begin_src bash :results output
+      mvn clean compile assembly:single && \
+          cp target/concurrentAlgorithms-*-dependencies.jar cc.jar && \
+          java -jar cc.jar
+    #+end_src
