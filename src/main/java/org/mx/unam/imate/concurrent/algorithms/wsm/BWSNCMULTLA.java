@@ -35,25 +35,34 @@ public class BWSNCMULTLA implements WorkStealingStruct {
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
      * tareas.
      *
-     * @param arrayLength El tamaño del arreglo de tareas.
+     * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public BWSNCMULTLA(int arrayLength, int numThreads) {
-        this.tail = 0;
-        this.head = new int[numThreads];
-        this.Head = new AtomicInteger(1);
+    public BWSNCMULTLA(int size, int numThreads) {
+        this.tail = -1;
         this.nodes = 0;
-        this.arrayLength = arrayLength;
+        this.arrayLength = size;
+        this.Head = new AtomicInteger(0);
+        this.head = new int[numThreads];
         for (int i = 0; i < numThreads; i++) {
-            head[i] = 1;
+            head[i] = 0;
         }
-
         tasks = new ArrayList<>();
         B = new ArrayList<>();
+        tasks.add(new NodeArrayInt(size, BOTTOM));
+        B.add(new NodeArrayBool(size));
+        nodes++;
+        length = nodes * size;
+    }
+
+    public void expand() {
         tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
+        unsafe.storeFence();
         B.add(new NodeArrayBool(arrayLength));
+        unsafe.storeFence();
         nodes++;
         length = nodes * arrayLength;
+        unsafe.storeFence();
     }
 
     @Override
@@ -61,21 +70,12 @@ public class BWSNCMULTLA implements WorkStealingStruct {
         return head[label] > tail;
     }
 
-    public void expand() {
-        tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
-        B.add(new NodeArrayBool(arrayLength));
-        nodes = nodes + 1;
-        length = nodes * arrayLength;
-        unsafe.storeFence();
-    }
-
     @Override
     public boolean put(int task, int label) {
-        if (tail == length) {
+        if (tail == (length - 1)) {
             expand();
-            return put(task, label);
         }
-        tail = tail + 1;
+        tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
         return true;
     }
@@ -83,13 +83,13 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     @Override
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail) {
-//            int h = head[label];
-            int node = head[label] / arrayLength;
-            int position = head[label] % arrayLength;
-            int x = tasks.get(node).get(position);
-            Head.set(head[label] + 1);
-            head[label]++;
+        int h = head[label];
+        if (h <= tail) {
+            int node = h / arrayLength;
+            int position = h % arrayLength;
+            int x = tasks.get(node).getValue(position);
+            Head.set(h + 1);
+            head[label] = h + 1;
             return x;
         } else {
             return EMPTY;
@@ -99,15 +99,14 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         while (true) {
-            head[label] = Math.max(head[label], Head.get());
-            int h = head[label];
+            int h = Math.max(head[label], Head.get());
             if (h < length) {
                 int node = h / arrayLength;
                 int position = h % arrayLength;
-                int x = tasks.get(node).get(position);
+                int x = tasks.get(node).getValue(position);
                 if (x != BOTTOM) {
                     head[label] = h + 1;
-                    if (B.get(node).getAtomicBoolean(position).getAndSet(false)) {
+                    if (B.get(node).getSwap(position).getAndSet(false)) {
                         Head.set(h + 1);
                         return x;
                     }
@@ -135,14 +134,14 @@ public class BWSNCMULTLA implements WorkStealingStruct {
         }
 
         public boolean setItem(int idx, int value) {
-            if (idx <= 0 || idx >= length) {
+            if (idx < 0 || idx >= length) {
                 return false;
             }
             items.set(idx, value);
             return true;
         }
 
-        public int get(int idx) {
+        public int getValue(int idx) {
             return items.get(idx);
         }
 
@@ -162,14 +161,14 @@ public class BWSNCMULTLA implements WorkStealingStruct {
         }
 
         public boolean setItem(int idx, boolean value) {
-            if (idx <= 0 || idx >= length) {
+            if (idx < 0 || idx >= length) {
                 return false;
             }
             B[idx].set(value);
             return true;
         }
 
-        public AtomicBoolean getAtomicBoolean(int idx) {
+        public AtomicBoolean getSwap(int idx) {
             return B[idx];
         }
     }
