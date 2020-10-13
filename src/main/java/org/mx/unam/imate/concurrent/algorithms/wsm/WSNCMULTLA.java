@@ -32,20 +32,20 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     private final List<NodeArrayInt> tasks;
 
-    public WSNCMULTLA(int arrayLength, int numThreads) {
+    public WSNCMULTLA(int size, int numThreads) {
+        this.nodes = 0;
         this.tail = new int[numThreads];
         this.head = new int[numThreads];
-        this.Head = new AtomicInteger(1);
-        this.nodes = 0;
+        this.Head = new AtomicInteger(0);
         for (int i = 0; i < numThreads; i++) {
-            tail[i] = 0;
-            head[i] = 1;
+            tail[i] = -1;
+            head[i] = 0;
         }
 
         // Inicializar valores de la estructura de datos
         tasks = new ArrayList<>();// ArrayList?
-        this.arrayLength = arrayLength;
-        tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
+        arrayLength = size;
+        tasks.add(new NodeArrayInt(size, BOTTOM));
         nodes++;
         length = nodes * arrayLength;
     }
@@ -58,24 +58,17 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public void expand() {
         tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
         unsafe.storeFence();
-        nodes = nodes + 1;
+        nodes++;
         length = nodes * arrayLength;
         unsafe.storeFence();
     }
 
     @Override
     public boolean put(int task, int label) {
-        // length = 110
-        // tail = 99
-        if (tail[label] == length - 1) {
+        if (tail[label] == (length - 1)) {
             expand();
-            // ..., [a, b, c, ...], [-2, -2, -2, ...]
-            // return put(task, label); // Revisar que pasa cuando lo quito
-            // [ -2, a, b, c, d, ...]
         }
-        tail[label] = tail[label] + 1;
-        // id owner: 1, tail = [0, 10000, 0, 0, 0, 0, 0]
-        // Equivalent to Tasks[tail].write(task)
+        tail[label]++;
         tasks.get(nodes - 1).setItem(tail[label] % arrayLength, task);
         return true;
     }
@@ -83,12 +76,13 @@ public class WSNCMULTLA implements WorkStealingStruct {
     @Override
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail[label]) {
-            int node = head[label] / arrayLength;
-            int position = head[label] % arrayLength;
+        int h = head[label];
+        if (h <= tail[label]) {
+            int node = h / arrayLength;
+            int position = h % arrayLength;
             int x = tasks.get(node).get(position);
-            head[label]++;
-            Head.set(head[label]);
+            head[label] = h + 1;
+            Head.set(h + 1);
             return x;
         } else {
             return EMPTY;
@@ -98,13 +92,14 @@ public class WSNCMULTLA implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] < length) {
-            int node = head[label] / arrayLength;
-            int position = head[label] % arrayLength;
+        int h = head[label];
+        if (h < length) {
+            int node = h / arrayLength;
+            int position = h % arrayLength;
             int x = tasks.get(node).get(position);
             if (x != BOTTOM) {
-                head[label]++;
-                Head.set(head[label]);
+                head[label] = h + 1;
+                Head.set(h + 1);
                 return x;
             }
         }
@@ -124,7 +119,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         }
 
         public boolean setItem(int idx, int value) {
-            if (idx <= 0 || idx >= length) {
+            if (idx < 0 || idx >= length) {
                 return false;
             }
             items.set(idx, value);
