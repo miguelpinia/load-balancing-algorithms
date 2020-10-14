@@ -63,9 +63,10 @@ o
 
     - algorithms :: Una lista de cadenas. Los valores permitidos para esas
       cadenas son: "CILK", "CHASELEV", "IDEMPOTENT_LIFO", "IDEMPOTENT_FIFO",
-      "IDEMPOTENT_DEQUE", "WS_NC_MULT", "B_WS_NC_MULT". Estos algoritmos serán
-      evaluados en los siguientes experimentos (si son declarados):
-      =spanningTree=, =putSteals=, =putTakes=, =putTakesSteals=.
+      "IDEMPOTENT_DEQUE", "WS_NC_MULT", "B_WS_NC_MULT", "WS_NC_MULT_LA",
+      "B_WS_NC_MULT_LA", "NEW_B_WS_NC_MULT", "NEW_B_WS_NC_MULT_LA". Estos
+      algoritmos serán evaluados en los siguientes experimentos (si son
+      declarados): =spanningTree=, =putSteals=, =putTakes=, =putTakesSteals=.
 
     - spanningTreeOptions :: Un objeto utilizado para configurar la ejecución
       del experimento de árbol generador. Este objeto cuenta con las siguientes
@@ -82,14 +83,16 @@ o
         que en los toros 3D, el número es la raíz cúbica del total de
         elementos. En el caso de la gráfica aleatoria, es el total de
         elementos.
+      - structSize :: El tamaño inicial con el que empiezan las estructuras de
+        datos asociadas a los algoritmos de /work-stealing/.
       - stepSpanningTree :: El tipo de variante de árbol generador, basadas en
-        la forma de terminación del algoritmo. La primera es "COUNTER", que
+        la forma de terminación del algoritmo. La primera es /"COUNTER"/, que
         lleva el conteo de todos los nodos procesados, cuando encuentra que ya
         han sido revisados, termina la ejecución. La segunda variante es
-        "DOUBLE_COLLECT", la cuál simula una doble colecta para verificar que ya
+        /"DOUBLE_COLLECT"/, la cuál simula una doble colecta para verificar que ya
         no hay más trabajos por realizar.
-      - iterations :: El número de veces que se repetirá el experimento. Por
-        defecto son 5 iteraciones.
+      - iterations :: El número de veces que se repetirá el experimento. La
+        convención es indicar 5 iteraciones.
       - directed :: Indica si la gráfica es dirigida o no.
       - stealTime :: Si tomará el conteó de la ejecución de los steals.
 
