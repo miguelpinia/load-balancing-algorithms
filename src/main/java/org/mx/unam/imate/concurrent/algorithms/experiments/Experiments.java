@@ -132,7 +132,7 @@ public class Experiments {
         output.put("workers", numWorkers);
         output.put("stealers", numStealers);
         output.put("operations", operations);
-        output.put("structSize", size);
+        output.put("size", size);
         JSONArray results = new JSONArray();
         types.forEach(type -> {
             JSONObject result = new JSONObject();
