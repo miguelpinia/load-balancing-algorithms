@@ -141,18 +141,6 @@ public class Parameters {
     }
 
     public int getStructSize() {
-        switch (getType()) {
-            case TORUS_2D:
-            case TORUS_2D_60:
-                this.structSize = shape * shape;
-                break;
-            case TORUS_3D:
-            case TORUS_3D_40:
-                this.structSize = shape * shape * shape;
-                break;
-            default:
-                this.structSize = shape;
-        }
         return structSize;
     }
 
@@ -161,8 +149,19 @@ public class Parameters {
     }
 
     public boolean isSpecialExecution() {
-        return (algType == AlgorithmsType.NBWSMULT_FIFO || algType == AlgorithmsType.B_NBWSMULT_FIFO
-                || algType == AlgorithmsType.WS_NC_MULT || algType == AlgorithmsType.B_WS_NC_MULT);
+        switch (algType) {
+            case NBWSMULT_FIFO:
+            case B_NBWSMULT_FIFO:
+            case WS_NC_MULT:
+            case B_WS_NC_MULT:
+            case WS_NC_MULT_LA:
+            case B_WS_NC_MULT_LA:
+            case NEW_B_WS_NC_MULT:
+            case NEW_B_WS_NC_MULT_LA:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public int getNumIterExps() {
@@ -219,11 +218,11 @@ public class Parameters {
 
     @Override
     public String toString() {
-        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report=" + report
-                + ", numThreads=" + numThreads + ", algType=" + algType + ", structSize="
-                + structSize + ", numIterExps=" + numIterExps + ", stepSpanningTreeType="
-                + stepSpanningTreeType + ", directed=" + directed + ", stealTime:" + stealTime
-                + '}';
+        return "Parameters{" + "type=" + type + ", shape=" + shape + ", report="
+                + report + ", numThreads=" + numThreads + ", algType=" + algType
+                + ", structSize=" + structSize + ", numIterExps=" + numIterExps
+                + ", stepSpanningTreeType=" + stepSpanningTreeType + ", directed="
+                + directed + ", stealTime=" + stealTime + '}';
     }
 
 }

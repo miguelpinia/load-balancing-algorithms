@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -39,8 +40,8 @@ public class BWSNCMULT implements WorkStealingStruct {
         this.head = new int[numThreads];
         this.Tail = new AtomicInteger(0);
         this.Head = new AtomicInteger(1);
-        int array[] = new int[size + 2];
-        this.B = new AtomicBoolean[size + 2];
+        int array[] = new int[size];
+        this.B = new AtomicBoolean[size];
         for (int i = 0; i < numThreads; i++) {
             head[i] = 1;
         }
@@ -59,7 +60,7 @@ public class BWSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (Tasks.length() - 1 == tail) {
+        if (tail == Tasks.length() - 1) {
             expand();
             put(task, label);
         }
@@ -85,22 +86,27 @@ public class BWSNCMULT implements WorkStealingStruct {
     public int steal(int label) {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
-            int x = Tasks.get(head[label]);
-            if (x != BOTTOM) {
-                head[label]++;
-                if (B[head[label]].getAndSet(false)) {
-                    Head.set(head[label]);
-                    return x;
+            if (head[label] < Tasks.length()) {
+                int x = Tasks.get(head[label]);
+                if (x != BOTTOM) {
+                    int h = head[label];
+                    head[label]++;
+                    if (B[h].getAndSet(false)) {
+                        Head.set(head[label]);
+                        return x;
+                    }
+                } else {
+                    return EMPTY;
                 }
-            } else {
-                return EMPTY;
             }
         }
     }
 
     public void expand() {
         int size = Tasks.length();
-        AtomicIntegerArray a = new AtomicIntegerArray(size * 2);
+        int array[] = new int[size * 2];
+        Arrays.fill(array, BOTTOM);
+        AtomicIntegerArray a = new AtomicIntegerArray(array);
         AtomicBoolean[] b = new AtomicBoolean[size * 2];
         unsafe.storeFence();
         for (int i = 0; i < b.length; i++) {
