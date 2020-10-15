@@ -96,8 +96,6 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
                             Head.set(h + 1);
                             return x;
                         }
-                    } else {
-                        return EMPTY;
                     }
                 }
                 return EMPTY;
