@@ -19,8 +19,19 @@ public class Experiments {
     private final Random random = new Random(System.nanoTime());
 
     private boolean isOurWS(AlgorithmsType type) {
-        return type == AlgorithmsType.WS_NC_MULT || type == AlgorithmsType.B_WS_NC_MULT
-                || type == AlgorithmsType.NBWSMULT_FIFO || type == AlgorithmsType.B_NBWSMULT_FIFO;
+        switch (type) {
+            case WS_NC_MULT:
+            case B_WS_NC_MULT:
+            case NBWSMULT_FIFO:
+            case B_NBWSMULT_FIFO:
+            case WS_NC_MULT_LA:
+            case B_WS_NC_MULT_LA:
+            case NEW_B_WS_NC_MULT:
+            case NEW_B_WS_NC_MULT_LA:
+                return true;
+            default:
+                return false;
+        }
     }
 
     public JSONArray putSteals(List<AlgorithmsType> types, JSONObject options) {
@@ -30,7 +41,7 @@ public class Experiments {
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
             WorkStealingStruct alg = WorkStealingStructLookUp
-                .getWorkStealingStruct(type, size, 1);
+                    .getWorkStealingStruct(type, size, 1);
             long putTime;
             long stealTime_;
             long time;
@@ -75,7 +86,7 @@ public class Experiments {
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
             WorkStealingStruct alg = WorkStealingStructLookUp
-                .getWorkStealingStruct(type, size, 1);
+                    .getWorkStealingStruct(type, size, 1);
             long putTime;
             long takestime;
             long time;
@@ -121,7 +132,7 @@ public class Experiments {
         output.put("workers", numWorkers);
         output.put("stealers", numStealers);
         output.put("operations", operations);
-        output.put("structSize", size);
+        output.put("size", size);
         JSONArray results = new JSONArray();
         types.forEach(type -> {
             JSONObject result = new JSONObject();
@@ -133,7 +144,7 @@ public class Experiments {
             long stealTime = 0;
             for (int i = 0; i < workers.length; i++) {
                 workers[i] = WorkStealingStructLookUp
-                    .getWorkStealingStruct(type, size, totalThreads);
+                        .getWorkStealingStruct(type, size, totalThreads);
             }
             if (isOurWS(type)) {
                 // Hacemos puts

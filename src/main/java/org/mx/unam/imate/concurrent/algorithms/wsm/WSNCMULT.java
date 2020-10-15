@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -96,7 +97,9 @@ public class WSNCMULT implements WorkStealingStruct {
     }
 
     public void expand() {
-        AtomicIntegerArray a = new AtomicIntegerArray(2 * Tasks.length());
+        int array[] = new int[2 * Tasks.length()];
+        Arrays.fill(array, BOTTOM);
+        AtomicIntegerArray a = new AtomicIntegerArray(array);
         unsafe.storeFence();
         for (int i = 0; i < Tasks.length(); i++) {
             a.set(i, Tasks.get(i));

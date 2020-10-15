@@ -70,9 +70,10 @@ public class GraphUtilsTest {
     /**
      * Test of inArray method, of class GraphUtils.
      */
-    @DisplayName("Test if values is in array using the corresponding function")
+    @DisplayName("Test if values are in array using the corresponding function")
     @Test
     public void testInArray() {
+        System.out.println("Test if values are in array using the corresponding function");
         int val1 = 14;
         int val2 = 13;
         int[] array = {19, 20, 14, 100, 220, 300, 150};
@@ -87,9 +88,10 @@ public class GraphUtilsTest {
     /**
      * Test of initializeArray method, of class GraphUtils.
      */
-    @DisplayName("Test if the array it is initialized correctly")
+    @DisplayName("Test if the array is initialized correctly")
     @Test
     public void testInitializeArray() {
+        System.out.println("Test if the array is initialized correctly");
         int length = 10;
         int defaultValue = -1;
         int[] expResult = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
@@ -103,6 +105,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if can build from array")
     @Test
     public void testBuildFromParents_3args_1() {
+        System.out.println("Test if can build a graph from array");
         int[] parents = {1, 2, 3, -1, 0};
         int root = 3;
         boolean directed = true;
@@ -124,6 +127,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if can build from AtomicIntegerArray")
     @Test
     public void testBuildFromParents_3args_2() {
+        System.out.println("Test if can build a graph from AtomicIntegerArray");
         int[] parentsArray = {1, 2, 3, -1, 0};
         AtomicIntegerArray parents = new AtomicIntegerArray(parentsArray);
         int root = 3;
@@ -143,9 +147,10 @@ public class GraphUtilsTest {
     /**
      * Test of MOD method, of class GraphUtils.
      */
-    @DisplayName("Test if the modulus operations works fine with negative integers")
+    @DisplayName("Test if the modulus works fine with negative integers")
     @Test
     public void testMOD() {
+        System.out.println("Test if the modulus works fine with negative integers");
         int a = -12343;
         int b = 13;
         int expResult = 7;
@@ -159,6 +164,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a torus2D")
     @Test
     public void testTorus2D() {
+        System.out.println("Test if the generated graph is a torus2D");
         int shape = 10;
         Graph result = GraphUtils.torus2D(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -189,6 +195,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a directed torus2D")
     @Test
     public void testDirectedTorus2D() {
+        System.out.println("Test if the generated graph is a directed torus2D");
         int shape = 10;
         Graph result = GraphUtils.directedTorus2D(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -217,6 +224,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a Torus2D60")
     @Test
     public void testTorus2D60() {
+        System.out.println("Test if the generated graph is a Torus2D60");
         int shape = 10;
         Graph result = GraphUtils.torus2D60(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -234,6 +242,7 @@ public class GraphUtilsTest {
                 i * shape + GraphUtils.MOD((j - 1), shape)
             };
             List<Integer> ns = Arrays.asList(neighbours);
+            Assertions.assertTrue(result.getNeighbours(randomVertex).size() > 0);
             if (result.getNeighbours(randomVertex).size() < 4) {
                 boolean some = ns.stream().anyMatch((neighbour) -> {
                     return result.getNeighbours(randomVertex).contains(neighbour);
@@ -254,6 +263,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a directed torus 2D60")
     @Test
     public void testDirectedTorus2D60() {
+        System.out.println("Test if the generated graph is a directed torus 2D60");
         int shape = 10;
         Graph result = GraphUtils.directedTorus2D60(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -269,6 +279,7 @@ public class GraphUtilsTest {
                 GraphUtils.MOD((i + 1), shape) * shape + j
             };
             List<Integer> ns = Arrays.asList(neighbours);
+            Assertions.assertTrue(result.getNeighbours(randomVertex).size() > 0);
             if (result.getNeighbours(randomVertex).size() < 2) {
                 boolean some = ns.stream().anyMatch((neighbour) -> {
                     return result.getNeighbours(randomVertex).contains(neighbour);
@@ -289,6 +300,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a torus 3D")
     @Test
     public void testTorus3D() {
+        System.out.println("Test if the generated graph is a torus 3D");
         int shape = 10;
         Graph result = GraphUtils.torus3D(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -322,6 +334,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a directed torus 3D")
     @Test
     public void testDirectedTorus3D() {
+        System.out.println("Test if the generated graph is a directed torus 3D");
         int shape = 10;
         Graph result = GraphUtils.directedTorus3D(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -352,6 +365,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is a torus 3D40")
     @Test
     public void testTorus3D40() {
+        System.out.println("Test if the generated graph is a torus 3D40");
         int shape = 10;
         Graph result = GraphUtils.torus3D40(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -372,6 +386,7 @@ public class GraphUtilsTest {
                 (GraphUtils.MOD((i + 1), shape) * shape * shape) + (j * shape) + k
             };
             List<Integer> ns = Arrays.asList(neighbours);
+            Assertions.assertTrue(result.getNeighbours(randomVertex).size() > 1);
             if (result.getNeighbours(randomVertex).size() < 6) {
                 boolean some = ns.stream().anyMatch((neighbour) -> {
                     return result.getNeighbours(randomVertex).contains(neighbour);
@@ -389,9 +404,10 @@ public class GraphUtilsTest {
     /**
      * Test of directedTorus3D40 method, of class GraphUtils.
      */
-    @DisplayName("Test if the generated graph is a torus 3D40")
+    @DisplayName("Test if the generated graph is a directed torus 3D40")
     @Test
     public void testDirectedTorus3D40() {
+        System.out.println("Test if the generated graph is a directed torus 3D40");
         int shape = 10;
         Graph result = GraphUtils.directedTorus3D40(shape);
         Random random = new Random(System.currentTimeMillis());
@@ -409,6 +425,7 @@ public class GraphUtilsTest {
                 (GraphUtils.MOD((i + 1), shape) * shape * shape) + (j * shape) + k
             };
             List<Integer> ns = Arrays.asList(neighbours);
+            Assertions.assertTrue(result.getNeighbours(randomVertex).size() > 0);
             if (result.getNeighbours(randomVertex).size() < 6) {
                 boolean some = ns.stream().anyMatch((neighbour) -> {
                     return result.getNeighbours(randomVertex).contains(neighbour);
@@ -429,6 +446,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is random")
     @Test
     public void testRandom() {
+        System.out.println("Test if the generated graph is random");
         int shape = 100;
         Graph result = GraphUtils.random(shape, 6);
         Assertions.assertEquals(100, result.getNumberVertices());
@@ -442,6 +460,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the generated graph is directed random")
     @Test
     public void testDirectedRandom() {
+        System.out.println("Test if the generated graph is directed random");
         int shape = 100;
         Graph result = GraphUtils.directedRandom(shape, 6);
         Assertions.assertEquals(100, result.getNumberVertices());
@@ -493,9 +512,10 @@ public class GraphUtilsTest {
     /**
      * Test of graphType method, of class GraphUtils.
      */
-    @DisplayName("Test if the graph generated has the correct type")
+    @DisplayName("Test if the generated graph has the correct type")
     @Test
     public void testGraphType() {
+        System.out.println("Test if the generated graph has the correct type");
         GraphType random = GraphType.RANDOM;
         GraphType torus2D = GraphType.TORUS_2D;
         GraphType torus2D60 = GraphType.TORUS_2D_60;
@@ -515,7 +535,7 @@ public class GraphUtilsTest {
         Graph directedTorus3DGraph = GraphUtils.directedTorus3D(10);
         Graph torus3D40Graph = GraphUtils.torus3D40(10);
         Graph directedTorus3D40Graph = GraphUtils.directedTorus3D40(10);
-        Graph kGraphKGraph = GraphUtils.kGraph(10, 6);
+//        Graph kGraphKGraph = GraphUtils.kGraph(10, 6);
 //        Graph directedKGraphGraph = GraphUtils.directedKGraph(10, 6);
 
         Assertions.assertEquals(random, randomGraph.getType());
@@ -536,9 +556,10 @@ public class GraphUtilsTest {
     /**
      * Test of stubSpanning method, of class GraphUtils.
      */
-    @DisplayName("Test if the stub generated is correct")
+    @DisplayName("Test if the generated stub is correct")
     @Test
     public void testStubSpanning() {
+        System.out.println("Test if the generated stub is correct");
         Graph result = GraphUtils.random(1000, 6);
         int[] stub = GraphUtils.stubSpanning(result, 10);
         for (int i = 1; i < 10; i++) {
@@ -552,6 +573,7 @@ public class GraphUtilsTest {
     @DisplayName("Test if the graph has a cycle")
     @Test
     public void testHasCycle() {
+        System.out.println("Test if the graph has a cycle");
         Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
         Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
         Assertions.assertTrue(GraphUtils.hasCycle(graphCycle));
@@ -564,15 +586,17 @@ public class GraphUtilsTest {
     @DisplayName("Test if the graph is a tree")
     @Test
     public void testIsTree() {
+        System.out.println("Test if the graph is a tree");
         Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
         Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
         Assertions.assertTrue(GraphUtils.isTree(graphTree));
         Assertions.assertFalse(GraphUtils.isTree(graphCycle));
     }
 
-    @DisplayName("Prueba extra de árbol")
+    @DisplayName("Extra test for detect if a graph is a tree")
     @Test
     public void testTreeExp() {
+        System.out.println("Extra test for detect if a graph is a tree");
         int foo[] = {4, 21, 1, 23, 3, 0, 5, 2, -1, 8, 5, 10, 7, 8, 13, 10, 15, 16, 13, 18, 24, 20, 21, 18, 4};
         Graph tree = GraphUtils.buildFromParents(foo, 8, false);
         Assertions.assertTrue(GraphUtils.isTree(tree));
@@ -581,9 +605,10 @@ public class GraphUtilsTest {
     /**
      * Test of detectType method, of class GraphUtils.
      */
-    @DisplayName("Test if the graph has the property of to be a cycle, a disconnected graph or a tree.")
+    @DisplayName("Test if the graph has the property of being a cycle, a disconnected graph or a tree.")
     @Test
     public void testDetectType() {
+        System.out.println("Test if the graph has the property of being a cycle, a disconnected graph or a tree.");
         Graph graphCycle = new Graph(edgesCycle, false, 0, 15, GraphType.RANDOM);
         Graph graphTree = new Graph(edgesTree, false, 0, 15, GraphType.RANDOM);
         Graph graphDisconnected = new Graph(edgesDisconnected, false, 0, 6, GraphType.RANDOM);

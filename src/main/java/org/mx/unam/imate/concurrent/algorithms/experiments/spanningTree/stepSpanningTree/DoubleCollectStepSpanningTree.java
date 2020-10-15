@@ -46,7 +46,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
             while (!struct.isEmpty()) {
                 v = struct.take();
                 report.takesIncrement();
-                if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
+                if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {
                         w = it.next();
@@ -104,7 +104,7 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
                 report.takesIncrement();
-                if (v != -1) { // Ignoramos en caso de que esté vacía la cola por concurrencia
+                if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {
                         w = it.next();

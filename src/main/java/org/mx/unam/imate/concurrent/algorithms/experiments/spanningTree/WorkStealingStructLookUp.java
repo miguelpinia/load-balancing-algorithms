@@ -9,9 +9,13 @@ import org.mx.unam.imate.concurrent.algorithms.idempotent.IdempotentWorkStealing
 import org.mx.unam.imate.concurrent.algorithms.idempotent.IdempotentWorkStealingLIFO;
 import org.mx.unam.imate.concurrent.algorithms.simple.SIMPLEWorkStealing;
 import org.mx.unam.imate.concurrent.algorithms.wsm.BWSNCMULT;
+import org.mx.unam.imate.concurrent.algorithms.wsm.BWSNCMULTLA;
 import org.mx.unam.imate.concurrent.algorithms.wsm.BoundedNonBlockingWorkStealingMultFIFO;
-import org.mx.unam.imate.concurrent.algorithms.wsm.WSNCMULT;
+import org.mx.unam.imate.concurrent.algorithms.wsm.New_BWSNCMULT;
+import org.mx.unam.imate.concurrent.algorithms.wsm.New_BWSNCMULTLA;
 import org.mx.unam.imate.concurrent.algorithms.wsm.NonBlockingWorkStealingMultFIFO;
+import org.mx.unam.imate.concurrent.algorithms.wsm.WSNCMULT;
+import org.mx.unam.imate.concurrent.algorithms.wsm.WSNCMULTLA;
 
 /**
  *
@@ -54,6 +58,14 @@ public class WorkStealingStructLookUp {
                 return new NonBlockingWorkStealingMultFIFO(size, numThreads);
             case B_NBWSMULT_FIFO:
                 return new BoundedNonBlockingWorkStealingMultFIFO(size, numThreads);
+            case WS_NC_MULT_LA:
+                return new WSNCMULTLA(size, numThreads);
+            case B_WS_NC_MULT_LA:
+                return new BWSNCMULTLA(size, numThreads);
+            case NEW_B_WS_NC_MULT:
+                return new New_BWSNCMULT(size, numThreads);
+            case NEW_B_WS_NC_MULT_LA:
+                return new New_BWSNCMULTLA(size, numThreads);
         }
         return null;
     }
