@@ -94,7 +94,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         if (h < length) {
             int node = h / arrayLength;
             int position = h % arrayLength;
-            if (node < tasks.size() - 1)  {
+            if (node < tasks.size())  {
                 int x = tasks.get(node).get(position);
                 if (x != BOTTOM) {
                     head[label] = h + 1;
