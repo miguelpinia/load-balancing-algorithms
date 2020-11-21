@@ -57,10 +57,8 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     public void expand() {
         tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
-        unsafe.storeFence();
         nodes++;
         length = nodes * arrayLength;
-        unsafe.storeFence();
     }
 
     @Override
@@ -96,11 +94,13 @@ public class WSNCMULTLA implements WorkStealingStruct {
         if (h < length) {
             int node = h / arrayLength;
             int position = h % arrayLength;
-            int x = tasks.get(node).get(position);
-            if (x != BOTTOM) {
-                head[label] = h + 1;
-                Head.set(h + 1);
-                return x;
+            if (node < tasks.size())  {
+                int x = tasks.get(node).get(position);
+                if (x != BOTTOM) {
+                    head[label] = h + 1;
+                    Head.set(h + 1);
+                    return x;
+                }
             }
         }
         return EMPTY;
