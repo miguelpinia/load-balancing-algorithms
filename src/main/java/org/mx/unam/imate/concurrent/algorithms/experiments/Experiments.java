@@ -45,6 +45,7 @@ public class Experiments {
             long putTime;
             long stealTime_;
             long time;
+            System.out.println("Beginning test " + type);
             if (isOurWS(type)) {
                 time = System.nanoTime();
                 for (int i = 0; i < operations; i++) {
@@ -69,6 +70,7 @@ public class Experiments {
                 stealTime_ = System.nanoTime() - time;
             }
             long total = putTime + stealTime_;
+            System.out.println("Ending test");
             result.put("Alg", type);
             result.put("put_time", putTime);
             result.put("steal_time", stealTime_);
@@ -90,6 +92,7 @@ public class Experiments {
             long putTime;
             long takestime;
             long time;
+            System.out.println("Beginning test " + type);
             if (isOurWS(type)) {
                 time = System.nanoTime();
                 for (int i = 0; i < operations; i++) {
@@ -109,11 +112,12 @@ public class Experiments {
                 putTime = System.nanoTime() - time;
                 time = System.nanoTime();
                 for (int i = 0; i < operations; i++) {
-                    alg.steal();
+                    alg.take();
                 }
                 takestime = System.nanoTime() - time;
             }
             long total = putTime + takestime;
+            System.out.println("Ending test");
             result.put("Alg", type);
             result.put("put_time", putTime);
             result.put("take_time", takestime);
@@ -134,6 +138,7 @@ public class Experiments {
         output.put("operations", operations);
         output.put("size", size);
         JSONArray results = new JSONArray();
+        System.out.println("Types: " + types);
         types.forEach(type -> {
             JSONObject result = new JSONObject();
             int totalThreads = numWorkers + numStealers;
@@ -142,6 +147,7 @@ public class Experiments {
             long putTime;
             long takeTime = 0;
             long stealTime = 0;
+            System.out.println("begining test " + type);
             for (int i = 0; i < workers.length; i++) {
                 workers[i] = WorkStealingStructLookUp
                         .getWorkStealingStruct(type, size, totalThreads);
@@ -196,6 +202,7 @@ public class Experiments {
                 }
             }
             long total = putTime + takeTime + stealTime;
+            System.out.println("Ending test");
             result.put("Alg", type.name());
             result.put("put_time", putTime);
             result.put("take_time", takeTime);
