@@ -17,12 +17,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -39,7 +39,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -61,7 +61,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -83,7 +83,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -107,7 +107,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -129,7 +129,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -151,7 +151,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -173,7 +173,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -196,12 +196,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -218,7 +218,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -240,7 +240,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -262,7 +262,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -285,7 +285,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -307,7 +307,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -329,7 +329,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -351,7 +351,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -374,12 +374,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -396,7 +396,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -418,7 +418,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -440,7 +440,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -463,7 +463,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -485,7 +485,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -507,7 +507,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -529,7 +529,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -552,7 +552,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -574,7 +574,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -596,7 +596,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -618,7 +618,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -641,7 +641,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -663,7 +663,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -685,7 +685,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -707,7 +707,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -990,12 +990,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1011,7 +1011,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1032,7 +1032,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1053,7 +1053,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1075,7 +1075,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1096,7 +1096,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1117,7 +1117,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1138,7 +1138,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1160,12 +1160,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1181,7 +1181,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1202,7 +1202,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1223,7 +1223,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
@@ -1246,12 +1246,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1268,7 +1268,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1290,7 +1290,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1312,7 +1312,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1336,12 +1336,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1357,7 +1357,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1378,7 +1378,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1399,7 +1399,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1421,7 +1421,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1442,7 +1442,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1463,7 +1463,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1484,7 +1484,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_2D_60",
-    "vertexSize": 3162,
+    "vertexSize": 1000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1506,12 +1506,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1527,7 +1527,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1548,7 +1548,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1569,7 +1569,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1591,12 +1591,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1612,7 +1612,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1633,7 +1633,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1654,7 +1654,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "TORUS_3D_40",
-    "vertexSize": 215,
+    "vertexSize": 100,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1676,12 +1676,12 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
     "stealTime": false,
-    "structSize": 10000000
+    "structSize": 1000000
   }
 }' > config.json && \
 java -jar cc.jar && \
@@ -1697,7 +1697,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1718,7 +1718,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
@@ -1739,7 +1739,7 @@ echo '{
   ],
   "spanningTreeOptions": {
     "graphType": "RANDOM",
-    "vertexSize": 10000000,
+    "vertexSize": 1000000,
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": false,
