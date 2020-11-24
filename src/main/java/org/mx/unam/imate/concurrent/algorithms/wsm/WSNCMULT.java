@@ -33,12 +33,12 @@ public class WSNCMULT implements WorkStealingStruct {
      * @param numThreads
      */
     public WSNCMULT(int size, int numThreads) {
-        this.tail = 0;
+        this.tail = -1;
         this.head = new int[numThreads];
-        this.Head = new AtomicInteger(1);
-        int array[] = new int[size + 1];
+        this.Head = new AtomicInteger(0);
+        int array[] = new int[size];
         for (int i = 0; i < numThreads; i++) {
-            head[i] = 1;
+            head[i] = 0;
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = BOTTOM;

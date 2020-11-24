@@ -23,7 +23,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final int[] tail;
+    private int tail;
     private final int[] head;
 
     private final int arrayLength;
@@ -34,11 +34,10 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     public WSNCMULTLA(int size, int numThreads) {
         this.nodes = 0;
-        this.tail = new int[numThreads];
+        this.tail = -1;
         this.head = new int[numThreads];
         this.Head = new AtomicInteger(0);
         for (int i = 0; i < numThreads; i++) {
-            tail[i] = -1;
             head[i] = 0;
         }
 
@@ -52,7 +51,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public boolean isEmpty(int label) {
-        return head[label] > tail[label];
+        return head[label] > tail;
     }
 
     public void expand() {
@@ -65,11 +64,11 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail[label] == (length - 1)) {
+        if (tail == (length - 1)) {
             expand();
         }
-        tail[label]++;
-        tasks.get(nodes - 1).setItem(tail[label] % arrayLength, task);
+        tail++;
+        tasks.get(nodes - 1).setItem(tail % arrayLength, task);
         return true;
     }
 
@@ -77,7 +76,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
         int h = head[label];
-        if (h <= tail[label]) {
+        if (h <= tail) {
             int node = h / arrayLength;
             int position = h % arrayLength;
             int x = tasks.get(node).get(position);

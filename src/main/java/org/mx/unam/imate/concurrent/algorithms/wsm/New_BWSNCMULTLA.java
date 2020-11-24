@@ -30,16 +30,16 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     private int tail;
 
     public New_BWSNCMULTLA(int size, int numThreads) {
-        this.tail = -1;
         this.nodes = 0;
         this.arrayLength = size;
+        this.tail = -1;
         this.Head = new AtomicInteger(0);
         this.head = new int[numThreads];
         for (int i = 0; i < numThreads; i++) {
             head[i] = 0;
         }
         tasks = new ArrayList<>();
-        tasks.add(new NodeArrayItem(arrayLength, BOTTOM));
+        tasks.add(new NodeArrayItem(size, BOTTOM));
         nodes++;
         length = nodes * arrayLength;
     }

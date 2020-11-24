@@ -21,7 +21,6 @@ public class BWSNCMULT implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final AtomicInteger Tail;
     private AtomicIntegerArray Tasks;
     private AtomicBoolean[] B;
 
@@ -36,14 +35,13 @@ public class BWSNCMULT implements WorkStealingStruct {
      * @param numThreads
      */
     public BWSNCMULT(int size, int numThreads) {
-        this.tail = 0;
+        this.tail = -1;
         this.head = new int[numThreads];
-        this.Tail = new AtomicInteger(0);
-        this.Head = new AtomicInteger(1);
+        this.Head = new AtomicInteger(0);
         int array[] = new int[size];
         this.B = new AtomicBoolean[size];
         for (int i = 0; i < numThreads; i++) {
-            head[i] = 1;
+            head[i] = 0;
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = BOTTOM;
@@ -95,6 +93,8 @@ public class BWSNCMULT implements WorkStealingStruct {
                 } else {
                     return EMPTY;
                 }
+            } else {
+                return EMPTY;
             }
         }
     }
@@ -108,13 +108,13 @@ public class BWSNCMULT implements WorkStealingStruct {
         unsafe.storeFence();
         for (int i = 0; i < b.length; i++) {
             b[i] = new AtomicBoolean(true);
+            unsafe.storeFence();
         }
-        unsafe.storeFence();
         for (int i = 0; i < size; i++) {
             a.set(i, Tasks.get(i));
             b[i] = B[i];
+            unsafe.storeFence();
         }
-        unsafe.storeFence();
         Tasks = a;
         B = b;
         unsafe.storeFence();
