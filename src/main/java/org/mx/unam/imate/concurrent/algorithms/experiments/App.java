@@ -103,9 +103,9 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            JSONArray results = exp.putTakes(types, putTakesOptions);
+            JSONObject results = exp.putTakes(types, putTakesOptions);
             System.out.println(results.toString(2));
-            WorkStealingUtils.saveJsonArrayToFile(results, "putsTakes.json");
+            WorkStealingUtils.saveJsonObjectToFile(results, "putsTakes.json");
         }
         if (putsTakesSteals) {
             String header

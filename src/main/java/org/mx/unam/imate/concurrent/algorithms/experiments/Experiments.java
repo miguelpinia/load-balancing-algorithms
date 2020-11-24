@@ -96,49 +96,66 @@ public class Experiments {
         return results;
     }
 
-    public JSONArray putTakes(List<AlgorithmsType> types, JSONObject options) {
+    public JSONObject putTakes(List<AlgorithmsType> types, JSONObject options) {
         int operations = options.getInt("operations");
         int size = options.getInt("size");
-        JSONArray results = new JSONArray();
+        int iters = options.getInt("iters");
+        JSONObject results = new JSONObject();
+        results.put("experiment", "puts-steals");
+        results.put("operations", operations);
+        results.put("size", size);
+        results.put("iters", iters);
+        results.put("algs", types);
+        JSONArray data = new JSONArray();
         types.forEach((type) -> {
             JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp
-                    .getWorkStealingStruct(type, size, 1);
-            long putTime;
-            long takestime;
-            long time;
+            result.put("algorithm", type);
+            JSONArray puts = new JSONArray();
+            JSONArray takes = new JSONArray();
+            JSONArray totals = new JSONArray();
+
             System.out.println("Beginning test " + type);
-            if (isOurWS(type)) {
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.put(i, 0);
+            for (int iter = 0; iter < iters; iter++) {
+                WorkStealingStruct alg = WorkStealingStructLookUp
+                        .getWorkStealingStruct(type, size, 1);
+                long putTime;
+                long takesTime;
+                long time;
+                if (isOurWS(type)) {
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.put(i, 0);
+                    }
+                    putTime = System.nanoTime() - time;
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.take(0);
+                    }
+                    takesTime = System.nanoTime() - time;
+                } else {
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.put(i);
+                    }
+                    putTime = System.nanoTime() - time;
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.take();
+                    }
+                    takesTime = System.nanoTime() - time;
                 }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.take(0);
-                }
-                takestime = System.nanoTime() - time;
-            } else {
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.put(i);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.take();
-                }
-                takestime = System.nanoTime() - time;
+                long total = putTime + takesTime;
+                puts.put(putTime);
+                takes.put(takesTime);
+                totals.put(total);
             }
-            long total = putTime + takestime;
+            result.put("puts", puts);
+            result.put("takes", takes);
+            result.put("total", totals);
             System.out.println("Ending test");
-            result.put("Alg", type);
-            result.put("put_time", putTime);
-            result.put("take_time", takestime);
-            result.put("total_time", total);
-            results.put(result);
+            data.put(result);
         });
+        results.put("results", data);
         return results;
     }
 
