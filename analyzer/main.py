@@ -109,10 +109,11 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
 def barchart_puts_steals(path_file):
     """Generate barcharts comparing put and steal times"""
     json_data = read_json(path_file)
-    algs = list(map(lambda d: d['Alg'], json_data))
-    steals = list(map(lambda d: d['steal_time'], json_data))
-    puts = list(map(lambda d: d['put_time'], json_data))
-    total = list(map(lambda d: d['total_time'], json_data))
+    iters = json_data['iters']
+    algs = list(map(lambda d: d['algorithm'], json_data['results']))
+    steals = list(map(lambda d: np.average(np.sort(d['steals'])[1:iters-1]), json_data['results']))
+    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
+    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
     ind = np.arange(len(algs))
     width = 0.25
     fig, ax = plt.subplots()
@@ -132,10 +133,11 @@ def barchart_puts_steals(path_file):
 def barchart_puts_takes(path_file):
     """Generate barcharts comparing put and takes times"""
     json_data = read_json(path_file)
-    algs = list(map(lambda d: d['Alg'], json_data))
-    takes = list(map(lambda d: d['take_time'], json_data))
-    puts = list(map(lambda d: d['put_time'], json_data))
-    total = list(map(lambda d: d['total_time'], json_data))
+    iters = json_data['iters']
+    algs = list(map(lambda d: d['algorithm'], json_data['results']))
+    takes = list(map(lambda d: np.average(np.sort(d['takes'])[1:iters-1]), json_data['results']))
+    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
+    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
     ind = np.arange(len(algs))
     width = 0.25
     fig, ax = plt.subplots()
