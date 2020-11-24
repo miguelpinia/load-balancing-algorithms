@@ -57,12 +57,9 @@ public class BWSNCMULTLA implements WorkStealingStruct {
 
     public void expand() {
         tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
-        unsafe.storeFence();
         B.add(new NodeArrayBool(arrayLength));
-        unsafe.storeFence();
         nodes++;
         length = nodes * arrayLength;
-        unsafe.storeFence();
     }
 
     @Override
@@ -103,16 +100,17 @@ public class BWSNCMULTLA implements WorkStealingStruct {
             if (h < length) {
                 int node = h / arrayLength;
                 int position = h % arrayLength;
-                int x = tasks.get(node).getValue(position);
-                if (x != BOTTOM) {
-                    head[label] = h + 1;
-                    if (B.get(node).getSwap(position).getAndSet(false)) {
-                        Head.set(h + 1);
-                        return x;
+                if (node < tasks.size()) {
+                    int x = tasks.get(node).getValue(position);
+                    if (x != BOTTOM) {
+                        head[label] = h + 1;
+                        if (B.get(node).getSwap(position).getAndSet(false)) {
+                            Head.set(h + 1);
+                            return x;
+                        }
                     }
-                } else {
-                    return EMPTY;
                 }
+                return EMPTY;
             } else {
                 return EMPTY;
             }

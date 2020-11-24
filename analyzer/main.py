@@ -75,13 +75,58 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
     else:
         algs = results['algorithms']
     procs = results['processors']
-    data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}}
+    data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}, 'speedup': {}}
+    chaselev = get_data('time', stat_type, stats(results)['CHASELEV'], procs)[0]
     for alg in algs:
         vals = stats(results)[alg]
         data['takes'][alg] = get_data('takes', stat_type, vals, procs)
         data['puts'][alg] = get_data('puts', stat_type, vals, procs)
         data['steals'][alg] = get_data('steals', stat_type, vals, procs)
         data['time'][alg] = get_data('time', stat_type, vals, procs)
+        data['speedup'][alg] = chaselev / get_data('time', stat_type, vals,
+                                        procs)
+    print('Generating plots {}'.format(stat_type))
+    current_time = datetime.now().strftime("%H:%M:%S")
+    if stat_type == 'average' or stat_type == 'median':
+        fig1, axes1 = plt.subplots()
+        fig1.suptitle('SpeedUp: {}, {}, {}'.format(
+            results['graphType'],
+            stat_type,
+            'directed' if results['directed'] else 'undirected'))
+        for alg in algs:
+            axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], '-o', label=alg)
+        axes1.grid()
+        axes1.legend()
+        plt.gcf().set_size_inches(9.6, 5.4)
+        plt.savefig('speedup-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                        'directed'
+                                                        if results['directed']
+                                                        else 'undirected',
+                                                           results['vertexSize'],
+                                                           results['structSize'],
+                                                           stat_type,
+                                                           current_time),
+                    dpi=200)
+        f, a = plt.subplots()
+        f.suptitle('Graph: {} {}, {}'.format(
+            results['graphType'],
+            results['directed'],
+            stat_type))
+        for alg in algs:
+            a.plot(np.arange(1, procs + 1), data['time'][alg], '-o', label=alg)
+        a.set_ylabel('Nanoseconds')
+        a.set_title('{} {}'.format('time', stat_type).title())
+        a.grid()
+        a.legend()
+        plt.gcf().set_size_inches(9.6, 5.4)
+        plt.savefig('time-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                        'directed'
+                                                        if results['directed']
+                                                        else 'undirected',
+                                                        results['vertexSize'],
+                                                        results['structSize'],
+                                                        stat_type, current_time),
+                    dpi=200)
     fig, axes = plt.subplots(2, 2)
     fig.suptitle(
         'Graph: {}, Statistics type: {}'.format(
@@ -98,10 +143,14 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         ax.grid()
         ax.legend()
     plt.gcf().set_size_inches(19.2, 10.8)
-    current_time = datetime.now().strftime("%H:%M:%S")
     plt.savefig(
-        'statistics-{}-{}-{}.png'.format(results['graphType'],
-                                         stat_type, current_time),
+        'statistics-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                  'directed'
+                                                  if results['directed']
+                                                  else 'undirected',
+                                                  results['vertexSize'],
+                                                  results['structSize'],
+                                                  stat_type, current_time),
         dpi=200)
     plt.close('all')
 
