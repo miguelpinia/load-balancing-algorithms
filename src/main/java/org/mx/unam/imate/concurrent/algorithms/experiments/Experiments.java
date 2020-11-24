@@ -34,50 +34,65 @@ public class Experiments {
         }
     }
 
-    public JSONArray putSteals(List<AlgorithmsType> types, JSONObject options) {
+    public JSONObject putSteals(List<AlgorithmsType> types, JSONObject options) {
         int operations = options.getInt("operations");
         int size = options.getInt("size");
-        JSONArray results = new JSONArray();
+        int iters = options.getInt("iters");
+        JSONObject results = new JSONObject();
+        results.put("experiment", "puts-steals");
+        results.put("operations", operations);
+        results.put("size", size);
+        results.put("iters", iters);
+        results.put("algs", types);
+        JSONArray data = new JSONArray();
         types.forEach((type) -> {
-            JSONObject result = new JSONObject();
-            WorkStealingStruct alg = WorkStealingStructLookUp
-                    .getWorkStealingStruct(type, size, 1);
-            long putTime;
-            long stealTime_;
-            long time;
+            JSONObject resultAlgs = new JSONObject();
+            resultAlgs.put("algorithm", type);
+            JSONArray puts = new JSONArray();
+            JSONArray steals = new JSONArray();
+            JSONArray totals = new JSONArray();
             System.out.println("Beginning test " + type);
-            if (isOurWS(type)) {
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.put(i, 0);
+            for (int iter = 0; iter < iters; iter++) {
+                WorkStealingStruct alg = WorkStealingStructLookUp
+                        .getWorkStealingStruct(type, size, 1);
+                long putTime;
+                long stealTime_;
+                long time;
+                if (isOurWS(type)) {
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.put(i, 0);
+                    }
+                    putTime = System.nanoTime() - time;
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.steal(0);
+                    }
+                    stealTime_ = System.nanoTime() - time;
+                } else {
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.put(i);
+                    }
+                    putTime = System.nanoTime() - time;
+                    time = System.nanoTime();
+                    for (int i = 0; i < operations; i++) {
+                        alg.steal();
+                    }
+                    stealTime_ = System.nanoTime() - time;
                 }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.steal(0);
-                }
-                stealTime_ = System.nanoTime() - time;
-            } else {
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.put(i);
-                }
-                putTime = System.nanoTime() - time;
-                time = System.nanoTime();
-                for (int i = 0; i < operations; i++) {
-                    alg.steal();
-                }
-                stealTime_ = System.nanoTime() - time;
+                long total = putTime + stealTime_;
+                puts.put(putTime);
+                steals.put(stealTime_);
+                totals.put(total);
             }
-            long total = putTime + stealTime_;
+            resultAlgs.put("puts", puts);
+            resultAlgs.put("steals", steals);
+            resultAlgs.put("total", totals);
             System.out.println("Ending test");
-            result.put("Alg", type);
-            result.put("put_time", putTime);
-            result.put("steal_time", stealTime_);
-            result.put("total_time", total);
-            results.put(result);
+            data.put(resultAlgs);
         });
-
+        results.put("results", data);
         return results;
     }
 

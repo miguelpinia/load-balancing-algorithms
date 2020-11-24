@@ -92,9 +92,9 @@ public class App {
                     + "=====================================\n";
             Experiments exp = new Experiments();
             System.out.println(header);
-            JSONArray results = exp.putSteals(types, putStealsOptions);
+            JSONObject results = exp.putSteals(types, putStealsOptions);
             System.out.println(results.toString(2));
-            WorkStealingUtils.saveJsonArrayToFile(results, "putsSteals.json");
+            WorkStealingUtils.saveJsonObjectToFile(results, "putsSteals.json");
         }
         if (putTakes) {
             String header
