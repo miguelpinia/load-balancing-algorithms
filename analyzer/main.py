@@ -92,16 +92,16 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         fig1.suptitle('SpeedUp: {}, {}, {}'.format(
             results['graphType'],
             stat_type,
-            'directed' if results['directed'] else 'undirected'))
+            'Directed' if results['directed'] else 'Undirected'))
         for alg in algs:
             axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], '-o', label=alg)
         axes1.grid()
         axes1.legend()
         plt.gcf().set_size_inches(9.6, 5.4)
         plt.savefig('speedup-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
-                                                        'directed'
-                                                        if results['directed']
-                                                        else 'undirected',
+                                                           'directed'
+                                                           if results['directed']
+                                                           else 'undirected',
                                                            results['vertexSize'],
                                                            results['structSize'],
                                                            stat_type,
@@ -110,7 +110,9 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         f, a = plt.subplots()
         f.suptitle('Graph: {} {}, {}'.format(
             results['graphType'],
-            results['directed'],
+            'Directed'
+            if results['directed']
+            else 'Undirected',
             stat_type))
         for alg in algs:
             a.plot(np.arange(1, procs + 1), data['time'][alg], '-o', label=alg)
