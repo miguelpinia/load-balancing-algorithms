@@ -178,7 +178,12 @@ def barchart_puts_steals(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsSteals-{}-{}-{}.png'.format(json_data['operations'],
+                                                 json_data['size'],
+                                                 json_data['iters']),
+                dpi=200)
+    plt.close('all')
 
 
 def barchart_puts_takes(path_file):
@@ -202,7 +207,12 @@ def barchart_puts_takes(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsTakes-{}-{}-{}.png'.format(json_data['operations'],
+                                                json_data['size'],
+                                                json_data['iters']),
+                dpi=200)
+    plt.close('all')
 
 
 def barchart_puts_takes_steals(path_file):
@@ -228,7 +238,13 @@ def barchart_puts_takes_steals(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsTakesSteals-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                         json_data['size'],
+                                                         json_data['workers'],
+                                                         json_data['stealers']),
+                dpi=200)
+    plt.close('all')
 
 
 def main():
