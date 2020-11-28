@@ -92,16 +92,16 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         fig1.suptitle('SpeedUp: {}, {}, {}'.format(
             results['graphType'],
             stat_type,
-            'directed' if results['directed'] else 'undirected'))
+            'Directed' if results['directed'] else 'Undirected'))
         for alg in algs:
             axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], '-o', label=alg)
         axes1.grid()
         axes1.legend()
         plt.gcf().set_size_inches(9.6, 5.4)
         plt.savefig('speedup-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
-                                                        'directed'
-                                                        if results['directed']
-                                                        else 'undirected',
+                                                           'directed'
+                                                           if results['directed']
+                                                           else 'undirected',
                                                            results['vertexSize'],
                                                            results['structSize'],
                                                            stat_type,
@@ -110,7 +110,9 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         f, a = plt.subplots()
         f.suptitle('Graph: {} {}, {}'.format(
             results['graphType'],
-            results['directed'],
+            'Directed'
+            if results['directed']
+            else 'Undirected',
             stat_type))
         for alg in algs:
             a.plot(np.arange(1, procs + 1), data['time'][alg], '-o', label=alg)
@@ -158,10 +160,11 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
 def barchart_puts_steals(path_file):
     """Generate barcharts comparing put and steal times"""
     json_data = read_json(path_file)
-    algs = list(map(lambda d: d['Alg'], json_data))
-    steals = list(map(lambda d: d['steal_time'], json_data))
-    puts = list(map(lambda d: d['put_time'], json_data))
-    total = list(map(lambda d: d['total_time'], json_data))
+    iters = json_data['iters']
+    algs = list(map(lambda d: d['algorithm'], json_data['results']))
+    steals = list(map(lambda d: np.average(np.sort(d['steals'])[1:iters-1]), json_data['results']))
+    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
+    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
     ind = np.arange(len(algs))
     width = 0.25
     fig, ax = plt.subplots()
@@ -175,16 +178,22 @@ def barchart_puts_steals(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsSteals-{}-{}-{}.png'.format(json_data['operations'],
+                                                 json_data['size'],
+                                                 json_data['iters']),
+                dpi=200)
+    plt.close('all')
 
 
 def barchart_puts_takes(path_file):
     """Generate barcharts comparing put and takes times"""
     json_data = read_json(path_file)
-    algs = list(map(lambda d: d['Alg'], json_data))
-    takes = list(map(lambda d: d['take_time'], json_data))
-    puts = list(map(lambda d: d['put_time'], json_data))
-    total = list(map(lambda d: d['total_time'], json_data))
+    iters = json_data['iters']
+    algs = list(map(lambda d: d['algorithm'], json_data['results']))
+    takes = list(map(lambda d: np.average(np.sort(d['takes'])[1:iters-1]), json_data['results']))
+    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
+    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
     ind = np.arange(len(algs))
     width = 0.25
     fig, ax = plt.subplots()
@@ -198,7 +207,12 @@ def barchart_puts_takes(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsTakes-{}-{}-{}.png'.format(json_data['operations'],
+                                                json_data['size'],
+                                                json_data['iters']),
+                dpi=200)
+    plt.close('all')
 
 
 def barchart_puts_takes_steals(path_file):
@@ -224,7 +238,13 @@ def barchart_puts_takes_steals(path_file):
     ax.set_xticklabels(algs)
     ax.legend()
     fig.tight_layout()
-    plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsTakesSteals-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                         json_data['size'],
+                                                         json_data['workers'],
+                                                         json_data['stealers']),
+                dpi=200)
+    plt.close('all')
 
 
 def main():

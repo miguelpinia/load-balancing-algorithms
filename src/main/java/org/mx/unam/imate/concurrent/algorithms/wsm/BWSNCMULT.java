@@ -21,7 +21,6 @@ public class BWSNCMULT implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final AtomicInteger Tail;
     private AtomicIntegerArray Tasks;
     private AtomicBoolean[] B;
 
@@ -36,21 +35,19 @@ public class BWSNCMULT implements WorkStealingStruct {
      * @param numThreads
      */
     public BWSNCMULT(int size, int numThreads) {
-        this.tail = 0;
+        this.tail = -1;
         this.head = new int[numThreads];
-        this.Tail = new AtomicInteger(0);
-        this.Head = new AtomicInteger(1);
+        this.Head = new AtomicInteger(0);
         int array[] = new int[size];
         this.B = new AtomicBoolean[size];
         for (int i = 0; i < numThreads; i++) {
-            head[i] = 1;
+            head[i] = 0;
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = BOTTOM;
             B[i] = new AtomicBoolean(true);
         }
         this.Tasks = new AtomicIntegerArray(array); // Inicializar las tareas a bottom.
-
     }
 
     @Override
@@ -62,9 +59,8 @@ public class BWSNCMULT implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail == Tasks.length() - 1) {
             expand();
-            put(task, label);
         }
-        tail = tail + 1;
+        tail++;
         Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
         return true;
     }
@@ -74,12 +70,11 @@ public class BWSNCMULT implements WorkStealingStruct {
         head[label] = Math.max(head[label], Head.get());
         if (head[label] <= tail) {
             int x = Tasks.get(head[label]);
-            Head.set(head[label] + 1);
             head[label]++;
+            Head.set(head[label]);
             return x;
-        } else {
-            return EMPTY;
         }
+        return EMPTY;
     }
 
     @Override
@@ -98,6 +93,8 @@ public class BWSNCMULT implements WorkStealingStruct {
                 } else {
                     return EMPTY;
                 }
+            } else {
+                return EMPTY;
             }
         }
     }

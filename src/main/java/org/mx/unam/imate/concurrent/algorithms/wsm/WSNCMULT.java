@@ -16,14 +16,13 @@ public class WSNCMULT implements WorkStealingStruct {
 
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
-    private static final int TOP = -3;
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
     private AtomicIntegerArray Tasks;
 
-    private final int[] tail;
+    private int tail;
     private final int[] head;
 
     /**
@@ -34,13 +33,12 @@ public class WSNCMULT implements WorkStealingStruct {
      * @param numThreads
      */
     public WSNCMULT(int size, int numThreads) {
-        this.tail = new int[numThreads];
+        this.tail = -1;
         this.head = new int[numThreads];
-        this.Head = new AtomicInteger(1);
-        int array[] = new int[size + 1];
+        this.Head = new AtomicInteger(0);
+        int array[] = new int[size];
         for (int i = 0; i < numThreads; i++) {
-            tail[i] = 0;
-            head[i] = 1;
+            head[i] = 0;
         }
         for (int i = 0; i < array.length; i++) {
             array[i] = BOTTOM;
@@ -55,26 +53,24 @@ public class WSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail[label] == Tasks.length() - 1) {
+        if (tail == Tasks.length() - 1) {
             expand();
-            put(task, label);
         }
-        tail[label] = tail[label] + 1;
-        Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
+        tail++;
+        Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
         return true;
     }
 
     @Override
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail[label]) {
+        if (head[label] <= tail) {
             int x = Tasks.get(head[label]);
             head[label]++;
             Head.set(head[label]);
             return x;
-        } else {
-            return EMPTY;
         }
+        return EMPTY;
     }
 
     @Override
@@ -100,10 +96,8 @@ public class WSNCMULT implements WorkStealingStruct {
         int array[] = new int[2 * Tasks.length()];
         Arrays.fill(array, BOTTOM);
         AtomicIntegerArray a = new AtomicIntegerArray(array);
-        unsafe.storeFence();
         for (int i = 0; i < Tasks.length(); i++) {
             a.set(i, Tasks.get(i));
-            unsafe.storeFence();
         }
         Tasks = a;
         unsafe.storeFence();
@@ -121,7 +115,7 @@ public class WSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean isEmpty(int label) {
-        return head[label] > tail[label];
+        return head[label] > tail;
     }
 
 }

@@ -20,18 +20,19 @@ public class New_BWSNCMULT implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private final AtomicInteger Tail;
     private AtomicReferenceArray<Item> tasks;
 
     private final int[] head;
     private int tail;
 
     public New_BWSNCMULT(int size, int numThreads) {
-        tail = 0;
+        tail = -1;
         head = new int[numThreads];
-        Head = new AtomicInteger(1);
-        Tail = new AtomicInteger(0);
+        Head = new AtomicInteger(0);
         Item[] array = new Item[size];
+        for (int i = 0; i < numThreads; i++) {
+            head[i] = 0;
+        }
         for (int i = 0; i < size; i++) {
             array[i] = new Item(true, BOTTOM);
         }
@@ -45,27 +46,22 @@ public class New_BWSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail == tasks.length() - 1) {
+        if (tail == (tasks.length() - 1)) {
             expand();
-            put(task, label);
         }
-        tail = tail + 1;
-        try {
-            tasks.get(tail).setValue(task); // Equivalent to Tasks[tail].write(task)
-        } catch (NullPointerException ex) {
-            System.out.println("Error!!!!! " + tasks.get(tail) + ", tail: " + tail);
-        }
-
+        tail++;
+        tasks.get(tail).setValue(task);
         return true;
     }
 
     @Override
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] <= tail) {
-            int x = tasks.get(head[label]).getValue();
-            Head.set(head[label] + 1);
-            head[label]++;
+        int h = head[label];
+        if (h <= tail) {
+            int x = tasks.get(h).getValue();
+            head[label] = h + 1;
+            Head.set(h + 1);
             return x;
         } else {
             return EMPTY;
@@ -88,6 +84,8 @@ public class New_BWSNCMULT implements WorkStealingStruct {
                 } else {
                     return EMPTY;
                 }
+            } else {
+                return EMPTY;
             }
         }
     }
