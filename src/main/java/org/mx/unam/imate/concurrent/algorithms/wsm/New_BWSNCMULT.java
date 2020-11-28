@@ -2,11 +2,8 @@ package org.mx.unam.imate.concurrent.algorithms.wsm;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -14,13 +11,11 @@ import sun.misc.Unsafe;
  */
 public class New_BWSNCMULT implements WorkStealingStruct {
 
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
-
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private AtomicReferenceArray<Item> tasks;
+    private Item[] tasks;
 
     private final int[] head;
     private int tail;
@@ -36,7 +31,7 @@ public class New_BWSNCMULT implements WorkStealingStruct {
         for (int i = 0; i < size; i++) {
             array[i] = new Item(true, BOTTOM);
         }
-        tasks = new AtomicReferenceArray<>(array);
+        tasks = array;
     }
 
     @Override
@@ -46,11 +41,11 @@ public class New_BWSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail == (tasks.length() - 1)) {
+        if (tail == (tasks.length - 1)) {
             expand();
         }
         tail++;
-        tasks.get(tail).setValue(task);
+        tasks[tail].setValue(task);
         return true;
     }
 
@@ -59,7 +54,7 @@ public class New_BWSNCMULT implements WorkStealingStruct {
         head[label] = Math.max(head[label], Head.get());
         int h = head[label];
         if (h <= tail) {
-            int x = tasks.get(h).getValue();
+            int x = tasks[h].getValue();
             head[label] = h + 1;
             Head.set(h + 1);
             return x;
@@ -72,12 +67,12 @@ public class New_BWSNCMULT implements WorkStealingStruct {
     public int steal(int label) {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
-            if (head[label] < tasks.length()) {
-                int x = tasks.get(head[label]).getValue();
+            if (head[label] < tasks.length) {
+                int x = tasks[head[label]].getValue();
                 if (x != BOTTOM) {
                     int h = head[label];
                     head[label]++;
-                    if (tasks.get(h).getSwap().getAndSet(false)) {
+                    if (tasks[h].getSwap().getAndSet(false)) {
                         Head.set(head[label]);
                         return x;
                     }
@@ -91,21 +86,16 @@ public class New_BWSNCMULT implements WorkStealingStruct {
     }
 
     public void expand() {
-        int size = tasks.length();
+        int size = tasks.length;
         Item[] array = new Item[size * 2];
         for (int i = 0; i < size * 2; i++) {
             array[i] = new Item(true, BOTTOM);
         }
-        AtomicReferenceArray<Item> a = new AtomicReferenceArray<>(array);
-        unsafe.storeFence();
-
         for (int i = 0; i < size; i++) {
-            a.get(i).getSwap().set(tasks.get(i).getSwap().get());
-            a.get(i).setValue(tasks.get(i).getValue());
-            unsafe.storeFence();
+            array[i].getSwap().set(tasks[i].getSwap().get());
+            array[i].setValue(tasks[i].getValue());
         }
-        tasks = a;
-        unsafe.storeFence();
+        tasks = array;
     }
 
     @Override

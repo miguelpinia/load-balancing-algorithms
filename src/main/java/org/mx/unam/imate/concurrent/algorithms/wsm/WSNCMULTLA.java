@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -16,9 +13,6 @@ import sun.misc.Unsafe;
  */
 public class WSNCMULTLA implements WorkStealingStruct {
 
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
-
-    private static final int TOP = -3;
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
@@ -108,30 +102,30 @@ public class WSNCMULTLA implements WorkStealingStruct {
     private class NodeArrayInt {
 
         private final int length;
-        private final AtomicIntegerArray items;
+        private final int[] items;
 
         public NodeArrayInt(int length, int defaultValue) {
             this.length = length;
             int[] defaultArray = new int[length]; // ¿Crear arreglo y asignarlo en constructor de AtomicIntegerArray?
             Arrays.fill(defaultArray, defaultValue); // ¿O iniciar AtomicIntegerArray y con un ciclo iniciar valores?
-            items = new AtomicIntegerArray(defaultArray);
+            items = defaultArray;
         }
 
         public boolean setItem(int idx, int value) {
             if (idx < 0 || idx >= length) {
                 return false;
             }
-            items.set(idx, value);
+            items[idx] = value;
             return true;
         }
 
         public int get(int idx) {
-            return items.get(idx);
+            return items[idx];
         }
 
         @Override
         public String toString() {
-            return "NodeArrayInt{" + "length=" + length + ", items=" + items.toString() + '}';
+            return "NodeArrayInt{" + "length=" + length + ", items=" + Arrays.toString(items)+ '}';
         }
 
     }

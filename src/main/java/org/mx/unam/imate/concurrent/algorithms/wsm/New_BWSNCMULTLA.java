@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReferenceArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
  * @author miguel
  */
 public class New_BWSNCMULTLA implements WorkStealingStruct {
-
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
@@ -152,7 +147,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     private class NodeArrayItem {
 
         private final int length;
-        private final AtomicReferenceArray<Item> tasks;
+        private final Item[] tasks;
 
         public NodeArrayItem(int length, int defaultValue) {
             this.length = length;
@@ -160,23 +155,23 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
             for (int i = 0; i < length; i++) {
                 array[i] = new Item(true, defaultValue);
             }
-            tasks = new AtomicReferenceArray<>(array);
+            tasks = array;
         }
 
         public boolean setItem(int idx, int value) {
             if (idx < 0 || idx  >= length) {
                 return false;
             }
-            tasks.get(idx).setValue(value);
+            tasks[idx].setValue(value);
             return true;
         }
 
         public int getValue(int idx) {
-            return tasks.get(idx).getValue();
+            return tasks[idx].getValue();
         }
 
         public AtomicBoolean getSwap(int idx) {
-            return tasks.get(idx).getSwap();
+            return tasks[idx].getSwap();
         }
     }
 

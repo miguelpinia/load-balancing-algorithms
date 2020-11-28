@@ -21,7 +21,7 @@ public class BWSNCMULT implements WorkStealingStruct {
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
-    private AtomicIntegerArray Tasks;
+    private int[] Tasks;
     private AtomicBoolean[] B;
 
     private final int[] head;
@@ -47,7 +47,7 @@ public class BWSNCMULT implements WorkStealingStruct {
             array[i] = BOTTOM;
             B[i] = new AtomicBoolean(true);
         }
-        this.Tasks = new AtomicIntegerArray(array); // Inicializar las tareas a bottom.
+        this.Tasks = array; // Inicializar las tareas a bottom.
     }
 
     @Override
@@ -57,11 +57,11 @@ public class BWSNCMULT implements WorkStealingStruct {
 
     @Override
     public boolean put(int task, int label) {
-        if (tail == Tasks.length() - 1) {
+        if (tail == Tasks.length - 1) {
             expand();
         }
         tail++;
-        Tasks.set(tail, task); // Equivalent to Tasks[tail].write(task)
+        Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
         return true;
     }
 
@@ -69,7 +69,7 @@ public class BWSNCMULT implements WorkStealingStruct {
     public int take(int label) {
         head[label] = Math.max(head[label], Head.get());
         if (head[label] <= tail) {
-            int x = Tasks.get(head[label]);
+            int x = Tasks[head[label]];
             head[label]++;
             Head.set(head[label]);
             return x;
@@ -81,8 +81,8 @@ public class BWSNCMULT implements WorkStealingStruct {
     public int steal(int label) {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
-            if (head[label] < Tasks.length()) {
-                int x = Tasks.get(head[label]);
+            if (head[label] < Tasks.length) {
+                int x = Tasks[head[label]];
                 if (x != BOTTOM) {
                     int h = head[label];
                     head[label]++;
@@ -100,10 +100,9 @@ public class BWSNCMULT implements WorkStealingStruct {
     }
 
     public void expand() {
-        int size = Tasks.length();
+        int size = Tasks.length;
         int array[] = new int[size * 2];
         Arrays.fill(array, BOTTOM);
-        AtomicIntegerArray a = new AtomicIntegerArray(array);
         AtomicBoolean[] b = new AtomicBoolean[size * 2];
         unsafe.storeFence();
         for (int i = 0; i < b.length; i++) {
@@ -111,11 +110,11 @@ public class BWSNCMULT implements WorkStealingStruct {
             unsafe.storeFence();
         }
         for (int i = 0; i < size; i++) {
-            a.set(i, Tasks.get(i));
+            array[i] = Tasks[i];
             b[i] = B[i];
             unsafe.storeFence();
         }
-        Tasks = a;
+        Tasks = array;
         B = b;
         unsafe.storeFence();
     }
