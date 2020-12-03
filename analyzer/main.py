@@ -179,9 +179,10 @@ def barchart_puts_steals(path_file):
     ax.legend()
     fig.tight_layout()
     plt.gcf().set_size_inches(9.6, 5.4)
-    plt.savefig('putsSteals-{}-{}-{}.png'.format(json_data['operations'],
-                                                 json_data['size'],
-                                                 json_data['iters']),
+    plt.savefig('putsSteals-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                    json_data['size'],
+                                                    json_data['iters'],
+                                                    '_'.join(algs)),
                 dpi=200)
     plt.close('all')
 
@@ -208,9 +209,10 @@ def barchart_puts_takes(path_file):
     ax.legend()
     fig.tight_layout()
     plt.gcf().set_size_inches(9.6, 5.4)
-    plt.savefig('putsTakes-{}-{}-{}.png'.format(json_data['operations'],
-                                                json_data['size'],
-                                                json_data['iters']),
+    plt.savefig('putsTakes-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                     json_data['size'],
+                                                     json_data['iters'],
+                                                     '_'.join(algs)),
                 dpi=200)
     plt.close('all')
 
@@ -239,10 +241,11 @@ def barchart_puts_takes_steals(path_file):
     ax.legend()
     fig.tight_layout()
     plt.gcf().set_size_inches(9.6, 5.4)
-    plt.savefig('putsTakesSteals-{}-{}-{}-{}.png'.format(json_data['operations'],
-                                                         json_data['size'],
-                                                         json_data['workers'],
-                                                         json_data['stealers']),
+    plt.savefig('putsTakesSteals-{}-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                            json_data['size'],
+                                                            json_data['workers'],
+                                                            json_data['stealers'],
+                                                            '_'.join(algs)),
                 dpi=200)
     plt.close('all')
 
