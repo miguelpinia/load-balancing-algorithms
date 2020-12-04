@@ -125,10 +125,66 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
                                                         'directed'
                                                         if results['directed']
                                                         else 'undirected',
+                                                        stat_type,
                                                         results['vertexSize'],
                                                         results['structSize'],
-                                                        stat_type, current_time),
+                                                        current_time),
                     dpi=200)
+    f1, a1 = plt.subplots()
+    f1.suptitle('Graph: {}, Takes'.format(results['graphType']))
+    for alg in algs:
+        a1.plot(np.arange(1, procs + 1),
+                data['takes'][alg], '-o', label=alg)
+    a1.set_title('{} {}'.format('Takes', stat_type))
+    a1.grid()
+    a1.legend()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('takes-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                     'Directed'
+                                                     if results['directed']
+                                                     else 'Undirected',
+                                                     stat_type,
+                                                     results['vertexSize'],
+                                                     results['structSize'],
+                                                     current_time),
+                dpi=200)
+    f2, a2 = plt.subplots()
+    f2.suptitle('Graph: {}, Puts'.format(results['graphType']))
+    for alg in algs:
+        a2.plot(np.arange(1, procs + 1),
+                data['puts'][alg], '-o', label=alg)
+    a2.set_title('{} {}'.format('Puts', stat_type))
+    a2.grid()
+    a2.legend()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('puts-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                    'Directed'
+                                                    if results['directed']
+                                                    else 'Undirected',
+                                                    stat_type,
+                                                    results['vertexSize'],
+                                                    results['structSize'],
+                                                    current_time),
+                dpi=200)
+    f3, a3 = plt.subplots()
+    f3.suptitle('Graph: {}, Steals'.format(results['graphType']))
+    for alg in algs:
+        a3.plot(np.arange(1, procs + 1),
+                data['steals'][alg], '-o', label=alg)
+    a3.set_title('{} {}'.format('Steals', stat_type))
+    a3.grid()
+    a3.legend()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('steals-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                      'Directed'
+                                                      if results['directed']
+                                                      else 'Undirected',
+                                                      stat_type,
+                                                      results['vertexSize'],
+                                                      results['structSize'],
+                                                      current_time),
+                dpi=200)
+
     fig, axes = plt.subplots(2, 2)
     fig.suptitle(
         'Graph: {}, Statistics type: {}'.format(
@@ -150,9 +206,10 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
                                                   'directed'
                                                   if results['directed']
                                                   else 'undirected',
+                                                  stat_type,
                                                   results['vertexSize'],
                                                   results['structSize'],
-                                                  stat_type, current_time),
+                                                  current_time),
         dpi=200)
     plt.close('all')
 
