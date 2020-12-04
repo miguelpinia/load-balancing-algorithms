@@ -27,7 +27,7 @@ public class SpanningTree {
         int[] processors = new int[params.getNumThreads()];
         AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
         AtomicInteger counter = new AtomicInteger(0);
-
+        long executionTime = System.nanoTime();
         for (int i = 0; i < params.getNumThreads(); i++) {
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
@@ -39,7 +39,9 @@ public class SpanningTree {
 
             threads[i] = new Thread(step);
         }
-        long executionTime = System.nanoTime();
+        if (!params.isAllTime()) {
+            executionTime = System.nanoTime();
+        }
         for (Thread thread : threads) {
             thread.start();
         }

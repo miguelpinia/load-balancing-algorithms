@@ -22,6 +22,7 @@ public class Parameters {
     private StepSpanningTreeType stepSpanningTreeType;
     private boolean directed;
     private boolean stealTime;
+    private boolean allTime;
 
     public Parameters() {
     }
@@ -60,6 +61,7 @@ public class Parameters {
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
         this.directed = directed;
         this.stealTime = stealTime;
+        allTime = false;
     }
 
     /**
@@ -89,6 +91,7 @@ public class Parameters {
         this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
+        allTime = false;
     }
 
     /**
@@ -118,6 +121,15 @@ public class Parameters {
         this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = stepSpanningTreeType;
+    }
+    
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, 
+            int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, 
+            boolean directed, boolean stealTime, boolean allTime) {
+        this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
+        this.numIterExps = numIterExps;
+        this.stepSpanningTreeType = stepSpanningTreeType;
+        this.allTime = allTime;
     }
 
     public GraphType getType() {
@@ -214,6 +226,10 @@ public class Parameters {
 
     public void setStealTime(boolean stealTime) {
         this.stealTime = stealTime;
+    }
+
+    public boolean isAllTime() {
+        return allTime;
     }
 
     @Override

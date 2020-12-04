@@ -1,6 +1,8 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +39,7 @@ public class App {
     private static final String PUT_TAKES = "putTakes";
     private static final String PUTS_TAKES_STEALS = "putsTakesSteals";
     private static final String ALGORITHMS = "algorithms";
+    private static final String ALL_TIME = "allTime";
 
     private final JSONObject spanningTreeOptions;
     private final JSONObject putStealsOptions;
@@ -139,6 +142,7 @@ public class App {
         boolean stealTime = stProps.getBoolean(STEAL_TIME);
         int iterations = stProps.getInt(ITERATIONS);
         int processorsNum = Runtime.getRuntime().availableProcessors();
+        boolean allTime = stProps.getBoolean(ALL_TIME);
         Map<AlgorithmsType, List<Result>> lists = buildLists();
         Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
         {
@@ -158,6 +162,7 @@ public class App {
         results.put("stepSpanningTree", stepType.name());
         results.put("vertexSize", vertexSize);
         results.put("structSize", structSize);
+        results.put("allTime", allTime);
         System.out.println(String.format("Processors: %d", processorsNum));
         JSONObject execs = new JSONObject();
         for (int i = 0; i < processorsNum; i++) {
@@ -166,13 +171,18 @@ public class App {
             for (AlgorithmsType type : types) {
                 JSONObject exec = new JSONObject();
                 lists.get(type).add(getResult(new Parameters(graphType, type, vertexSize,
-                        (i + 1), structSize, false, iterations, stepType, directed, stealTime), graph, exec));
+                        (i + 1), structSize, false, iterations, stepType, directed, stealTime,
+                        allTime), graph, exec));
                 iter.put(type.name(), exec);
             }
             execs.put(String.format("thread-%d", i), iter);
         }
         results.put("executions", execs);
 //        System.out.println(results.toString(2));
+        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+        String time = format.format(new Date());
+        String title = String.format("st-%s-%s-%d-%d-%b.json", types.toString(), time, structSize, vertexSize, directed); 
+        WorkStealingUtils.saveJsonObjectToFile(results, title);
         WorkStealingUtils.saveJsonObjectToFile(results, "experiment-1.json");
         return results;
     }
