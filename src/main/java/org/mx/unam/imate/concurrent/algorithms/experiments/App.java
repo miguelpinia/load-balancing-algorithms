@@ -181,7 +181,9 @@ public class App {
 //        System.out.println(results.toString(2));
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("st-%s-%s-%d-%d-%b.json", types.toString(), time, structSize, vertexSize, directed); 
+        String title = String.format("st-%s-%s-%s-%b-%d-%d.json",
+                                     types.toString(), time, graphType.name(),
+                                     directed, structSize, vertexSize);
         WorkStealingUtils.saveJsonObjectToFile(results, title);
         WorkStealingUtils.saveJsonObjectToFile(results, "experiment-1.json");
         return results;
