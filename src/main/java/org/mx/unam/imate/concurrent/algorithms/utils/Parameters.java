@@ -170,6 +170,10 @@ public class Parameters {
             case B_WS_NC_MULT_LA:
             case NEW_B_WS_NC_MULT:
             case NEW_B_WS_NC_MULT_LA:
+            case WS_NC_MULT_OPT:
+            case WS_NC_MULT_LA_OPT:
+            case B_WS_NC_MULT_OPT:
+            case B_WS_NC_MULT_LA_OPT:
                 return true;
             default:
                 return false;
