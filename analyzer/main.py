@@ -70,6 +70,7 @@ def get_data(result_type, stat_type, vals, procs):
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
     """#  TODO: Update description (MAPA 2020-09-17)"""
+    print(results)
     if alg_filter is not None:
         algs = [alg for alg in results['algorithms'] if alg in alg_filter]
     else:
@@ -77,6 +78,7 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
     procs = results['processors']
     data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}, 'speedup': {}}
     chaselev = get_data('time', stat_type, stats(results)['CHASELEV'], procs)[0]
+    all_time = results['allTime']
     for alg in algs:
         vals = stats(results)[alg]
         data['takes'][alg] = get_data('takes', stat_type, vals, procs)
@@ -87,33 +89,39 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
                                         procs)
     print('Generating plots {}'.format(stat_type))
     current_time = datetime.now().strftime("%H:%M:%S")
-    if stat_type == 'average' or stat_type == 'median':
+    if stat_type in ('average', 'median'):
         fig1, axes1 = plt.subplots()
-        fig1.suptitle('SpeedUp: {}, {}, {}'.format(
+        fig1.suptitle('SpeedUp: {}, {}, {}. Init time? {}'.format(
             results['graphType'],
             stat_type,
-            'Directed' if results['directed'] else 'Undirected'))
+            'Directed'
+            if results['directed']
+            else 'Undirected',
+            'yes' if all_time else 'no'))
         for alg in algs:
             axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], '-o', label=alg)
         axes1.grid()
         axes1.legend()
         plt.gcf().set_size_inches(9.6, 5.4)
-        plt.savefig('speedup-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
-                                                           'directed'
-                                                           if results['directed']
-                                                           else 'undirected',
-                                                           results['vertexSize'],
-                                                           results['structSize'],
-                                                           stat_type,
-                                                           current_time),
+        plt.savefig('speedup-{}-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                              'directed'
+                                                              if results['directed']
+                                                              else 'undirected',
+                                                              results['vertexSize'],
+                                                              results['structSize'],
+                                                              stat_type,
+                                                              'allTime' if all_time
+                                                              else 'noTime',
+                                                              current_time),
                     dpi=200)
         f, a = plt.subplots()
-        f.suptitle('Graph: {} {}, {}'.format(
+        f.suptitle('Graph: {} {}, {}. Init time? {}'.format(
             results['graphType'],
+            stat_type,
             'Directed'
             if results['directed']
             else 'Undirected',
-            stat_type))
+            'yes' if all_time else 'no'))
         for alg in algs:
             a.plot(np.arange(1, procs + 1), data['time'][alg], '-o', label=alg)
         a.set_ylabel('Nanoseconds')
@@ -121,17 +129,23 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         a.grid()
         a.legend()
         plt.gcf().set_size_inches(9.6, 5.4)
-        plt.savefig('time-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
-                                                        'directed'
-                                                        if results['directed']
-                                                        else 'undirected',
-                                                        stat_type,
-                                                        results['vertexSize'],
-                                                        results['structSize'],
-                                                        current_time),
+        plt.savefig('time-{}-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
+                                                           'directed'
+                                                           if results['directed']
+                                                           else 'undirected',
+                                                           stat_type,
+                                                           results['vertexSize'],
+                                                           results['structSize'],
+                                                           'allTime'
+                                                           if all_time
+                                                           else 'noTime',
+                                                           current_time),
                     dpi=200)
     f1, a1 = plt.subplots()
-    f1.suptitle('Graph: {}, Takes'.format(results['graphType']))
+    f1.suptitle('Graph: {}, Takes. Init time? {}'.format(results['graphType'],
+                                                         'yes'
+                                                         if all_time
+                                                         else 'no'))
     for alg in algs:
         a1.plot(np.arange(1, procs + 1),
                 data['takes'][alg], '-o', label=alg)
