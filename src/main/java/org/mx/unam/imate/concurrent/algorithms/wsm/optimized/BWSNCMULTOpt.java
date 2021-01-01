@@ -1,10 +1,13 @@
-package org.mx.unam.imate.concurrent.algorithms.wsm;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.mx.unam.imate.concurrent.algorithms.wsm.optimized;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
-
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import sun.misc.Unsafe;
@@ -13,8 +16,8 @@ import sun.misc.Unsafe;
  *
  * @author miguel
  */
-public class BWSNCMULT implements WorkStealingStruct {
-
+public class BWSNCMULTOpt implements WorkStealingStruct {
+    
     private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private static final int BOTTOM = -2;
@@ -34,20 +37,13 @@ public class BWSNCMULT implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public BWSNCMULT(int size, int numThreads) {
+    public BWSNCMULTOpt(int size, int numThreads) {
         this.tail = -1;
         this.head = new int[numThreads];
         this.Head = new AtomicInteger(0);
-        int array[] = new int[size];
         this.B = new AtomicBoolean[size];
-        for (int i = 0; i < numThreads; i++) {
-            head[i] = 0;
-        }
-        for (int i = 0; i < array.length; i++) {
-            array[i] = BOTTOM;
-            B[i] = new AtomicBoolean(true);
-        }
-        this.Tasks = array; // Inicializar las tareas a bottom.
+        Arrays.fill(head, 0);
+        this.Tasks = new int[size]; // Inicializar las tareas a bottom.
     }
 
     @Override
@@ -59,6 +55,12 @@ public class BWSNCMULT implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail == Tasks.length - 1) {
             expand();
+        }
+        if (tail <= Tasks.length - 3) {
+            Tasks[tail + 1] = BOTTOM; 
+            Tasks[tail + 2] = BOTTOM;
+            B[tail + 1] = new AtomicBoolean(true);
+            B[tail + 2] = new AtomicBoolean(true);
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
@@ -81,7 +83,7 @@ public class BWSNCMULT implements WorkStealingStruct {
     public int steal(int label) {
         while (true) {
             head[label] = Math.max(head[label], Head.get());
-            if (head[label] < Tasks.length) {
+            if (head[label] <= tail) {
                 int x = Tasks[head[label]];
                 if (x != BOTTOM) {
                     int h = head[label];
@@ -138,5 +140,5 @@ public class BWSNCMULT implements WorkStealingStruct {
     public boolean isEmpty(int label) {
         return head[label] > tail;
     }
-
+    
 }

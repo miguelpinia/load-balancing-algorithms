@@ -1,15 +1,14 @@
-package org.mx.unam.imate.concurrent.algorithms.wsm;
+package org.mx.unam.imate.concurrent.algorithms.wsm.optimized;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 
 /**
  *
  * @author miguel
  */
-public class WSNCMULT implements WorkStealingStruct {
+public class WSNCMULTOpt implements WorkStealingStruct {
 
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
@@ -27,16 +26,12 @@ public class WSNCMULT implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public WSNCMULT(int size, int numThreads) {
+    public WSNCMULTOpt(int size, int numThreads) {
         this.tail = -1;
         this.head = new int[numThreads];
         this.Head = new AtomicInteger(0);
-        int array[] = new int[size];
-        for (int i = 0; i < numThreads; i++) {
-            head[i] = 0;
-        }
-        Arrays.fill(array, BOTTOM);
-        this.Tasks = array; // Inicializar las tareas a bottom.
+        Arrays.fill(head, 0);
+        this.Tasks = new int[size]; // Inicializar las tareas a bottom.
     }
 
     @Override
@@ -48,6 +43,10 @@ public class WSNCMULT implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail == Tasks.length - 1) {
             expand();
+        }
+        if (tail <= Tasks.length - 3) {
+            Tasks[tail + 1] = BOTTOM;
+            Tasks[tail + 2] = BOTTOM;
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
@@ -69,7 +68,7 @@ public class WSNCMULT implements WorkStealingStruct {
     @Override
     public int steal(int label) {
         head[label] = Math.max(head[label], Head.get());
-        if (head[label] < Tasks.length) {
+        if (head[label] <= tail) {
             int x = Tasks[head[label]];
             if (x != BOTTOM) {
                 head[label]++;
@@ -87,7 +86,6 @@ public class WSNCMULT implements WorkStealingStruct {
 
     public void expand() {
         int array[] = new int[2 * Tasks.length];
-        Arrays.fill(array, BOTTOM);
         System.arraycopy(Tasks, 0, array, 0, Tasks.length);
         Tasks = array;
     }

@@ -684,7 +684,6 @@ public class GeneralSpanningTreeTest {
     ////////////////////////////////////////////////////////////
     // Pruebas de algoritmo bounded non-blocking workstealing //
     ////////////////////////////////////////////////////////////
-
     @DisplayName("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT algorithm")
     @Test
     public void testSpanningTreeBNEWALGTorus2D() {
@@ -1143,6 +1142,378 @@ public class GeneralSpanningTreeTest {
     public void testSpanningTreeNEWBWSNCMULTLADirectedRandom() {
         System.out.println("Test the execution of spanning tree for directed random graph using NEW_B_WS_NC_MULT_LA algorithm");
         Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.NEW_B_WS_NC_MULT_LA, 1000000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    /////////////////
+    // WSNCMULTOPT //
+    /////////////////
+    @DisplayName("Test the execution of spanning tree for torus 2D using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTTorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.WS_NC_MULT_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTDirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.WS_NC_MULT_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTTorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.WS_NC_MULT_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTDirectedTorus2D60() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D60 using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.WS_NC_MULT_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTTorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.WS_NC_MULT_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTDirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.WS_NC_MULT_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTTorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.WS_NC_MULT_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTDirectedTorus3D40() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D40 using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.WS_NC_MULT_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for random graph using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTRandom() {
+        System.out.println("Test the execution of spanning tree for random graph using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.WS_NC_MULT_OPT, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed random graph using WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTOPTDirectedRandom() {
+        System.out.println("Test the execution of spanning tree for directed random graph using WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.WS_NC_MULT_OPT, 1000000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    //////////////////
+    // BWSNCMULTOPT //
+    //////////////////
+    @DisplayName("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTTorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_WS_NC_MULT_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTDirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_WS_NC_MULT_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTTorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_WS_NC_MULT_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTDirectedTorus2D60() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D60 using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_WS_NC_MULT_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTTorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_WS_NC_MULT_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTDirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_WS_NC_MULT_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTTorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_WS_NC_MULT_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTDirectedTorus3D40() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D40 using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_WS_NC_MULT_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for random graph using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTRandom() {
+        System.out.println("Test the execution of spanning tree for random graph using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_WS_NC_MULT_OPT, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed random graph using B_WS_NC_MULT_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTOPTDirectedRandom() {
+        System.out.println("Test the execution of spanning tree for directed random graph using B_WS_NC_MULT_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_WS_NC_MULT_OPT, 1000000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    /////////////////////
+    // WSNCMULT_LA_OPT //
+    /////////////////////
+    @DisplayName("Test the execution of spanning tree for torus 2D using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTTorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTDirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTTorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTDirectedTorus2D60() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D60 using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTTorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.WS_NC_MULT_LA_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTDirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.WS_NC_MULT_LA_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTTorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.WS_NC_MULT_LA_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTDirectedTorus3D40() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D40 using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.WS_NC_MULT_LA_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for random graph using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTRandom() {
+        System.out.println("Test the execution of spanning tree for random graph using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed random graph using WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeWSNCMULTLAOPTDirectedRandom() {
+        System.out.println("Test the execution of spanning tree for directed random graph using WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.WS_NC_MULT_LA_OPT, 1000000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    //////////////////////
+    // BWSNCMULT_LA_OPT //
+    //////////////////////
+    @DisplayName("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTTorus2D() {
+        System.out.println("Test the execution of spanning tree for torus 2D using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTDirectedTorus2D() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 2D60 using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTTorus2D60() {
+        System.out.println("Test the execution of spanning tree for torus 2D60 using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 2D60 using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTDirectedTorus2D60() {
+        System.out.println("Test the execution of spanning tree for directed torus 2D60 using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_2D_60, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTTorus3D() {
+        System.out.println("Test the execution of spanning tree for torus 3D using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTDirectedTorus3D() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for torus 3D40 using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTTorus3D40() {
+        System.out.println("Test the execution of spanning tree for torus 3D40 using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 100, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed torus 3D40 using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTDirectedTorus3D40() {
+        System.out.println("Test the execution of spanning tree for directed torus 3D40 using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.TORUS_3D_40, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 100, 8, 4096, false, true);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for random graph using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTRandom() {
+        System.out.println("Test the execution of spanning tree for random graph using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000000, 8, 4096, false, false);
+        String result = GraphUtils.detectType(tree);
+        Assertions.assertEquals(GraphUtils.IS_TREE, result);
+    }
+
+    @DisplayName("Test the execution of spanning tree for directed random graph using B_WS_NC_MULT_LA_OPT algorithm")
+    @Test
+    public void testSpanningTreeBWSNCMULTLAOPTDirectedRandom() {
+        System.out.println("Test the execution of spanning tree for directed random graph using B_WS_NC_MULT_LA_OPT algorithm");
+        Graph tree = generateTree(GraphType.RANDOM, AlgorithmsType.B_WS_NC_MULT_LA_OPT, 1000000, 8, 4096, false, true);
         String result = GraphUtils.detectType(tree);
         Assertions.assertEquals(GraphUtils.IS_TREE, result);
     }

@@ -21,7 +21,7 @@ public class Graph {
 
     private final boolean directed;
     private final Integer root;
-    private Integer numEdges;
+    private int numEdges;
 
     private final GraphType type;
 
@@ -39,6 +39,21 @@ public class Graph {
         }
     }
 
+    /**
+     * Just create the graph without information about the edges, only
+     * the number of vertex that contain.
+     */
+    public Graph(Integer root, Integer numVertices, GraphType type, boolean directed) {
+        this.directed = directed;
+        this.root = root;
+        this.numEdges = 0;
+        this.type = type;
+        this.vertices = new Vertex[numVertices];
+        for (int i = 0; i < vertices.length; i++) {
+            vertices[i] = new Vertex(directed, i);
+        }
+    }
+
     private void _addEdge(Edge edge) {
         int src = edge.getSrc();
         int dest = edge.getDest();
@@ -46,14 +61,28 @@ public class Graph {
             return;
         }
         vertices[src].addNeighbour(dest);
-        this.numEdges++;
+        numEdges++;
         if (directed) {
             vertices[dest].addChild(src);
         } else {
             vertices[dest].addNeighbour(src);
-            this.numEdges++;
+            numEdges++;
         }
 
+    }
+
+    public void addEdge(Integer src, Integer dest) {
+        if (dest == -1) {
+            return;
+        }
+        vertices[src].addNeighbour(dest);
+        numEdges++;
+        if (directed) {
+            vertices[dest].addChild(src);
+        } else {
+            vertices[dest].addNeighbour(src);
+            numEdges++;
+        }
     }
 
     public void addEdge(Edge edge) {

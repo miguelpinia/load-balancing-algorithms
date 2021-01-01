@@ -41,25 +41,25 @@ public class Vertex {
         return childs;
     }
 
-    public void addNeighbour(Integer neighbour) {
+    public void addNeighbour(int neighbour) {
         if (!neighbours.contains(neighbour)) {
             neighbours.add(neighbour);
         }
     }
 
-    public void deleteNeighbour(Integer neighbour) {
+    public void deleteNeighbour(int neighbour) {
         if (neighbours.contains(neighbour)) {
             neighbours.remove(neighbour);
         }
     }
 
-    public void addChild(Integer child) {
+    public void addChild(int child) {
         if (directed && !childs.contains(child)) {
             childs.add(child);
         }
     }
 
-    public void deleteChild(Integer child) {
+    public void deleteChild(int child) {
         if (directed && childs.contains(child)) {
             childs.remove(child);
         }

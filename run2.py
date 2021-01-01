@@ -3,14 +3,12 @@ import json
 from datetime import datetime
 import time
 
-alg_config_1 = ['CHASELEV', 'IDEMPOTENT_FIFO', 'IDEMPOTENT_LIFO',
-'WS_NC_MULT', 'B_WS_NC_MULT']
-alg_config_2 = ['CHASELEV', 'IDEMPOTENT_FIFO', 'IDEMPOTENT_LIFO',
-'WS_NC_MULT_LA', 'B_WS_NC_MULT_LA']
-alg_config_3 = ['CHASELEV', 'WS_NC_MULT', 'B_WS_NC_MULT',
-'WS_NC_MULT_LA', 'B_WS_NC_MULT_LA']
+alg_config_1 = ['CHASELEV', 'WS_NC_MULT_LA', 'B_WS_NC_MULT_LA',
+'WS_NC_MULT_LA_OPT', 'B_WS_NC_MULT_LA_OPT']
+alg_config_2 = ['CHASELEV', 'WS_NC_MULT', 'B_WS_NC_MULT',
+'WS_NC_MULT_OPT', 'B_WS_NC_MULT_OPT']
 
-configs = [alg_config_1, alg_config_2, alg_config_3]
+configs = [alg_config_1, alg_config_2]
 graphs = ['TORUS_2D', 'TORUS_2D_60', 'TORUS_3D', 'TORUS_3D_40', 'RANDOM']
 sizes = [1000000, 500000, 250000, 100000, 32768, 4096, 256]
 directeds = [True, False]

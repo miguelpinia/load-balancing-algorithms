@@ -1,19 +1,18 @@
-package org.mx.unam.imate.concurrent.algorithms.wsm;
+package org.mx.unam.imate.concurrent.algorithms.wsm.optimized;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 
 /**
  *
  * @author miguel
  */
-public class WSNCMULTLA implements WorkStealingStruct {
-
-    private static final int BOTTOM = -2;
+public class WSNCMULTLAOpt implements WorkStealingStruct {
+    
+        private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
@@ -26,19 +25,17 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     private final List<NodeArrayInt> tasks;
 
-    public WSNCMULTLA(int size, int numThreads) {
+    public WSNCMULTLAOpt(int size, int numThreads) {
         this.nodes = 0;
         this.tail = -1;
         this.head = new int[numThreads];
         this.Head = new AtomicInteger(0);
-        for (int i = 0; i < numThreads; i++) {
-            head[i] = 0;
-        }
+        Arrays.fill(head, 0);
 
         // Inicializar valores de la estructura de datos
         tasks = new ArrayList<>();// ArrayList?
         arrayLength = size;
-        tasks.add(new NodeArrayInt(size, BOTTOM));
+        tasks.add(new NodeArrayInt(size));
         nodes++;
         length = nodes * arrayLength;
     }
@@ -49,7 +46,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     }
 
     public void expand() {
-        tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
+        tasks.add(new NodeArrayInt(arrayLength));
         nodes++;
         length = nodes * arrayLength;
     }
@@ -58,6 +55,10 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail == (length - 1)) {
             expand();
+        }
+        if (tail <= length - 3) {
+            tasks.get(nodes - 1).setItem((tail + 1) % arrayLength, BOTTOM);
+            tasks.get(nodes - 1).setItem((tail + 2) % arrayLength, BOTTOM);
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
@@ -84,7 +85,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public int steal(int label) {
         head[label] = Math.max(head[label], Head.get());
         int h = head[label];
-        if (h < length) {
+        if (h <= tail) {
             int node = h / arrayLength;
             int position = h % arrayLength;
             if (node < tasks.size())  {
@@ -104,11 +105,9 @@ public class WSNCMULTLA implements WorkStealingStruct {
         private final int length;
         private final int[] items;
 
-        public NodeArrayInt(int length, int defaultValue) {
+        public NodeArrayInt(int length) {
             this.length = length;
-            int[] defaultArray = new int[length]; // ¿Crear arreglo y asignarlo en constructor de AtomicIntegerArray?
-            Arrays.fill(defaultArray, defaultValue); // ¿O iniciar AtomicIntegerArray y con un ciclo iniciar valores?
-            items = defaultArray;
+            items = new int[length];
         }
 
         public boolean setItem(int idx, int value) {
@@ -149,5 +148,5 @@ public class WSNCMULTLA implements WorkStealingStruct {
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

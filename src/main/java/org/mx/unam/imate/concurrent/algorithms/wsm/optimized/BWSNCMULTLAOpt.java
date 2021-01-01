@@ -1,17 +1,17 @@
-package org.mx.unam.imate.concurrent.algorithms.wsm;
+package org.mx.unam.imate.concurrent.algorithms.wsm.optimized;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 
 /**
  *
  * @author miguel
  */
-public class BWSNCMULTLA implements WorkStealingStruct {
+public class BWSNCMULTLAOpt implements WorkStealingStruct {
 
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
@@ -33,25 +33,23 @@ public class BWSNCMULTLA implements WorkStealingStruct {
      * @param size El tamaño del arreglo de tareas.
      * @param numThreads
      */
-    public BWSNCMULTLA(int size, int numThreads) {
+    public BWSNCMULTLAOpt(int size, int numThreads) {
         this.tail = -1;
         this.nodes = 0;
         this.arrayLength = size;
         this.Head = new AtomicInteger(0);
         this.head = new int[numThreads];
-        for (int i = 0; i < numThreads; i++) {
-            head[i] = 0;
-        }
+        Arrays.fill(head, 0);
         tasks = new ArrayList<>();
         B = new ArrayList<>();
-        tasks.add(new NodeArrayInt(size, BOTTOM));
+        tasks.add(new NodeArrayInt(size));
         B.add(new NodeArrayBool(size));
         nodes++;
         length = nodes * size;
     }
 
     public void expand() {
-        tasks.add(new NodeArrayInt(arrayLength, BOTTOM));
+        tasks.add(new NodeArrayInt(arrayLength));
         B.add(new NodeArrayBool(arrayLength));
         nodes++;
         length = nodes * arrayLength;
@@ -66,6 +64,12 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     public boolean put(int task, int label) {
         if (tail == (length - 1)) {
             expand();
+        }
+        if (tail <= length - 3) {
+            tasks.get(nodes - 1).setItem((tail + 1) % arrayLength, BOTTOM);
+            tasks.get(nodes - 1).setItem((tail + 2) % arrayLength, BOTTOM);
+            B.get(nodes - 1).setItem((tail + 1) % arrayLength, true);
+            B.get(nodes - 1).setItem((tail + 2) % arrayLength, true);
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
@@ -92,7 +96,7 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     public int steal(int label) {
         while (true) {
             int h = Math.max(head[label], Head.get());
-            if (h < length) {
+            if (h <= tail) {
                 int node = h / arrayLength;
                 int position = h % arrayLength;
                 if (node < tasks.size()) {
@@ -117,13 +121,9 @@ public class BWSNCMULTLA implements WorkStealingStruct {
         private final int length;
         private final int[] items;
 
-        public NodeArrayInt(int length, int defaultValue) {
+        public NodeArrayInt(int length) {
             this.length = length;
-            int[] defaultArray = new int[length]; // ¿Crear arreglo y asignarlo en constructor de AtomicIntegerArray?
-            for (int i = 0; i < length; i++) {
-                defaultArray[i] = defaultValue;
-            }
-            items = defaultArray;
+            items = new int[length];
         }
 
         public boolean setItem(int idx, int value) {
@@ -147,17 +147,14 @@ public class BWSNCMULTLA implements WorkStealingStruct {
 
         public NodeArrayBool(int length) {
             this.length = length;
-            B = new AtomicBoolean[length];
-            for (int i = 0; i < length; i++) {
-                B[i] = new AtomicBoolean(true);
-            }
+            this.B = new AtomicBoolean[length];
         }
 
         public boolean setItem(int idx, boolean value) {
             if (idx < 0 || idx >= length) {
                 return false;
             }
-            B[idx].set(value);
+            B[idx] = new AtomicBoolean(value);
             return true;
         }
 
@@ -185,5 +182,5 @@ public class BWSNCMULTLA implements WorkStealingStruct {
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
 }

@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.utils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -72,7 +73,7 @@ public class WorkStealingUtils {
     }
 
     public static void saveJsonObjectToFile(JSONObject jo, String path) {
-        try (PrintWriter saveFile = new PrintWriter(path, StandardCharsets.UTF_8.displayName())) {
+        try (PrintWriter saveFile = new PrintWriter(new File(path), StandardCharsets.UTF_8.displayName())) {
             saveFile.println(jo.toString(2));
             saveFile.flush();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
