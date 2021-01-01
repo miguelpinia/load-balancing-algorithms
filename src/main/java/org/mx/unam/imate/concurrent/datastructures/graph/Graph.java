@@ -39,6 +39,10 @@ public class Graph {
         }
     }
 
+    /**
+     * Just create the graph without information about the edges, only
+     * the number of vertex that contain.
+     */
     public Graph(Integer root, Integer numVertices, GraphType type, boolean directed) {
         this.directed = directed;
         this.root = root;
