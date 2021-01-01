@@ -70,11 +70,10 @@ public class GraphUtils {
      * @return A graph builded from the parents.
      */
     public static Graph buildFromParents(int[] parents, int root, boolean directed) {
-        Edge[] edges = new Edge[parents.length];
+        Graph graph = new Graph(root, parents.length, GraphType.RANDOM, directed);
         for (int i = 0; i < parents.length; i++) {
-            edges[i] = new Edge(i, parents[i]);
+            graph.addEdge(i, parents[i]);
         }
-        Graph graph = new Graph(edges, directed, root, parents.length, GraphType.RANDOM);
         return graph;
     }
 
@@ -87,11 +86,10 @@ public class GraphUtils {
      * @return A graph builded from the parents.
      */
     public static Graph buildFromParents(AtomicIntegerArray parents, int root, boolean directed) {
-        Edge[] edges = new Edge[parents.length()];
+        Graph graph = new Graph(root, parents.length(), GraphType.RANDOM, directed);
         for (int i = 0; i < parents.length(); i++) {
-            edges[i] = new Edge(i, parents.get(i));
+            graph.addEdge(i, parents.get(i));
         }
-        Graph graph = new Graph(edges, directed, root, parents.length(), GraphType.RANDOM);
         return graph;
     }
 
@@ -110,7 +108,7 @@ public class GraphUtils {
         boolean directed = false;
         int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D, directed);
         int neighbor;
         int i, j, currentIdx, pos;
         for (int k = 0; k < numEdges; k++) {
@@ -134,17 +132,16 @@ public class GraphUtils {
                 default:
                     neighbor = 0;
             }
-            edges[k] = new Edge(currentIdx, neighbor);
+            graph.addEdge(currentIdx, neighbor);
         }
-        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D);
-        return newGraph;
+        return graph;
     }
 
     public static Graph directedTorus2D(int shape) {
         boolean directed = true;
         int numEdges = shape * shape * 2;
         int numVertices = shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D, directed);
         int neighbor;
         int i, j, currentIdx, pos;
         for (int k = 0; k < numEdges; k++) {
@@ -162,10 +159,9 @@ public class GraphUtils {
                 default:
                     neighbor = 0;
             }
-            edges[k] = new Edge(currentIdx, neighbor);
+            graph.addEdge(currentIdx, neighbor);
         }
-        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D);
-        return newGraph;
+        return graph;
     }
 
     public static Graph torus2D60(int shape) {
@@ -173,7 +169,7 @@ public class GraphUtils {
         Random rand = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D_60, directed);
         int randomNumber, i, j, currentIdx, pos;
         int current = 0;
         int neighbor;
@@ -187,34 +183,31 @@ public class GraphUtils {
             switch (pos) {
                 case 0:
                     neighbor = MOD((i - 1), shape) * shape + j;
-                    edges[current++] = new Edge(currentIdx, neighbor);
+                    graph.addEdge(currentIdx, neighbor);
                     break;
                 case 1:
                     if (randomNumber < 60) {
                         neighbor = i * shape + MOD((j + 1), shape);
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 2:
                     if (randomNumber < 60) {
                         neighbor = MOD((i + 1), shape) * shape + j;
-
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 3:
                     if (randomNumber < 60) {
                         neighbor = i * shape + MOD((j - 1), shape);
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 default:
                     break;
             }
         }
-        edges = Arrays.copyOf(edges, current);
-        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D_60);
-        return newGraph;
+        return graph;
     }
 
     public static Graph directedTorus2D60(int shape) {
@@ -222,7 +215,7 @@ public class GraphUtils {
         Random rand = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * 2;
         int numVertices = shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D_60, directed);
         int randomNumber, i, j, currentIdx, pos;
         int current = 0;
         int neighbor;
@@ -235,28 +228,26 @@ public class GraphUtils {
             switch (pos) {
                 case 0:
                     neighbor = i * shape + MOD((j + 1), shape);
-                    edges[current++] = new Edge(currentIdx, neighbor);
+                    graph.addEdge(currentIdx, neighbor);
                     break;
                 case 1:
                     if (randomNumber < 60) {
                         neighbor = MOD((i + 1), shape) * shape + j;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 default:
                     System.out.println("Error al calcular el vecino.");
             }
         }
-        edges = Arrays.copyOf(edges, current);
-        Graph newGraph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_2D_60);
-        return newGraph;
+        return graph;
     }
 
     public static Graph torus3D(int shape) {
         boolean directed = false;
         int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D, directed);
         int i;
         int j;
         int k;
@@ -291,9 +282,8 @@ public class GraphUtils {
                 default:
                     neighbor = 0;
             }
-            edges[m] = new Edge(currentIdx, neighbor);
+            graph.addEdge(currentIdx, neighbor);
         }
-        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D);
         return graph;
     }
 
@@ -301,7 +291,7 @@ public class GraphUtils {
         boolean directed = true;
         int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D, directed);
         int i;
         int j;
         int k;
@@ -327,9 +317,8 @@ public class GraphUtils {
                 default:
                     neighbor = 0;
             }
-            edges[m] = new Edge(currentIdx, neighbor);
+            graph.addEdge(currentIdx, neighbor);
         }
-        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D);
         return graph;
     }
 
@@ -338,7 +327,7 @@ public class GraphUtils {
         Random random = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D_40, directed);
         int randomNumber;
         int i;
         int j;
@@ -357,36 +346,36 @@ public class GraphUtils {
             switch (pos) {
                 case 0:
                     neighbor = (i * shape * shape) + (j * shape) + MOD((k - 1), shape);
-                    edges[current++] = new Edge(currentIdx, neighbor);
+                    graph.addEdge(currentIdx, neighbor);
                     break;
                 case 1:
                     if (randomNumber < 40) {
                         neighbor = (i * shape * shape) + (j * shape) + MOD((k + 1), shape);
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 2:
                     if (randomNumber < 40) {
                         neighbor = (i * shape * shape) + (MOD((j - 1), shape) * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 3:
                     if (randomNumber < 40) {
                         neighbor = (i * shape * shape) + (MOD((j + 1), shape) * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 4:
                     if (randomNumber < 40) {
                         neighbor = (MOD((i - 1), shape) * shape * shape) + (j * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 5:
                     if (randomNumber < 40) {
                         neighbor = (MOD((i + 1), shape) * shape * shape) + (j * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 default:
@@ -394,8 +383,6 @@ public class GraphUtils {
             }
 
         }
-        edges = Arrays.copyOf(edges, current);
-        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D_40);
         return graph;
     }
 
@@ -404,7 +391,7 @@ public class GraphUtils {
         Random random = new Random(System.currentTimeMillis());
         int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
-        Edge[] edges = new Edge[numEdges];
+        Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D_40, directed);
         int randomNumber;
         int i;
         int j;
@@ -423,26 +410,24 @@ public class GraphUtils {
             switch (pos) {
                 case 0:
                     neighbor = (i * shape * shape) + (j * shape) + MOD((k + 1), shape);
-                    edges[current++] = new Edge(currentIdx, neighbor);
+                    graph.addEdge(currentIdx, neighbor);
                     break;
                 case 1:
                     if (randomNumber < 40) {
                         neighbor = (i * shape * shape) + (MOD((j + 1), shape) * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 case 2:
                     if (randomNumber < 40) {
                         neighbor = (MOD((i + 1), shape) * shape * shape) + (j * shape) + k;
-                        edges[current++] = new Edge(currentIdx, neighbor);
+                        graph.addEdge(currentIdx, neighbor);
                     }
                     break;
                 default:
                     System.out.println("Error al calcular los vecinos");
             }
         }
-        edges = Arrays.copyOf(edges, current);
-        Graph graph = new Graph(edges, directed, 0, numVertices, GraphType.TORUS_3D_40);
         return graph;
     }
 
