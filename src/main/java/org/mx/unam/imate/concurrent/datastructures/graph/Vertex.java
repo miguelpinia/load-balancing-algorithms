@@ -43,7 +43,7 @@ public class Vertex {
 
     public void addNeighbour(int neighbour) {
         if (!neighbours.contains(neighbour)) {
-            neighbours.add(negihbour);
+            neighbours.add(neighbour);
         }
     }
 
