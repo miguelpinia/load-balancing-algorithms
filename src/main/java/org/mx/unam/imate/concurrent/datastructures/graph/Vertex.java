@@ -1,7 +1,12 @@
 package org.mx.unam.imate.concurrent.datastructures.graph;
 
+import gnu.trove.list.TIntList;
+import gnu.trove.list.array.TIntArrayList;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represent the vertex of a graph. Use a <b>List</b> to store its neighbours,
@@ -15,14 +20,14 @@ public class Vertex {
 
     private final boolean directed;
     private final Integer value;
-    private final List<Integer> neighbours;
-    private final List<Integer> childs;
+    private final TIntList neighbours;
+    private final TIntList childs;
 
     public Vertex(boolean directed, Integer value) {
         this.directed = directed;
         this.value = value;
-        this.neighbours = new ArrayList<>();
-        this.childs = directed ? new ArrayList<>() : null;
+        this.neighbours = new TIntArrayList();
+        this.childs = directed ? new TIntArrayList() : null;
     }
 
     public boolean isDirected() {
@@ -34,11 +39,17 @@ public class Vertex {
     }
 
     public List<Integer> getNeighbours() {
-        return neighbours;
+        List<Integer> result = Arrays.stream(neighbours.toArray())
+            .boxed()
+            .collect(Collectors.toList());
+        return result;
     }
 
     public List<Integer> getChilds() {
-        return childs;
+        List<Integer> result = Arrays.stream(childs.toArray())
+            .boxed()
+            .collect(Collectors.toList());
+        return result;
     }
 
     public void addNeighbour(int neighbour) {

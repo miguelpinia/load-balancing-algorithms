@@ -44,6 +44,12 @@
             <artifactId>json</artifactId>
             <version>20200518</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/gnu.trove/trove -->
+        <dependency>
+          <groupId>gnu.trove</groupId>
+          <artifactId>trove</artifactId>
+          <version>3.0.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -114,6 +120,10 @@
         <repository>
             <id>java-net-repo</id>
             <url>https://maven.java.net/content/repositories/public/</url>
+        </repository>
+        <repository>
+            <id>mvnrepository</id>
+            <url>http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-releases/</url>
         </repository>
     </repositories>
     <properties>
