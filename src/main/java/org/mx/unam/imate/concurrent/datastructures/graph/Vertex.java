@@ -60,7 +60,7 @@ public class Vertex {
 
     public void deleteNeighbour(int neighbour) {
         if (neighbours.contains(neighbour)) {
-            neighbours.remove(neighbour);
+            neighbours.remove(Integer.valueOf(neighbour));
         }
     }
 
@@ -72,7 +72,7 @@ public class Vertex {
 
     public void deleteChild(int child) {
         if (directed && childs.contains(child)) {
-            childs.remove(child);
+            childs.remove(Integer.valueOf(child));
         }
     }
 
