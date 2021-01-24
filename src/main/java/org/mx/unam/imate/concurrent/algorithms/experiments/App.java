@@ -97,7 +97,9 @@ public class App {
             System.out.println(header);
             JSONObject results = exp.putSteals(types, putStealsOptions);
             System.out.println(results.toString(2));
-            WorkStealingUtils.saveJsonObjectToFile(results, "putsSteals.json");
+            SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+            String time = format.format(new Date());
+            WorkStealingUtils.saveJsonObjectToFile(results, String.format("putsSteals-%s.json", time));
         }
         if (putTakes) {
             String header
@@ -108,7 +110,9 @@ public class App {
             System.out.println(header);
             JSONObject results = exp.putTakes(types, putTakesOptions);
             System.out.println(results.toString(2));
-            WorkStealingUtils.saveJsonObjectToFile(results, "putsTakes.json");
+            SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+            String time = format.format(new Date());
+            WorkStealingUtils.saveJsonObjectToFile(results, String.format("putsTakes-%s.json", time));
         }
         if (putsTakesSteals) {
             String header
@@ -119,7 +123,9 @@ public class App {
             System.out.println(header);
             JSONObject results = exp.putTakesSteals(types, ptsOptions);
             System.out.println(results.toString(2));
-            WorkStealingUtils.saveJsonObjectToFile(results, "putsTakesSteals.json");
+            SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+            String time = format.format(new Date());
+            WorkStealingUtils.saveJsonObjectToFile(results, String.format("putsTakesSteals-%s.json", time));
         }
         if (spanningTree) {
             String header
