@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -15,6 +14,9 @@ import json
 
 import matplotlib.pyplot as plt
 import numpy as np
+import glob
+import itertools
+import pprint
 
 
 def read_json(path_file):
@@ -69,8 +71,10 @@ def get_data(result_type, stat_type, vals, procs):
 
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
-    """#  TODO: Update description (MAPA 2020-09-17)"""
-    print(results)
+    """#  TODO: Update description (MAPA 2020-09-17)
+    >>> results = read_json('./i7_results/st_random_true.json')
+    >>> generate_graph_stats(results, 'average')"""
+    # print(results)
     if alg_filter is not None:
         algs = [alg for alg in results['algorithms'] if alg in alg_filter]
     else:
@@ -87,19 +91,34 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         data['time'][alg] = get_data('time', stat_type, vals, procs)
         data['speedup'][alg] = chaselev / get_data('time', stat_type, vals,
                                         procs)
+        maximum = np.around(np.amax(data['speedup'][alg]), decimals=2)
+        minimum = np.around(np.amin(data['speedup'][alg]), decimals=2)
+        print('{:<16}\t\t ${}x \sim {}x$'.format(alg, minimum, maximum))
+    # print(algs, '\n')
+    # pprint.pprint(data['speedup'])
     print('Generating plots {}'.format(stat_type))
     current_time = datetime.now().strftime("%H:%M:%S")
+    plt.style.use('default') #grayscale #tableau-colorblind10
+    marker = itertools.cycle(('s', '*', 'p', 'v', '^', '>', '<'))
+    plt.margins(0,0)
     if stat_type in ('average', 'median'):
         fig1, axes1 = plt.subplots()
-        fig1.suptitle('SpeedUp: {}, {}, {}. Init time? {}'.format(
-            results['graphType'],
-            stat_type,
+        axes1.set_ylabel('SpeedUp')
+        axes1.set_xlabel('Processors')
+        fig1.suptitle('SpeedUp respect to Chase-Lev\nGraph: {} {}'.format(
             'Directed'
             if results['directed']
             else 'Undirected',
-            'yes' if all_time else 'no'))
+            results['graphType']))
         for alg in algs:
-            axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], '-o', label=alg)
+            if alg == 'WS_NC_MULT_LA_OPT':
+                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='-', label='WS_WMULT', color='red')
+            elif alg == 'B_WS_NC_MULT_LA_OPT':
+                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='-', label='B_WS_WMULT', color='red')
+            elif alg == 'CHASELEV':
+                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='--', label=alg, color='#333333')
+            else:
+                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls=':', label=alg, color='#333333')
         axes1.grid()
         axes1.legend()
         plt.gcf().set_size_inches(9.6, 5.4)
@@ -227,24 +246,44 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         dpi=200)
     plt.close('all')
 
+def replace_name(algorithm):
+    if algorithm == 'WS_NC_MULT_LA_OPT':
+        return 'WS_WMULT'
+    if algorithm == 'B_WS_NC_MULT_L4A_OPT':
+        return 'B_WS_WMULT'
+    return algorithm
 
-def barchart_puts_steals(path_file):
+def g_puts_steals(path_file):
     """Generate barcharts comparing put and steal times"""
     json_data = read_json(path_file)
     iters = json_data['iters']
     algs = list(map(lambda d: d['algorithm'], json_data['results']))
-    steals = list(map(lambda d: np.average(np.sort(d['steals'])[1:iters-1]), json_data['results']))
-    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
-    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
+    algs = list(map(replace_name, algs))
+    steals = np.array(list(map(lambda d: np.average(np.sort(d['steals'])), json_data['results'])))
+    puts = np.array(list(map(lambda d: np.average(np.sort(d['puts'])), json_data['results'])))
+    # total = list(map(lambda d: np.average(np.sort(d['total'])), json_data['results']))
+    total = puts + steals
+    print('iters', iters, 'size', json_data['size'], 'operations', json_data['operations'])
+    print(algs)
+    print('total', total)
+    print('respect to chase-lev', np.around((total[0] - total) / total[0], decimals=3))
+    print('respect to idempotent fifo', np.around((total[1] - total) / total[1], decimals=3))
+    print('respect to idempotent lifo', np.around((total[2] - total) / total[2], decimals=3))
+    print('steals', steals)
+    print('respect to chase-lev', np.around((steals[0] - steals) / steals[0], decimals=3))
+    print('respect to idempotent fifo', np.around((steals[1] - steals) / steals[1], decimals=3))
+    print('respect to idempotent lifo', np.around((steals[2] - steals) / steals[2], decimals=3))
+    print('\n')
     ind = np.arange(len(algs))
     width = 0.25
+    plt.style.use('grayscale')
     fig, ax = plt.subplots()
     ax.grid(linestyle='--', linewidth=0.2)
-    ax.bar(ind - width, puts, width, label='Puts')
-    ax.bar(ind, steals, width, label='Steals')
-    ax.bar(ind + width, total, width, label='Total')
-    ax.set_ylabel('Time')
-    ax.set_title('Time done by puts and steals')
+    ax.bar(ind - width, puts, width, label='Puts', color='#A9A9A9')
+    ax.bar(ind, steals, width, label='Steals', color='#696969')
+    ax.bar(ind + width, total, width, label='Total', color='#333333')
+    ax.set_ylabel('Time (ms)')
+    ax.set_title('Puts and steals')
     ax.set_xticks(ind)
     ax.set_xticklabels(algs)
     ax.legend()
@@ -254,27 +293,66 @@ def barchart_puts_steals(path_file):
                                                     json_data['size'],
                                                     json_data['iters'],
                                                     '_'.join(algs)),
+
+                dpi=200)
+    plt.close('all')
+
+def g_puts_steals_norm(path_file):
+    json_data = read_json(path_file)
+    iters = json_data['iters']
+    algs = list(map(lambda d: d['algorithm'], json_data['results']))
+    algs = list(map(replace_name, algs))
+    steals = list(map(lambda d: np.average(np.sort(d['steals'])[1:iters-1]), json_data['results']))
+    steals = steals / steals[0]
+    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
+    puts = puts / puts[0]
+    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
+    total = total / total[0]
+    ind = np.arange(len(algs))
+    fig, axs = plt.subplots(1, 3, figsize=(9, 3))
+    axs[0].bar(algs, puts, 0.25, label='Puts')
+    axs[1].bar(algs, steals)
+    axs[2].bar(algs, total)
+    fig.suptitle('Categorical Plotting')
+    fig.tight_layout()
+    # plt.show()
+    plt.gcf().set_size_inches(9.6, 5.4)
+    plt.savefig('putsSteals-norm-{}-{}-{}-{}.png'.format(json_data['operations'],
+                                                         json_data['size'],
+                                                         json_data['iters'],
+                                                         '_'.join(algs)),
                 dpi=200)
     plt.close('all')
 
 
-def barchart_puts_takes(path_file):
+def g_puts_takes(path_file):
     """Generate barcharts comparing put and takes times"""
     json_data = read_json(path_file)
     iters = json_data['iters']
     algs = list(map(lambda d: d['algorithm'], json_data['results']))
-    takes = list(map(lambda d: np.average(np.sort(d['takes'])[1:iters-1]), json_data['results']))
-    puts = list(map(lambda d: np.average(np.sort(d['puts'])[1:iters-1]), json_data['results']))
-    total = list(map(lambda d: np.average(np.sort(d['total'])[1:iters-1]), json_data['results']))
+    # print(algs)
+    algs = list(map(replace_name, algs))
+    takes = np.array(list(map(lambda d: np.average(np.sort(d['takes'])), json_data['results'])))
+    puts = np.array(list(map(lambda d: np.average(np.sort(d['puts'])), json_data['results'])))
+    # total = list(map(lambda d: np.average(np.sort(d['total'])), json_data['results']))
+    total = puts + takes
+    print('iters', iters, 'size', json_data['size'], 'operations', json_data['operations'])
+    print(algs)
+    print('total', total)
+    print('respect to chase-lev', np.around((total[0] - total) / total[0], decimals=3))
+    print('respect to idempotent fifo', np.around((total[1] - total) / total[1], decimals=3))
+    print('respect to idempotent lifo', np.around((total[2] - total) / total[2], decimals=3))
+    print('\n')
     ind = np.arange(len(algs))
     width = 0.25
+    plt.style.use('grayscale')
     fig, ax = plt.subplots()
     ax.grid(linestyle='--', linewidth=0.2)
-    ax.bar(ind - width, puts, width, label='Puts')
-    ax.bar(ind, takes, width, label='Takes')
-    ax.bar(ind + width, total, width, label='Total')
-    ax.set_ylabel('Time')
-    ax.set_title('Time done by puts and takes')
+    ax.bar(ind - width, puts, width, label='Puts', color='#A9A9A9')
+    ax.bar(ind, takes, width, label='Takes', color='#696969')
+    ax.bar(ind + width, total, width, label='Total', color='#333333')
+    ax.set_ylabel('Time (ms)')
+    ax.set_title('Puts and takes')
     ax.set_xticks(ind)
     ax.set_xticklabels(algs)
     ax.legend()
@@ -287,6 +365,15 @@ def barchart_puts_takes(path_file):
                 dpi=200)
     plt.close('all')
 
+def processps(regex):
+    """processps('./cluster_results/putsSteals*.json')"""
+    for f_ in glob.glob(regex):
+        g_puts_steals(f_)
+
+def processpt(regex):
+    """processpt('./cluster_results/putsTakes*.json')"""
+    for f_ in glob.glob(regex):
+        g_puts_takes(f_)
 
 def barchart_puts_takes_steals(path_file):
     """Generate barcharts comparing put, takes and steal times"""
@@ -356,9 +443,10 @@ def main():
         help='''Genera la gráfica de puts, takes y steals''')
     args = parser.parse_args()
     if args.filept:
-        barchart_puts_takes(args.filept)
+        g_puts_takes(args.filept)
+        # barchart_puts_takes(args.filept)
     if args.fileps:
-        barchart_puts_steals(args.fileps)
+        g_puts_steals(args.fileps)
     if args.filepts:
         barchart_puts_takes_steals(args.filepts)
     if args.filest:
