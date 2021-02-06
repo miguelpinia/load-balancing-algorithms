@@ -249,7 +249,7 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
 def replace_name(algorithm):
     if algorithm == 'WS_NC_MULT_LA_OPT':
         return 'WS_WMULT'
-    if algorithm == 'B_WS_NC_MULT_L4A_OPT':
+    if algorithm == 'B_WS_NC_MULT_LA_OPT':
         return 'B_WS_WMULT'
     return algorithm
 
@@ -452,9 +452,9 @@ def main():
     if args.filest:
         results = read_json(args.filest)
         generate_graph_stats(results, 'average')
-        generate_graph_stats(results, 'median')
-        generate_graph_stats(results, 'range')
-        generate_graph_stats(results, 'std')
+        # generate_graph_stats(results, 'median')
+        # generate_graph_stats(results, 'range')
+        # generate_graph_stats(results, 'std')
 
 
 if __name__ == '__main__':
