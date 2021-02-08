@@ -251,6 +251,8 @@ def replace_name(algorithm):
         return 'WS_WMULT'
     if algorithm == 'B_WS_NC_MULT_LA_OPT':
         return 'B_WS_WMULT'
+    if algorithm == 'WS_NC_MULT_OPT':
+        return 'WS_WMULT_ARRAY'
     return algorithm
 
 def g_puts_steals(path_file):
@@ -293,7 +295,6 @@ def g_puts_steals(path_file):
                                                     json_data['size'],
                                                     json_data['iters'],
                                                     '_'.join(algs)),
-
                 dpi=200)
     plt.close('all')
 
