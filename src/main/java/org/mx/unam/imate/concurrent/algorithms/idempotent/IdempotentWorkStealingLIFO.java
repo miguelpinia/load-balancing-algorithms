@@ -5,12 +5,11 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.idempotent;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Pair;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -19,7 +18,6 @@ import sun.misc.Unsafe;
 public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private int[] tasks;
     private final AtomicReference<Pair> anchor;
@@ -46,7 +44,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             put(task);
         }
         tasks[t] = task;
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         anchor.set(new Pair(t + 1, g + 1));
     }
 
@@ -73,7 +71,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
                 return EMPTY;
             }
             int[] tmp = tasks;
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             int task = tmp[t - 1];
             if (anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
                 return task;
@@ -88,9 +86,9 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             newTasks[i] = tasks[i];
         }
         tasks = newTasks;
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         capacity = 2 * capacity;
-        unsafe.storeFence();
+        VarHandle.releaseFence();
     }
 
     @Override

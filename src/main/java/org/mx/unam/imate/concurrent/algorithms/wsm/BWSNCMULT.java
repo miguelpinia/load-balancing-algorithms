@@ -1,21 +1,17 @@
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
+import java.lang.invoke.VarHandle;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
  * @author miguel
  */
 public class BWSNCMULT implements WorkStealingStruct {
-
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
@@ -104,19 +100,19 @@ public class BWSNCMULT implements WorkStealingStruct {
         int array[] = new int[size * 2];
         Arrays.fill(array, BOTTOM);
         AtomicBoolean[] b = new AtomicBoolean[size * 2];
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         for (int i = 0; i < b.length; i++) {
             b[i] = new AtomicBoolean(true);
-            unsafe.storeFence();
+            VarHandle.releaseFence();
         }
         for (int i = 0; i < size; i++) {
             array[i] = Tasks[i];
             b[i] = B[i];
-            unsafe.storeFence();
+            VarHandle.releaseFence();
         }
         Tasks = array;
         B = b;
-        unsafe.storeFence();
+        VarHandle.releaseFence();
     }
 
     @Override

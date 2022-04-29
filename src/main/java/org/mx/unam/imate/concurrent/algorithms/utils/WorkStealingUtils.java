@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,24 +15,12 @@ import java.util.logging.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
-import sun.misc.Unsafe;
 
 /**
  *
  * @author miguel
  */
 public class WorkStealingUtils {
-
-    public static Unsafe createUnsafe() {
-        try {
-            Field field = Unsafe.class.getDeclaredField("theUnsafe");
-            field.setAccessible(true);
-            return (Unsafe) field.get(Unsafe.class);
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
-    }
 
     public static void report(Graph graph, AtomicIntegerArray parents, int roots[]) {
         report(graph, parents, null, roots);

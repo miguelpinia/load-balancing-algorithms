@@ -1,12 +1,11 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
 import org.mx.unam.imate.concurrent.algorithms.utils.Triplet;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -16,7 +15,6 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
     private static final int MAX_SIZE = 0xFFFFFF;
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private TaskArrayWithSize tasks;
     private final AtomicReference<Triplet> anchor;
@@ -37,7 +35,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             put(task);
         }
         tasks.set((h + s) % tasks.getSize(), task);
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         anchor.set(new Triplet(h, s + 1, g + 1));
     }
 
@@ -72,9 +70,9 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
                 return EMPTY;
             }
             TaskArrayWithSize a = tasks;
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             int task = a.get(h % a.getSize());
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             int h2 = h + 1 % MAX_SIZE;
             Triplet newReference = new Triplet(h2, s - 1, g);
             if (anchor.compareAndSet(oldReference, newReference)) {
@@ -89,13 +87,13 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * s);
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         for (int i = 0; i < s; i++) {
             a.set((h + i) % a.getSize(), tasks.get((h + i) % tasks.getSize()));
-            unsafe.storeFence();
+            VarHandle.releaseFence();
         }
         tasks = a;
-        unsafe.storeFence();
+        VarHandle.fullFence();
     }
 
     @Override

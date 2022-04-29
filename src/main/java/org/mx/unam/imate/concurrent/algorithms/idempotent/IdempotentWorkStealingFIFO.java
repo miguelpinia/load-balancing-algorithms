@@ -1,11 +1,10 @@
 package org.mx.unam.imate.concurrent.algorithms.idempotent;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
 import org.mx.unam.imate.concurrent.datastructures.TaskArrayWithSize;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -14,7 +13,6 @@ import sun.misc.Unsafe;
 public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private TaskArrayWithSize tasks;
     private final AtomicInteger head;
@@ -39,7 +37,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             expand();
             put(task);
         }
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         tasks.set(t % tasks.getSize(), task);
         tail.set(t + 1);
     }
@@ -60,14 +58,14 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
     public int steal() {
         while (true) {
             int h = head.get();
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             int t = tail.get();
             if (h == t) {
                 return EMPTY;
             }
             TaskArrayWithSize a = tasks;
             int task = a.get(h % a.getSize());
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             if (head.compareAndSet(h, h + 1)) {
                 return task;
             }
@@ -78,15 +76,15 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
     public void expand() {
         int size = tasks.getSize();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * size);
-        unsafe.storeFence();
+        VarHandle.releaseFence();
         int h = head.get();
         int t = tail.get();
         for (int i = h; i < t; i++) {
             a.set(i % a.getSize(), tasks.get(i % tasks.getSize()));
-            unsafe.storeFence();
+            VarHandle.releaseFence();
         }
         tasks = a;
-        unsafe.storeFence();
+        VarHandle.releaseFence();
     }
 
     @Override

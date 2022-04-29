@@ -1,19 +1,16 @@
 package org.mx.unam.imate.concurrent.algorithms.wsm;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
  * @author miguel
  */
 public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
-
-    private static final Unsafe unsafe = WorkStealingUtils.createUnsafe();
 
     private static final int TOP = -3;
     private static final int BOTTOM = -2;
@@ -100,7 +97,7 @@ public class NonBlockingWorkStealingMultFIFO implements WorkStealingStruct {
                 head[label]++;
             }
             int ntail = Tail.get();
-            unsafe.loadFence();
+            VarHandle.acquireFence();
             if (tail[label] == ntail && x == TOP) {
                 Head.set(head[label]);
                 return EMPTY;

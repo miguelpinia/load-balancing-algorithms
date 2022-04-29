@@ -1,11 +1,10 @@
 package org.mx.unam.imate.concurrent.algorithms.chaselev;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -14,10 +13,9 @@ import sun.misc.Unsafe;
 public class ChaseLevWorkStealing implements WorkStealingStruct {
 
     private static final int EMPTY = -1;
-    private AtomicInteger H;
-    private AtomicInteger T;
+    private final AtomicInteger H;
+    private final AtomicInteger T;
     private AtomicIntegerArray tasks;
-    private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
     public ChaseLevWorkStealing(int initialSize) {
         tasks = new AtomicIntegerArray(initialSize);
@@ -55,7 +53,7 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
     public int take() {
         int t = T.get() - 1;
         T.set(t);
-        UNSAFE.storeFence();
+        VarHandle.releaseFence();
         int h = H.get();
         if (t > h) {
             return tasks.get(t % tasks.length());
@@ -76,6 +74,7 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
     public int steal() {
         while (true) {
             int h = H.get();
+            VarHandle.acquireFence();
             int t = T.get();
             if (h >= t) {
                 return EMPTY;

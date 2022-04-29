@@ -1,12 +1,11 @@
 package org.mx.unam.imate.concurrent.algorithms.cilk;
 
+import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
-import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
-import sun.misc.Unsafe;
 
 /**
  *
@@ -19,7 +18,6 @@ public class DequeCilk implements WorkStealingStruct {
     private AtomicInteger T;
     private AtomicIntegerArray tasks;
     private final ReentrantLock lock;
-    private static final Unsafe UNSAFE = WorkStealingUtils.createUnsafe();
 
     public DequeCilk(int initialSize) {
         lock = new ReentrantLock();
@@ -58,7 +56,7 @@ public class DequeCilk implements WorkStealingStruct {
     public int take() {
         int t = T.get() - 1;
         T.set(t);
-        UNSAFE.storeFence();
+        VarHandle.releaseFence();
         int h = H.get();
         if (t > h) {
             return tasks.get(t % tasks.length());
@@ -87,7 +85,7 @@ public class DequeCilk implements WorkStealingStruct {
         lock.lock();
         int h = H.get();
         H.set(h + 1);
-        UNSAFE.loadFence();
+        VarHandle.acquireFence();
         int ret;
         if (h + 1 <= T.get()) {
             ret = tasks.get(h % tasks.length());
