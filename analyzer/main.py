@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import glob
 import itertools
-import pprint
+from pprint import pprint
 
 
 def read_json(path_file):
@@ -24,7 +24,6 @@ def read_json(path_file):
     with open(path_file) as f:
         data = json.load(f)
         return data
-
 
 def stats(results):
     """Calculate statistics from results json"""
@@ -69,6 +68,59 @@ def get_data(result_type, stat_type, vals, procs):
             for d in [d1[stat_type]
                       for d1 in [vals[i] for i in range(0, procs)]]]
 
+def getmaximum(results, mmax):
+    algs = results['algorithms']
+    procs = results['processors']
+    data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}, 'speedup': {}}
+    chaselev = get_data('time', 'average', stats(results)['CHASELEV'], procs)[0]
+    for alg in algs:
+        vals = stats(results)[alg]
+        data['speedup'][alg] = chaselev / get_data('time', 'average', vals,
+                                        procs)
+        maximum = np.around(np.amax(data['speedup'][alg]), decimals=2)
+        mmax[alg].append(maximum)
+    return mmax
+
+def maximus(path):
+    """promedio de los máximos de cuqlauier gráfica para cada algoritmo"""
+    algs = ['CHASELEV', 'IDEMPOTENT_FIFO', 'IDEMPOTENT_LIFO',
+'WS_NC_MULT_LA_OPT', 'B_WS_NC_MULT_LA_OPT']
+    l = glob.glob(path+'/st_*.json')
+    mmax = {alg: [] for alg in algs}
+    for f in l:
+        print(f)
+        results = read_json(f)
+        mmax = getmaximum(results, mmax)
+        print(mmax)
+    for k in mmax:
+        print(k, np.average(mmax[k]))
+    return mmax
+
+def getmax(results):
+    algs = results['algorithms']
+
+def compare(f):
+    results = read_json(f)
+    algs = results['algorithms']
+    mmax = {alg: [] for alg in algs}
+    mmax = getmaximum(results, mmax)
+    nmmax =[]
+    print(f)
+    for k in mmax:
+        a = np.around(mmax[k][0], decimals=2)
+        b = np.around(mmax['WS_NC_MULT_LA_OPT'][0], decimals=2)
+        # print(a, b)
+        result = 100 - (( a/b ) * 100)
+        # print(k, np.around(result, decimals=2))
+    # print('\n===================\n')
+    # print(f, mmax)
+    return mmax
+
+def comparegraphs(path):
+    l = glob.glob(path+'/st_*.json')
+    for f in l:
+        compare(f)
+
 
 def generate_graph_stats(results, stat_type, alg_filter=None):
     """#  TODO: Update description (MAPA 2020-09-17)
@@ -83,6 +135,7 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
     data = {'takes': {}, 'puts': {}, 'steals': {}, 'time': {}, 'speedup': {}}
     chaselev = get_data('time', stat_type, stats(results)['CHASELEV'], procs)[0]
     all_time = results['allTime']
+    mmax = {alg: [] for alg in algs}
     for alg in algs:
         vals = stats(results)[alg]
         data['takes'][alg] = get_data('takes', stat_type, vals, procs)
@@ -94,12 +147,15 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
         maximum = np.around(np.amax(data['speedup'][alg]), decimals=2)
         minimum = np.around(np.amin(data['speedup'][alg]), decimals=2)
         print('{:<16}\t\t ${}x \sim {}x$'.format(alg, minimum, maximum))
+        print('{:<16}:\t\t {}'.format(alg, np.average(maximum)))
+        mmax[alg].append(maximum)
+    pprint(mmax)
     # print(algs, '\n')
     # pprint.pprint(data['speedup'])
     print('Generating plots {}'.format(stat_type))
     current_time = datetime.now().strftime("%H:%M:%S")
-    plt.style.use('default') #grayscale #tableau-colorblind10
-    marker = itertools.cycle(('s', '*', 'p', 'v', '^', '>', '<'))
+    # plt.style.use('default') #grayscale #tableau-colorblind10
+    marker = itertools.cycle(('s', '*', 'p', 'v', 'X', '^', 'D', 'o', 'P', '1'))
     plt.margins(0,0)
     if stat_type in ('average', 'median'):
         fig1, axes1 = plt.subplots()
@@ -110,18 +166,23 @@ def generate_graph_stats(results, stat_type, alg_filter=None):
             if results['directed']
             else 'Undirected',
             results['graphType']))
+        nrange = np.arange(1, procs + 1, 9)
         for alg in algs:
+            d = data['speedup'][alg][nrange]
+            print('d', d)
             if alg == 'WS_NC_MULT_LA_OPT':
-                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='-', label='WS_WMULT', color='red')
+                axes1.plot(nrange, d, marker=next(marker), ls='-', label='WS_WMULT', color='red')
             elif alg == 'B_WS_NC_MULT_LA_OPT':
-                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='-', label='B_WS_WMULT', color='red')
+                axes1.plot(nrange, d, marker=next(marker), ls='-', label='B_WS_WMULT', color='red')
             elif alg == 'CHASELEV':
-                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls='--', label=alg, color='#333333')
+                axes1.plot(nrange, d, marker=next(marker), ls='--', label=alg, color='#333333')
             else:
-                axes1.plot(np.arange(1, procs + 1), data['speedup'][alg], marker=next(marker), ls=':', label=alg, color='#333333')
+                axes1.plot(nrange, d, marker=next(marker), ls=':', label=alg, color='#333333')
         axes1.grid()
         axes1.legend()
-        plt.gcf().set_size_inches(9.6, 5.4)
+        plt.gcf().set_size_inches(19.2, 10.8)
+        # plt.gcf().set_size_inches(38.4, 21.6)
+        # plt.gcf().set_size_inches(9.6, 5.4)
         plt.savefig('speedup-{}-{}-{}-{}-{}-{}-{}.png'.format(results['graphType'],
                                                               'directed'
                                                               if results['directed']
