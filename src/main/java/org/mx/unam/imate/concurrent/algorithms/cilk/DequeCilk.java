@@ -56,7 +56,7 @@ public class DequeCilk implements WorkStealingStruct {
     public int take() {
         int t = T.get() - 1;
         T.set(t);
-        VarHandle.releaseFence();
+        VarHandle.fullFence();
         int h = H.get();
         if (t > h) {
             return tasks.get(t % tasks.length());
@@ -85,7 +85,7 @@ public class DequeCilk implements WorkStealingStruct {
         lock.lock();
         int h = H.get();
         H.set(h + 1);
-        VarHandle.acquireFence();
+        VarHandle.fullFence();
         int ret;
         if (h + 1 <= T.get()) {
             ret = tasks.get(h % tasks.length());
