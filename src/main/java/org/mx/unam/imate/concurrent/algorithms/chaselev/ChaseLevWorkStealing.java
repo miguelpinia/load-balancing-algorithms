@@ -74,7 +74,6 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
     public int steal() {
         while (true) {
             int h = H.get();
-            VarHandle.acquireFence();
             int t = T.get();
             if (h >= t) {
                 return EMPTY;
