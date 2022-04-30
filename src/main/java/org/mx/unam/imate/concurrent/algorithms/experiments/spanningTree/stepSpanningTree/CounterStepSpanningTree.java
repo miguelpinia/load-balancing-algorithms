@@ -1,6 +1,7 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
 import java.util.Iterator;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -21,8 +22,8 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
     public CounterStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
             WorkStealingStruct[] structs, Report report, boolean specialExecution,
-            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime) {
-        super(graph, root, color, parent, label, numThreads, struct, report, stealTime, structs);
+            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime, CyclicBarrier barrier) {
+        super(graph, root, color, parent, label, numThreads, struct, report, stealTime, barrier, structs);
         this.specialExecution = specialExecution;
         this.visited = visited;
         this.counter = counter;

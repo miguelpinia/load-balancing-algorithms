@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree;
 
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
@@ -28,6 +29,8 @@ public class SpanningTree {
         AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
         AtomicInteger counter = new AtomicInteger(0);
         long executionTime = System.nanoTime();
+        Runnable barrierAction = () -> System.out.println(String.format("%d hilos comenzando al mismo tiempo", params.getNumThreads()));
+        CyclicBarrier barrier = new CyclicBarrier(params.getNumThreads(), barrierAction);
         for (int i = 0; i < params.getNumThreads(); i++) {
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
@@ -35,7 +38,7 @@ public class SpanningTree {
         for (int i = 0; i < params.getNumThreads(); i++) {
             AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
                     graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
-                    report, params.isSpecialExecution(), visited, counter, params.isStealTime());
+                    report, params.isSpecialExecution(), visited, counter, params.isStealTime(), barrier);
 
             threads[i] = new Thread(step);
         }

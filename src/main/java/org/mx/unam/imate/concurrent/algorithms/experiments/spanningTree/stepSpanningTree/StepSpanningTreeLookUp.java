@@ -5,6 +5,7 @@
  */
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
@@ -21,17 +22,14 @@ public class StepSpanningTreeLookUp {
     public static AbstractStepSpanningTree getStepSpanningTree(StepSpanningTreeType type, Graph graph,
             int root, AtomicIntegerArray color, AtomicIntegerArray parent, int label, int numThreads,
             WorkStealingStruct struct, WorkStealingStruct[] structs, Report report, boolean specialExecution,
-            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime) {
-        switch (type) {
-            case COUNTER:
-                return new CounterStepSpanningTree(graph, root, color, parent, label, numThreads,
-                        struct, structs, report, specialExecution, visited, counter, stealTime);
-            case DOUBLE_COLLECT:
-                return new DoubleCollectStepSpanningTree(graph, root, color, parent, label, numThreads,
-                        struct, structs, report, specialExecution, stealTime);
-            default:
-                return null;
-        }
+            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime, CyclicBarrier barrier) {
+        return switch (type) {
+            case COUNTER -> new CounterStepSpanningTree(graph, root, color, parent, label, numThreads,
+                    struct, structs, report, specialExecution, visited, counter, stealTime, barrier);
+            case DOUBLE_COLLECT -> new DoubleCollectStepSpanningTree(graph, root, color, parent, label, numThreads,
+                    struct, structs, report, specialExecution, stealTime, barrier);
+            default -> null;
+        };
     }
 
 }

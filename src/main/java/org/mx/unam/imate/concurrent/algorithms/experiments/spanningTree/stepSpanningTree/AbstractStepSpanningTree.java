@@ -1,7 +1,11 @@
 package org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree;
 
 import java.util.Random;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicIntegerArray;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.mx.unam.imate.concurrent.algorithms.StepSpanningTree;
 import org.mx.unam.imate.concurrent.algorithms.WorkStealingStruct;
@@ -25,10 +29,11 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
     protected final Report report;
     protected final Random random;
     protected final boolean stealTime;
+    protected final CyclicBarrier barrier;
 
     public AbstractStepSpanningTree(Graph graph, int root, AtomicIntegerArray color,
             AtomicIntegerArray parent, int label, int numThreads, WorkStealingStruct struct,
-            Report report, boolean stealTime, WorkStealingStruct... structs) {
+            Report report, boolean stealTime, CyclicBarrier barrier, WorkStealingStruct... structs) {
         this.graph = graph;
         this.root = root;
         this.color = color;
@@ -40,6 +45,7 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
         this.report = report;
         this.random = new Random(System.currentTimeMillis());
         this.stealTime = stealTime;
+        this.barrier = barrier;
     }
 
     int pickRandomThread(int numThreads, int self) {
@@ -55,7 +61,12 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
 
     @Override
     public void run() {
-        graph_traversal_step(graph, color, parent, root, label, report);
+        try {
+            barrier.await();
+            graph_traversal_step(graph, color, parent, root, label, report);
+        } catch (InterruptedException | BrokenBarrierException ex) {
+            Logger.getLogger(AbstractStepSpanningTree.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
