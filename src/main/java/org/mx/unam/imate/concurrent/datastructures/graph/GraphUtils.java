@@ -106,13 +106,13 @@ public class GraphUtils {
 
     public static Graph torus2D(int shape) {
         boolean directed = false;
-        int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
+        int numEdges = numVertices * 4;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D, directed);
         int neighbor;
         int i, j, currentIdx, pos;
         for (int k = 0; k < numEdges; k++) {
-            j = (k / 4) % shape;
+            j = MOD(k / 4, shape);
             i = k / (shape * 4);
             currentIdx = (i * shape) + j;
             pos = k % 4;
@@ -139,16 +139,15 @@ public class GraphUtils {
 
     public static Graph directedTorus2D(int shape) {
         boolean directed = true;
-        int numEdges = shape * shape * 2;
         int numVertices = shape * shape;
+        int numEdges = numVertices * 2;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D, directed);
-        int neighbor;
-        int i, j, currentIdx, pos;
+        int neighbor, i, j, currentIdx, pos;
         for (int k = 0; k < numEdges; k++) {
-            j = (k / 2) % shape;
+            j = MOD(k / 2, shape);
             i = k / (shape * 2);
             currentIdx = (i * shape) + j;
-            pos = k % 2;
+            pos = MOD(k, 2);
             switch (pos) {
                 case 0:
                     neighbor = i * shape + MOD((j + 1), shape);
@@ -167,19 +166,17 @@ public class GraphUtils {
     public static Graph torus2D60(int shape) {
         boolean directed = false;
         Random rand = new Random(System.currentTimeMillis());
-        int numEdges = shape * shape * 4;
         int numVertices = shape * shape;
+        int numEdges = numVertices * 4;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_2D_60, directed);
-        int randomNumber, i, j, currentIdx, pos;
+        int randomNumber, i, j, currentIdx, pos, neighbor;
         int current = 0;
-        int neighbor;
         for (int k = 0; k < numEdges; k++) {
-            j = (k / 4) % shape;
+            j = MOD(k / 4, shape);
             i = k / (shape * 4);
             currentIdx = (i * shape) + j;
-            pos = k % 4;
+            pos = MOD(k, 4);
             randomNumber = rand.nextInt(100);
-
             switch (pos) {
                 case 0:
                     neighbor = MOD((i - 1), shape) * shape + j;
@@ -220,10 +217,10 @@ public class GraphUtils {
         int current = 0;
         int neighbor;
         for (int k = 0; k < numEdges; k++) {
-            j = (k / 2) % shape;
+            j = MOD(k / 2, shape);
             i = k / (shape * 2);
             currentIdx = (i * shape) + j;
-            pos = k % 2;
+            pos = MOD(k, 2);
             randomNumber = rand.nextInt(100);
             switch (pos) {
                 case 0:
@@ -245,21 +242,16 @@ public class GraphUtils {
 
     public static Graph torus3D(int shape) {
         boolean directed = false;
-        int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
+        int numEdges = numVertices * 6;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D, directed);
-        int i;
-        int j;
-        int k;
-        int currentIdx;
-        int pos;
-        int neighbor;
+        int i, j, k, currentIdx, pos, neighbor;
         for (int m = 0; m < numEdges; ++m) {
-            k = (m / 6) % shape;
-            j = (m / (shape * 6)) % shape;
-            i = (m / (shape * shape * 6)) % shape;
+            k = MOD(Math.round(m / 6), shape);
+            j = MOD(Math.round(m / (shape * 6)), shape);
+            i = MOD(Math.round(m / (shape * shape * 6)), shape);
             currentIdx = (i * shape * shape) + (j * shape) + k;
-            pos = m % 6;
+            pos = MOD(m, 6);
             switch (pos) {
                 case 0:
                     neighbor = (i * shape * shape) + (j * shape) + MOD((k - 1), shape);
@@ -289,21 +281,16 @@ public class GraphUtils {
 
     public static Graph directedTorus3D(int shape) {
         boolean directed = true;
-        int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
+        int numEdges = numVertices * 3;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D, directed);
-        int i;
-        int j;
-        int k;
-        int currentIdx;
-        int pos;
-        int neighbor;
-        for (int m = 0; m < numEdges; ++m) {
-            k = (m / 3) % shape;
-            j = (m / (shape * 3)) % shape;
-            i = (m / (shape * shape * 3)) % shape;
+        int i, j, k, currentIdx, pos, neighbor;
+        for (int m = 0; m < numEdges; m++) {
+            k = MOD(Math.round(m / 3), shape);
+            j = MOD(Math.round(m / (shape * 3)), shape);
+            i = MOD(Math.round(m / (shape * shape * 3)), shape);
             currentIdx = (i * shape * shape) + (j * shape) + k;
-            pos = m % 3;
+            pos = MOD(m, 3);
             switch (pos) {
                 case 0:
                     neighbor = (i * shape * shape) + (j * shape) + MOD((k + 1), shape);
@@ -325,23 +312,16 @@ public class GraphUtils {
     public static Graph torus3D40(int shape) {
         boolean directed = false;
         Random random = new Random(System.currentTimeMillis());
-        int numEdges = shape * shape * shape * 6;
         int numVertices = shape * shape * shape;
+        int numEdges = numVertices * 6;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D_40, directed);
-        int randomNumber;
-        int i;
-        int j;
-        int k;
-        int current = 0;
-        int currentIdx;
-        int pos;
-        int neighbor;
+        int randomNumber, i, j, k, currentIdx, pos, neighbor;
         for (int m = 0; m < (shape * shape * shape * 6); ++m) {
-            k = (m / 6) % shape;
-            j = (m / (shape * 6)) % shape;
-            i = (m / (shape * shape * 6)) % shape;
+            k = MOD(Math.round(m / 6), shape);
+            j = MOD(Math.round(m / (shape * 6)), shape);
+            i = MOD(Math.round(m / (shape * shape * 6)), shape);
             currentIdx = (i * shape * shape) + (j * shape) + k;
-            pos = m % 6;
+            pos = MOD(m, 6);
             randomNumber = random.nextInt(100);
             switch (pos) {
                 case 0:
@@ -381,7 +361,6 @@ public class GraphUtils {
                 default:
                     System.out.println("Error al calcular los vecinos");
             }
-
         }
         return graph;
     }
@@ -389,23 +368,16 @@ public class GraphUtils {
     public static Graph directedTorus3D40(int shape) {
         boolean directed = true;
         Random random = new Random(System.currentTimeMillis());
-        int numEdges = shape * shape * shape * 3;
         int numVertices = shape * shape * shape;
+        int numEdges = numVertices * 3;
         Graph graph = new Graph(0, numVertices, GraphType.TORUS_3D_40, directed);
-        int randomNumber;
-        int i;
-        int j;
-        int k;
-        int current = 0;
-        int currentIdx;
-        int pos;
-        int neighbor;
+        int randomNumber, i, j, k, currentIdx, pos, neighbor;
         for (int m = 0; m < numEdges; ++m) {
-            k = (m / 3) % shape;
-            j = (m / (shape * 3)) % shape;
-            i = (m / (shape * shape * 3)) % shape;
+            k = MOD(Math.round(m / 3), shape);
+            j = MOD(Math.round(m / (shape * 3)), shape);
+            i = MOD(Math.round(m / (shape * shape * 3)), shape);
             currentIdx = (i * shape * shape) + (j * shape) + k;
-            pos = m % 3;
+            pos = MOD(m, 3);
             randomNumber = random.nextInt(100);
             switch (pos) {
                 case 0:
@@ -437,10 +409,7 @@ public class GraphUtils {
         int numEdges = numberVertices * vertexDegree;
         int numVertices = numberVertices;
         Edge[] edges = new Edge[numEdges];
-        int randomVertex;
-        int i;
-        int j;
-        int current;
+        int randomVertex, i, j, current;
         boolean inPrevious;
         for (int k = 0; k < (numberVertices * vertexDegree); k++) {
             i = k / (numberVertices * vertexDegree);
