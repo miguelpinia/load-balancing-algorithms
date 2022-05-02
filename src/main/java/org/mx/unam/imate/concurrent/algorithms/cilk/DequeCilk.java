@@ -20,7 +20,7 @@ public class DequeCilk implements WorkStealingStruct {
     private final ReentrantLock lock;
 
     public DequeCilk(int initialSize) {
-        lock = new ReentrantLock();
+        lock = new ReentrantLock(true);
         tasks = new AtomicIntegerArray(initialSize);
         H = new AtomicInteger(0);
         T = new AtomicInteger(0);
