@@ -37,8 +37,8 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             expand();
             put(task);
         }
-        VarHandle.releaseFence();
         tasks.set(t % tasks.getSize(), task);
+        VarHandle.releaseFence();
         tail.set(t + 1);
     }
 
@@ -63,6 +63,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             if (h == t) {
                 return EMPTY;
             }
+            VarHandle.acquireFence();
             TaskArrayWithSize a = tasks;
             int task = a.get(h % a.getSize());
             VarHandle.acquireFence();
