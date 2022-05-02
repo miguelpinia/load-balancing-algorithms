@@ -30,7 +30,6 @@ public class StatisticsST {
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             Graph tree = st.spanningTree(graph, roots, report, params);
-            assert (GraphUtils.isTree(tree));
             reports.add(report);
         }
         return reports;

@@ -29,7 +29,7 @@ public class SpanningTree {
         AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
         AtomicInteger counter = new AtomicInteger(0);
         long executionTime = System.nanoTime();
-        Runnable barrierAction = () -> System.out.println(String.format("%d hilos comenzando al mismo tiempo", params.getNumThreads()));
+        Runnable barrierAction = () -> {};
         CyclicBarrier barrier = new CyclicBarrier(params.getNumThreads(), barrierAction);
         for (int i = 0; i < params.getNumThreads(); i++) {
             structs[i] = WorkStealingStructLookUp
