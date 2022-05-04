@@ -24,7 +24,7 @@ algorithms.
 
 This project require the following dependencies:
 
-- OpenJDK 1.8 (1.8.0_252)
+- OpenJDK 17 (17.0.3)
 - maven 3.6.3
 
 ## Installation
@@ -50,6 +50,18 @@ Using the standalone jar we will running as follows:
 ```sh
 $ java -jar concurrentAlgorithms-1.0-SNAPSHOT-jar-with-dependencies.jar
 ```
+
+Currently, we have a template script to run a set of experiments and
+build the charts about the experiments. To run this script, you need
+use at least the version `python 3.10` In a dedicated server, run:
+
+```sh
+$ nohup python3 run2.py &
+```
+
+Inside the script there are many options to configure the experiments.
+
+### config.json
 
 For that to happen, it's necessary have a file named
 properties.props. This file must be put in the same directory where is
