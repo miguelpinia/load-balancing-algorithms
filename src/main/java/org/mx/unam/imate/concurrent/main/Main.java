@@ -20,6 +20,10 @@ public class Main {
                 + "=====================================\n";
         File f = new File("config.json");
         JSONObject props = readProperties(f);
+        if (props == null) {
+            System.out.println("Error al leer el archivo de configuración. Intente de nuevo por favor.");
+            return;
+        }
         System.out.println(header + props.toString(2));
         App battery = new App(props);
         battery.compareAlgs();
@@ -33,7 +37,6 @@ public class Main {
         } catch (IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file", ex);
         }
-        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, "ERROR: Can't read properties file");
         return null;
     }
 

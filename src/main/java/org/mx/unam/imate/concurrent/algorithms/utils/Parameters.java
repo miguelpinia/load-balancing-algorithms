@@ -50,7 +50,8 @@ public class Parameters {
      * @param directed
      * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, boolean directed, boolean stealTime) {
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads,
+            int structSize, boolean report, boolean directed, boolean stealTime) {
         this.type = type;
         this.shape = shape;
         this.report = report;
@@ -58,10 +59,14 @@ public class Parameters {
         this.algType = algType;
         this.structSize = structSize;
         this.numIterExps = 1;
-        this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
+        this.stepSpanningTreeType = StepSpanningTreeType.COUNTER;
         this.directed = directed;
         this.stealTime = stealTime;
         allTime = false;
+    }
+
+    public Parameters(GraphType type, int shape, int structSize, boolean directed) {
+        this(type, AlgorithmsType.SIMPLE, shape, 1, structSize, false, directed, false);
     }
 
     /**
@@ -87,7 +92,8 @@ public class Parameters {
      * @param directed
      * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, boolean directed, boolean stealTime) {
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads,
+            int structSize, boolean report, int numIterExps, boolean directed, boolean stealTime) {
         this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = StepSpanningTreeType.DOUBLE_COLLECT;
@@ -117,14 +123,16 @@ public class Parameters {
      * @param directed
      * @param stealTime
      */
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, boolean directed, boolean stealTime) {
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads,
+            int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType,
+            boolean directed, boolean stealTime) {
         this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
         this.stepSpanningTreeType = stepSpanningTreeType;
     }
-    
-    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads, 
-            int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType, 
+
+    public Parameters(GraphType type, AlgorithmsType algType, int shape, int numThreads,
+            int structSize, boolean report, int numIterExps, StepSpanningTreeType stepSpanningTreeType,
             boolean directed, boolean stealTime, boolean allTime) {
         this(type, algType, shape, numThreads, structSize, report, directed, stealTime);
         this.numIterExps = numIterExps;
