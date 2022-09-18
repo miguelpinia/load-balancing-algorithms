@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import org.json.JSONObject;
@@ -14,12 +16,89 @@ import org.mx.unam.imate.concurrent.algorithms.utils.Report;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
 import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
+import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
+import org.mx.unam.imate.concurrent.main.Constants;
 
 /**
  *
  * @author miguel
  */
 public class StatisticsST {
+
+    private static final int ITERATIONS = 75;
+    private static final int K = 5;
+
+    public static Parameters buildParamsFromJSON(JSONObject json) {
+        int vertexSize = json.getInt(Constants.VERTEX_SIZE);
+        int structSize = json.getInt(Constants.STRUCT_SIZE);
+        GraphType graphType = GraphType.valueOf(json.getString(Constants.GRAPH_TYPE));
+        boolean directed = json.getBoolean(Constants.DIRECTED);
+        Parameters params = new Parameters(graphType, vertexSize, structSize, directed);
+        return params;
+    }
+
+    /**
+     * Perform at most <strong>n iterations</strong> of the spanning tree
+     * algorithm with graph and params provided. It must test if the coefficient
+     * of variation (CoV) of last k iterations reach the steady-state, i.e., CoV
+     * falls below a preset threshold, in this case, 0.02.
+     *
+     * @param graph
+     * @param params
+     * @param iterations
+     * @param k
+     * @return
+     */
+    public static CoVResult meanCoVSpanningTree(Graph graph, Parameters params, int iterations, int k) {
+        final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
+        SpanningTree st = new SpanningTree();
+        DescriptiveStatistics ds = new DescriptiveStatistics(k);
+        System.out.println(String.format("Alg: %s, numThreads: %d", params.getAlgType().toString(), params.getNumThreads()));
+        double smallS = Double.MAX_VALUE;
+        double smallX = Double.MAX_VALUE;
+        double smallCoV = Double.MAX_VALUE;
+        for (int i = 0; i < iterations; i++) {
+            long executionTime = st.spanningTreeSimplified(graph, roots, params);
+            ds.addValue(executionTime);
+            if (i > k) {
+                double s = ds.getStandardDeviation();
+                double x = ds.getMean();
+                double cov = s / x;
+                System.out.println(String.format("DS: %.2f, MEAN: %.2f, CoV: %.4f, iter: %d", s, x, cov, i));
+                if (cov < 0.05) {
+                    return new CoVResult(params.getNumThreads(), x, params.getAlgType());
+                }
+                if (smallCoV > cov) {
+                    smallCoV = cov;
+                    smallX = x;
+                    smallS = s;
+                }
+            }
+        }
+        System.out.println(String.format("(Last Iteration) DS: %.2f, MEAN: %.2f, CoV: %.4f", smallS, smallX, smallCoV));
+        return new CoVResult(params.getNumThreads(), smallX, params.getAlgType());
+    }
+
+    public static Map<String, List<CoVResult>> fullExperiment(Graph graph, JSONObject props, List<AlgorithmsType> algorithms) {
+        Map<String, List<CoVResult>> evaluation = new HashMap<>();
+        Parameters params = buildParamsFromJSON(props);
+        int processorsNum = Runtime.getRuntime().availableProcessors();
+        algorithms.forEach((algorithm) -> {
+            List<CoVResult> results = new ArrayList<>();
+            for (int i = 0; i < processorsNum; i++) {
+                params.setAlgType(algorithm);
+                params.setNumThreads((i + 1));
+                CoVResult result = meanCoVSpanningTree(graph, params, ITERATIONS, K);
+                results.add(result);
+            }
+            evaluation.put(algorithm.toString(), results);
+        });
+        return evaluation;
+    }
+
+
 
     public static List<Report> experiment(Graph graph, Parameters params) {
         List<Report> reports = new ArrayList<>();
@@ -30,7 +109,6 @@ public class StatisticsST {
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
             Graph tree = st.spanningTree(graph, roots, report, params);
-            assert (GraphUtils.isTree(tree));
             reports.add(report);
         }
         return reports;

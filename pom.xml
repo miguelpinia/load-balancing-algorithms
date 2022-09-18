@@ -46,9 +46,15 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/gnu.trove/trove -->
         <dependency>
-          <groupId>gnu.trove</groupId>
-          <artifactId>trove</artifactId>
-          <version>3.0.3</version>
+            <groupId>gnu.trove</groupId>
+            <artifactId>trove</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
     <build>
@@ -105,13 +111,13 @@
                     </descriptorRefs>
                 </configuration>
                 <executions>
-                  <execution>
-                    <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                    <phase>package</phase> <!-- bind to the packaging phase -->
-                    <goals>
-                      <goal>single</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

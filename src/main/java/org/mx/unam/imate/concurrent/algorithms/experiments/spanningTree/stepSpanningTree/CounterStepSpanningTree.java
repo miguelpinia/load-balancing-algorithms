@@ -46,7 +46,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             counter.getAndIncrement();
         }
         report.putsIncrement();
-        int v, w, pos;
+        int v, w;
         int stolenItem;
         int thread;
         Iterator<Integer> it;
@@ -100,7 +100,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             counter.getAndIncrement();
         }
         report.putsIncrement();
-        int v, w, pos;
+        int v, w;
         int stolenItem;
         int thread;
         Iterator<Integer> it;
