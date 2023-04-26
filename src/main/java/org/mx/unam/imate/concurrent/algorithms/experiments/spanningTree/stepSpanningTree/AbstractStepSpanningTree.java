@@ -57,13 +57,13 @@ public abstract class AbstractStepSpanningTree implements StepSpanningTree {
     }
 
     @Override
-    public abstract void graph_traversal_step(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report);
+    public abstract void graphTraversalStep(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report);
 
     @Override
     public void run() {
         try {
             barrier.await();
-            graph_traversal_step(graph, color, parent, root, label, report);
+            graphTraversalStep(graph, color, parent, root, label, report);
         } catch (InterruptedException | BrokenBarrierException ex) {
             Logger.getLogger(AbstractStepSpanningTree.class.getName()).log(Level.SEVERE, null, ex);
         }

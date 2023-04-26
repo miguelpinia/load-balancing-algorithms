@@ -5,7 +5,7 @@ package org.mx.unam.imate.concurrent.main;
  * @author miguel
  */
 public class Constants {
-    
+
     public static final String VERTEX_SIZE = "vertexSize";
     public static final String SPANNING_TREE_OPTIONS = "spanningTreeOptions";
     public static final String GRAPH_TYPE = "graphType";
@@ -20,5 +20,7 @@ public class Constants {
     public static final String ALGORITHMS = "algorithms";
     public static final String ALL_TIME = "allTime";
     public static final String STATISTICS = "statistics";
-    
+    public static final String NUM_OPERATIONS = "numOperations";
+    public static final String K = "k";
+
 }

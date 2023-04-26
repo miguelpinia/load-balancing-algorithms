@@ -7,7 +7,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.algorithms.experiments.App;
 
@@ -15,16 +14,22 @@ public class Main {
 
     public static void main(String[] args) {
         String header
-                = "=====================================\n"
-                + "=         reading properties        =\n"
-                + "=====================================\n";
+                = """
+                  =====================================
+                  =====================================
+                  """;
         File f = new File("config.json");
         JSONObject props = readProperties(f);
         if (props == null) {
             System.out.println("Error al leer el archivo de configuración. Intente de nuevo por favor.");
             return;
         }
-        System.out.println(header + props.toString(2));
+        var footer = """
+                     =================================
+                     =        Properties read        =
+                     =================================
+                     """;
+        System.out.println(header + props.toString(2) + footer);
         App battery = new App(props);
         battery.compareAlgs();
     }

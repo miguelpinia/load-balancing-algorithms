@@ -10,7 +10,7 @@ import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
  */
 public interface StepSpanningTree extends Runnable {
 
-    void graph_traversal_step(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parent, int root, int label, Report report);
+    void graphTraversalStep(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parent, int root, int label, Report report);
 
     @Override
     void run();

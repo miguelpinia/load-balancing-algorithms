@@ -30,7 +30,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
     }
 
     @Override
-    public void graph_traversal_step(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
+    public void graphTraversalStep(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, Report report) {
         if (specialExecution) {
             specialExecution(graph, colors, parents, root, label, report);
         } else {
@@ -54,7 +54,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         do {
             while (!struct.isEmpty()) {
                 v = struct.take();
-                report.takesIncrement();
+                report.incrementTakes();
                 if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {
@@ -108,7 +108,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         do {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
-                report.takesIncrement();
+                report.incrementTakes();
                 if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {

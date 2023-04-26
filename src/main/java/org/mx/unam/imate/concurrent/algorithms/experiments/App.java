@@ -6,13 +6,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.CoVResult;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.StatisticsST;
 import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
+import org.mx.unam.imate.concurrent.algorithms.experiments.zero.CoVResultZero;
+import org.mx.unam.imate.concurrent.algorithms.experiments.zero.ZeroCost;
 import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
 import org.mx.unam.imate.concurrent.algorithms.utils.Result;
 import org.mx.unam.imate.concurrent.algorithms.utils.WorkStealingUtils;
@@ -79,6 +80,28 @@ public class App {
         return algs;
     }
 
+    private static JSONObject processCoVPutSteals(Map<String, CoVResultZero> covs) {
+        JSONObject data = new JSONObject();
+        covs.forEach((algName, cov) -> {
+            JSONObject results = new JSONObject();
+            results.put("totalMean", cov.getMean());
+            results.put("putsMean", cov.getMeanPuts());
+            results.put("stealsMean", cov.getMeanSteals());
+            data.put(algName, results);
+        });
+        return data;
+    }
+
+    private void generateJSONFile(JSONObject results, String fileName,
+            int structSize, int numOperations) {
+        System.out.println(results.toString(2));
+        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+        String time = format.format(new Date());
+        String title = String.format("%s-%d-%d-%s.json", fileName, structSize, numOperations, time);
+        WorkStealingUtils.saveJsonObjectToFile(results, title);
+        System.out.println(String.format("Writing to file: %s", title));
+    }
+
     public void benchmarkPutSteals() {
         String header
                 = """
@@ -86,29 +109,39 @@ public class App {
                       = generating experiment puts-steals =
                       =====================================
                       """;
-        Experiments exp = new Experiments();
         System.out.println(header);
-        JSONObject results = exp.putSteals(types, ptsOptions);
-        System.out.println(results.toString(2));
-        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
-        String time = format.format(new Date());
-        WorkStealingUtils.saveJsonObjectToFile(results, String.format("%s-benchmark-puts-steals.json", time));
+        int structSize = putStealsOptions.getInt(Constants.STRUCT_SIZE);
+        int numOperations = putStealsOptions.getInt(Constants.NUM_OPERATIONS);
+
+        Map<String, CoVResultZero> covs = ZeroCost.fullExperimentPutsSteals(types, putStealsOptions);
+        JSONObject results = processCoVPutSteals(covs);
+        generateJSONFile(results, "stats-puts-steals", structSize, numOperations);
+    }
+
+    private static JSONObject processCoVPutTakes(Map<String, CoVResultZero> covs) {
+        JSONObject data = new JSONObject();
+        covs.forEach((algName, cov) -> {
+            JSONObject results = new JSONObject();
+            results.put("totalMean", cov.getMean());
+            results.put("putsMean", cov.getMeanPuts());
+            results.put("takesMean", cov.getMeanTakes());
+            data.put(algName, results);
+        });
+        return data;
     }
 
     public void benchmarkPutTakes() {
-        String header
-                = """
+        String header = """
                       =====================================
                       = generating experiment puts-takes  =
                       =====================================
                       """;
-        Experiments exp = new Experiments();
         System.out.println(header);
-        JSONObject results = exp.putTakes(types, putTakesOptions);
-        System.out.println(results.toString(2));
-        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
-        String time = format.format(new Date());
-        WorkStealingUtils.saveJsonObjectToFile(results, String.format("putsTakes-%s.json", time));
+        int structSize = putTakesOptions.getInt(Constants.STRUCT_SIZE);
+        int numOperations = putTakesOptions.getInt(Constants.NUM_OPERATIONS);
+        Map<String, CoVResultZero> covs = ZeroCost.fullExperimentPutsTakes(types, putTakesOptions);
+        JSONObject results = processCoVPutTakes(covs);
+        generateJSONFile(results, "stats-puts-takes", structSize, numOperations);
     }
 
     public void benchmarkPutTakesSteals() {
@@ -117,13 +150,12 @@ public class App {
                       = generating experiment puts-takes-steals  =
                       ============================================
                       """;
-        Experiments exp = new Experiments();
         System.out.println(header);
+        int structSize = ptsOptions.getInt(Constants.STRUCT_SIZE);
+        int numOperations = ptsOptions.getInt(Constants.NUM_OPERATIONS);
+        Experiments exp = new Experiments();
         JSONObject results = exp.putTakesSteals(types, ptsOptions);
-        System.out.println(results.toString(2));
-        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
-        String time = format.format(new Date());
-        WorkStealingUtils.saveJsonObjectToFile(results, String.format("putsTakesSteals-%s.json", time));
+        generateJSONFile(results, "puts-takes-steals", structSize, numOperations);
     }
 
     public void compareAlgs() {
@@ -175,7 +207,7 @@ public class App {
         int iterations = stProps.getInt(Constants.ITERATIONS);
         int processorsNum = Runtime.getRuntime().availableProcessors();
         boolean allTime = stProps.getBoolean(Constants.ALL_TIME);
-        Map<AlgorithmsType, List<Result>> lists = buildLists();
+        Map<AlgorithmsType, List<Result>> lists = buildTypeLists();
         Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
 
         results.put("vertexSize", vertexSize);
@@ -190,7 +222,7 @@ public class App {
         results.put("algorithms", getAlgorithms(types));
 
         warmUp(stProps, graph);
-        
+
         System.out.println(String.format("Processors: %d", processorsNum));
         JSONObject execs = new JSONObject();
         for (int i = 0; i < processorsNum; i++) {
@@ -216,24 +248,25 @@ public class App {
         WorkStealingUtils.saveJsonObjectToFile(results, "experiment-1.json");
         return results;
     }
-    
+
     public JSONObject evaluationSpanningTree(JSONObject props) {
         int vertexSize = props.getInt(Constants.VERTEX_SIZE);
-        GraphType graphType = GraphType.valueOf(props.getString(Constants.GRAPH_TYPE));
         boolean directed = props.getBoolean(Constants.DIRECTED);
         int structSize = props.getInt(Constants.STRUCT_SIZE);
+        GraphType graphType = GraphType.valueOf(props.getString(Constants.GRAPH_TYPE));
         Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
+        // Warm up the virtual machine.
         warmUp(props, graph);
         Map<String, List<CoVResult>> covs = StatisticsST.fullExperiment(graph, props, types);
-        JSONObject results = processCov(covs);
+        JSONObject results = analysisCoV(covs);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
         String title = String.format("%s-%s-%d-%s-stats.json", graphType.toString(), directed ? "directed" : "undirected", structSize, time);
         WorkStealingUtils.saveJsonObjectToFile(results, title);
         return results;
     }
-    
-    private static JSONObject processCov(Map<String, List<CoVResult>> covs) {
+
+    private static JSONObject analysisCoV(Map<String, List<CoVResult>> covs) {
         JSONObject data = new JSONObject();
         covs.forEach((algName, listCovs) -> {
             JSONArray vals = new JSONArray();
@@ -252,7 +285,7 @@ public class App {
         return StatisticsST.statistics(StatisticsST.experiment(graph, params), results);
     }
 
-    private Map<AlgorithmsType, List<Result>> buildLists() {
+    private Map<AlgorithmsType, List<Result>> buildTypeLists() {
         Map<AlgorithmsType, List<Result>> lists = new HashMap<>();
         types.forEach((type) -> {
             lists.put(type, new ArrayList<>());

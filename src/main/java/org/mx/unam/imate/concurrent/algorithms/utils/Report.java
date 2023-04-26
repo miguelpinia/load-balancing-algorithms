@@ -4,11 +4,13 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
 import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
 import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 
 /**
+ * This class is used to keep counters for each operation performed by the
+ * work-stealing algorithms.
+ *
  * Esta clase llevará contadores de las operaciones que se realizan en los
  * distintos algoritmos.
  *
@@ -17,29 +19,66 @@ import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
 public class Report implements Comparable<Report> {
 
     /**
-     * Lleva el conteo de takes realizados en la ejecución de la prueba.
+     * Counter: How many takes are performed by experiment.
+     *
+     * Contador: Lleva el conteo de takes realizados en la ejecución de la
+     * prueba.
      */
     private final AtomicInteger takes;
+
     /**
-     * Lleva el conteo de puts realizados en la ejecución de la prueba.
+     * Counter: How many puts are performed by experiment.
+     *
+     * Contador: Lleva el conteo de puts realizados en la ejecución de la
+     * prueba.
      */
     private final AtomicInteger puts;
+
     /**
-     * Lleva el conteo de steals realizados en la ejecución de la prueba.
+     * Counter: How many steals are performed by experiment.
+     *
+     * Contador: Lleva el conteo de steals realizados en la ejecución de la
+     * prueba.
      */
     private final AtomicInteger steals;
+
     /**
+     * Total time performed by experiment.
+     *
      * El tiempo total en ms de la ejecución de la prueba.
      */
     private long executionTime;
 
     private int[] processors;
 
+    /**
+     * Graph type used in the experiment.
+     */
     private GraphType graphType;
+
+    /**
+     * Work-stealing algorithm used in the experiment.
+     */
     private AlgorithmsType algType;
+
+    /**
+     * Max time performed by all steals.
+     */
     private final AtomicLong maxSteal;
+
+    /**
+     * Min time performed by all steals.
+     */
     private final AtomicLong minSteal;
+
+    /**
+     * Average time performed by all steals.
+     */
     private final AtomicLong avgSteal;
+
+    /**
+     * Average time performed by each cycle.
+     */
     private final AtomicLong avgIter;
 
     public Report() {
@@ -47,80 +86,169 @@ public class Report implements Comparable<Report> {
         puts = new AtomicInteger(0);
         steals = new AtomicInteger(0);
         executionTime = 0L;
-        maxSteal = new AtomicLong();
+        maxSteal = new AtomicLong(Long.MIN_VALUE);
         minSteal = new AtomicLong(Long.MAX_VALUE);
-        avgSteal = new AtomicLong();
-        avgIter = new AtomicLong();
+        avgSteal = new AtomicLong(0);
+        avgIter = new AtomicLong(0);
     }
 
-    public void takesIncrement() {
+    /**
+     * Increment by one the number of takes performed. The increment is
+     * performed atomically using incrementAndGet.
+     */
+    public void incrementTakes() {
         takes.incrementAndGet();
     }
 
+    /**
+     * Increment by one the number of puts performed. The increment is performed
+     * atomically using incrementAndGet.
+     */
     public void putsIncrement() {
         puts.incrementAndGet();
     }
 
+    /**
+     * Increment by one the number of steals performed by the experiment. The
+     * increment is performed atomically using incrementAndGet.
+     */
     public void stealsIncrement() {
         steals.incrementAndGet();
     }
 
+    /**
+     * Set the execution time performed by the experiment.
+     *
+     * @param executionTime Execution time of the experiment.
+     */
     public void setExecutionTime(long executionTime) {
         this.executionTime = executionTime;
     }
 
+    /**
+     * Set information about the processors.
+     *
+     * @param processors Array with information about the processors.
+     */
     public void setProcessors(int... processors) {
         this.processors = processors;
     }
 
+    /**
+     * Set the graph type used in the experiment.
+     *
+     * @param graphType Graph type.
+     */
     public void setGraphType(GraphType graphType) {
         this.graphType = graphType;
     }
 
+    /**
+     * Set the work-stealing algorithm type used in the experiment.
+     *
+     * @param algType Algorithm type.
+     */
     public void setAlgType(AlgorithmsType algType) {
         this.algType = algType;
     }
 
+    /**
+     * Returns the execution time.
+     *
+     * @return The execution time.
+     */
     public long getExecutionTime() {
         return executionTime;
     }
 
+    /**
+     * Returns the number of takes recorded.
+     *
+     * @return The number of takes.
+     */
     public int getTakes() {
         return takes.get();
     }
 
+    /**
+     * Returns the number of puts recorded.
+     *
+     * @return The number of puts.
+     */
     public int getPuts() {
         return puts.get();
     }
 
+    /**
+     * Returns the number of steals recorded.
+     *
+     * @return The number of steals.
+     */
     public int getSteals() {
         return steals.get();
     }
 
+    /**
+     * Returns a copy of the information about the processors.
+     *
+     * @return
+     */
     public int[] getProcessors() {
         return processors.clone();
     }
 
+    /**
+     * Returns the work-stealing algorithm type used in the experiment reported.
+     *
+     * @return The work-stealing algorithm..
+     */
     public AlgorithmsType getAlgType() {
         return algType;
     }
 
+    /**
+     * Returns the graph type used in the experiment.
+     *
+     * @return The graph type.
+     */
     public GraphType getGraphType() {
         return graphType;
     }
 
+    /**
+     * Returns the maximum time recorded of all steals.
+     *
+     * @return The maximum time of all steals.
+     */
     public long getMaxSteal() {
         return maxSteal.get();
     }
 
+    /**
+     * Returns the minimum time recorded of all steals.
+     *
+     * @return The minimum time of all steals.
+     */
     public long getMinSteal() {
         return minSteal.get();
     }
 
+    /**
+     * Returns the average time of all steals performed in the experiment.
+     *
+     * @return The average time of all steals.
+     */
     public long getAvgSteal() {
         return avgSteal.get();
     }
 
+    /**
+     * Set the max value of all steals. This only will happen if the vale
+     * <b>time</b> is greater than the last value recorded. If the last is true,
+     * then, it will try set the maximum value using a compareAndSet primitive.
+     *
+     * @param time Time of the tentative maximum.
+     */
     public void setMaxSteal(long time) {
         long expectedValue = maxSteal.get();
         if (expectedValue < time) {
@@ -128,6 +256,14 @@ public class Report implements Comparable<Report> {
         }
     }
 
+    /**
+     * Set the min value of all steals. This only will happen if the value
+     * <b>time</b> is smaller than the last value recorded. If the last is true,
+     * then, it will try set the minimum value using the compareAndSet
+     * primitive.
+     *
+     * @param time Time of the tentative minimum.
+     */
     public void setMinSteal(long time) {
         long expectedValue = minSteal.get();
         if (expectedValue > time) {
