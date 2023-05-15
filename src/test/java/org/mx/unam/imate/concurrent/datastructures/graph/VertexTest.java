@@ -1,5 +1,6 @@
 package org.mx.unam.imate.concurrent.datastructures.graph;
 
+import phd.ds.Vertex;
 import java.util.ArrayList;
 import java.util.List;
 

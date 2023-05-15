@@ -4,14 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.SpanningTree;
-import org.mx.unam.imate.concurrent.algorithms.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
-import org.mx.unam.imate.concurrent.algorithms.utils.Parameters;
-import org.mx.unam.imate.concurrent.algorithms.utils.Report;
-import org.mx.unam.imate.concurrent.datastructures.graph.Graph;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphType;
-import org.mx.unam.imate.concurrent.datastructures.graph.GraphUtils;
+import phd.ws.AlgorithmsType;
+import phd.ws.experiments.spanningTree.SpanningTree;
+import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
+import phd.utils.Parameters;
+import phd.utils.Report;
+import phd.ds.Graph;
+import phd.ds.GraphType;
+import phd.ds.GraphUtils;
 
 /**
  *

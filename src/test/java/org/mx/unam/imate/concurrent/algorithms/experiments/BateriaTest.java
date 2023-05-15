@@ -11,7 +11,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mx.unam.imate.concurrent.algorithms.AlgorithmsType;
+import phd.ws.AlgorithmsType;
 
 /**
  *
