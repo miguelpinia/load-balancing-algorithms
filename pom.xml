@@ -60,6 +60,14 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <mainClass>phd.ws.experiments.sat1.Main</mainClass>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
@@ -91,7 +99,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.mx.unam.imate.concurrent.main.Main</mainClass>
+                            <mainClass>phd.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -102,7 +110,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                org.mx.unam.imate.concurrent.main.Main
+                                phd.main.Main
                             </mainClass>
                         </manifest>
                     </archive>

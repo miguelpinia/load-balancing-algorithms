@@ -1,0 +1,14 @@
+{
+  "datafile": "data/pigeon.cnf",
+  "structSize": 65536,
+  "iterations": 1,
+  "algorithms": [
+    "CILK",
+    "CHASELEV",
+    "IDEMPOTENT_LIFO",
+    "IDEMPOTENT_FIFO",
+    "IDEMPOTENT_DEQUE",
+    "WS_MULT",
+    "B_WS_MULT"
+  ]
+}
