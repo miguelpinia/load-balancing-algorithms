@@ -21,6 +21,7 @@ public class WSMULT<T> implements WSStruct<T> {
     private int tail;
     private final int nodeCapacity;
     private int capacity;
+    private List<T> snapshot;
 
     public WSMULT(int nodeCapacity, int numThreads, T BOTTOM) {
         nodeCounter = 0;
@@ -36,6 +37,13 @@ public class WSMULT<T> implements WSStruct<T> {
         capacity = nodeCounter * nodeCapacity;
         this.BOTTOM = BOTTOM;
         size = new AtomicInteger(0);
+    }
+
+    public WSMULT(int nodeCapacity, int numThreads, T BOTTOM, boolean snapshot) {
+        this(nodeCapacity, numThreads, BOTTOM);
+        if (snapshot) {
+            this.snapshot = new ArrayList<>(nodeCapacity);
+        }
     }
 
     @Override
@@ -62,6 +70,9 @@ public class WSMULT<T> implements WSStruct<T> {
         tail++;
         size.getAndIncrement();
         tasks.get(nodeCounter - 1).set(tail % nodeCapacity, task);
+        if (snapshot != null) {
+            snapshot.add(task);
+        }
         return true;
     }
 
@@ -79,6 +90,19 @@ public class WSMULT<T> implements WSStruct<T> {
             return x;
         }
         return null;
+    }
+
+    @Override
+    public T get(int position) {
+        int node = position / nodeCapacity;
+        int pos = position % nodeCapacity;
+        T x = tasks.get(node).get(pos);
+        return x;
+    }
+
+    @Override
+    public List<T> getSnapshot() {
+        return snapshot;
     }
 
     @Override

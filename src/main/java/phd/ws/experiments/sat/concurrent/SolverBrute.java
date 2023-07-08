@@ -48,6 +48,8 @@ public class SolverBrute {
         if (range == null) {
             return;
         }
+        // if ()
+        // range.increment();
         Formula f = null;
         for (long i = range.getStart(); i < range.getEnd(); i++) {
             f = new Formula(formula);
@@ -66,6 +68,7 @@ public class SolverBrute {
         if (range == null) {
             return;
         }
+        range.increment();
         Formula f;
         for (long i = range.getStart(); i < range.getEnd(); i++) {
             f = new Formula(formula);
@@ -84,8 +87,8 @@ public class SolverBrute {
         int processors = config.getProcessorNum();
         int vars = formula.getVarFactory().getSize();
         double searchSpaceSize = Math.pow(2, vars) - 1;
-        int step = 1000;
-        int newTasks = (int) (searchSpaceSize / 1000) + 1;
+        int step = config.getStep();
+        int newTasks = (int) (searchSpaceSize / step) + 1;
         int start = 0;
         int end = start + (step * newTasks);
         for (int i = start; i < end; i += step) {
@@ -222,6 +225,11 @@ public class SolverBrute {
             results.put(alg.toString(), o);
         }
         return results;
+    }
+
+    public static void meanCoVSat(String configFile) {
+        JSONObject config = readProperties(configFile);
+
     }
 
     public static void main(String[] args) {

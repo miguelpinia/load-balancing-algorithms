@@ -1,5 +1,7 @@
 package phd.ws.gen;
 
+import java.util.List;
+
 /**
  *
  * @author miguel
@@ -71,4 +73,7 @@ public interface WSStruct<T> {
 
     int size();
 
+    T get(int position);
+
+    List<T> getSnapshot();
 }

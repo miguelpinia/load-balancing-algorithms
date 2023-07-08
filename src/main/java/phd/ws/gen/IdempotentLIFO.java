@@ -1,6 +1,8 @@
 package phd.ws.gen;
 
 import java.lang.invoke.VarHandle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import phd.utils.Pair;
 
@@ -13,11 +15,19 @@ public class IdempotentLIFO<T> implements WSStruct<T> {
     private T[] tasks;
     private final AtomicReference<Pair> anchor;
     private int capacity;
+    private List<T> snapshot;
 
     public IdempotentLIFO(int size) {
         anchor = new AtomicReference<>(new Pair(0, 0));
         capacity = size;
         tasks = (T[]) new Object[size];
+    }
+
+    public IdempotentLIFO(int size, boolean snapshot) {
+        this(size);
+        if (snapshot) {
+            this.snapshot = new ArrayList<>(size);
+        }
     }
 
     @Override
@@ -54,6 +64,20 @@ public class IdempotentLIFO<T> implements WSStruct<T> {
         tasks[t] = task;
         VarHandle.fullFence();
         anchor.set(new Pair(t + 1, g + 1));
+        if (snapshot != null) {
+            snapshot.add(task);
+        }
+    }
+
+    @Override
+    public T get(int position) {
+        // this could not work
+        return tasks[position];
+    }
+
+    @Override
+    public List<T> getSnapshot() {
+        return snapshot;
     }
 
     @Override

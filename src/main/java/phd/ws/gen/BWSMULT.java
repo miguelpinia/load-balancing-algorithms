@@ -19,6 +19,7 @@ public class BWSMULT<T> implements WSStruct<T> {
     private final List<NodeTasksBoolean> B;
     private final int[] heads;
     private final int nodeCapacity;
+    private List<T> snapshot;
     private int nodeCounter;
     private int capacity;
     private int tail;
@@ -37,6 +38,16 @@ public class BWSMULT<T> implements WSStruct<T> {
         nodeCounter++;
         capacity = nodeCounter * nodeCapacity;
         this.BOTTOM = BOTTOM;
+        snapshot = null;
+    }
+
+    public BWSMULT(int nodeCapacity, int numThreads, T BOTTOM, boolean snapshot) {
+        this(nodeCapacity, numThreads, BOTTOM);
+        if (snapshot) {
+            this.snapshot = new ArrayList<>();
+        } else {
+            this.snapshot = null;
+        }
     }
 
     @Override
@@ -58,6 +69,11 @@ public class BWSMULT<T> implements WSStruct<T> {
     }
 
     @Override
+    public List<T> getSnapshot() {
+        return snapshot;
+    }
+
+    @Override
     public boolean put(T task, int threadId) {
         if (tail == (capacity - 1)) {
             expand();
@@ -71,7 +87,18 @@ public class BWSMULT<T> implements WSStruct<T> {
         tail++;
         tasks.get(nodeCounter - 1).set(tail % nodeCapacity, task);
         B.get(nodeCounter - 1).set(tail % nodeCapacity, true);
+        if (snapshot != null) {
+            snapshot.add(task);
+        }
         return true;
+    }
+
+    @Override
+    public T get(int position) {
+        int node = position / nodeCapacity;
+        int pos = position % nodeCapacity;
+        T x = tasks.get(node).get(pos);
+        return x;
     }
 
     @Override

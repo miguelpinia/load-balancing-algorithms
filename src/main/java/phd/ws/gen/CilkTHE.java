@@ -3,6 +3,8 @@
 package phd.ws.gen;
 
 import java.lang.invoke.VarHandle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
@@ -16,6 +18,7 @@ public class CilkTHE<T> implements WSStruct<T> {
     private final AtomicInteger H;
     private final AtomicInteger T;
     private AtomicReferenceArray<T> tasks;
+    private List<T> snapshot;
     private final ReentrantLock lock;
 
     public CilkTHE(int initialSize) {
@@ -23,6 +26,13 @@ public class CilkTHE<T> implements WSStruct<T> {
         tasks = new AtomicReferenceArray<>(initialSize);
         H = new AtomicInteger(0);
         T = new AtomicInteger(0);
+    }
+
+    public CilkTHE(int initialSize, boolean snapshot) {
+        this(initialSize);
+        if (snapshot) {
+            this.snapshot = new ArrayList<>(initialSize);
+        }
     }
 
     @Override
@@ -55,6 +65,19 @@ public class CilkTHE<T> implements WSStruct<T> {
         }
         tasks.set(tail % tasks.length(), task);
         T.set(tail + 1);
+        if (snapshot != null) {
+            snapshot.add(task);
+        }
+    }
+
+    @Override
+    public T get(int position) {
+        return tasks.get(position);
+    }
+
+    @Override
+    public List<T> getSnapshot() {
+        return snapshot;
     }
 
     @Override

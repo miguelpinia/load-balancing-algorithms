@@ -1,6 +1,8 @@
 package phd.ws.gen;
 
 import java.lang.invoke.VarHandle;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -12,11 +14,19 @@ public class IdempotentFIFO<T> implements WSStruct<T> {
     private TaskArray<T> tasks;
     private final AtomicInteger head;
     private final AtomicInteger tail;
+    private List<T> snapshot;
 
     public IdempotentFIFO(int initialSize) {
         head = new AtomicInteger(0);
         tail = new AtomicInteger(0);
         tasks = new TaskArray<>(initialSize);
+    }
+
+    public IdempotentFIFO(int initialSize, boolean snapshot) {
+        this(initialSize);
+        if (snapshot) {
+            this.snapshot = new ArrayList<>(initialSize);
+        }
     }
 
     @Override
@@ -55,6 +65,19 @@ public class IdempotentFIFO<T> implements WSStruct<T> {
         tasks.set(t % tasks.size(), task);
         VarHandle.releaseFence();
         tail.set(t + 1);
+        if (snapshot != null) {
+            snapshot.add(task);
+        }
+    }
+
+    @Override
+    public T get(int position) {
+        return tasks.get(position);
+    }
+
+    @Override
+    public List<T> getSnapshot() {
+        return snapshot;
     }
 
     @Override

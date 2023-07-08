@@ -11,8 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.JSONObject;
 import phd.utils.WorkStealingUtils;
-
-import static phd.ws.experiments.sat.concurrent.SolverBrute.experiment;
+import phd.ws.experiments.sat.concurrent.BruteSolver;
 
 public class Main {
 
@@ -60,10 +59,14 @@ public class Main {
 //        }
 
         String configFile = "config_sat.json";
-        JSONObject result = experiment(configFile);
+        JSONObject properties = BruteSolver.readProperties(configFile);
+        int step = properties.getInt("step");
+//        JSONObject result = Statistics.evaluationSATST(configFile);
+        JSONObject result = BruteSolver.experimentMeasurements(configFile);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("experiment-brute-sat-%s-stats.json", time);
+//        String title = String.format("experiment-brute-sat-st-%s-%d.json", time, structSize);
+        String title = String.format("experiment-brute-sat-measurements-%d-%s.json", step, time);
         WorkStealingUtils.saveJsonObjectToFile(result, title);
         System.out.println("Finish Evaluation");
     }

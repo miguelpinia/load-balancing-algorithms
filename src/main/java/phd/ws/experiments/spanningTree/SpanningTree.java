@@ -5,14 +5,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import phd.ds.Graph;
+import phd.ds.GraphUtils;
+import phd.utils.Parameters;
+import phd.utils.Report;
 import phd.ws.WorkStealingStruct;
 import phd.ws.experiments.spanningTree.stepSpanningTree.AbstractStepSpanningTree;
 import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeLookUp;
-import phd.utils.Parameters;
-import phd.utils.Report;
-import phd.ds.Graph;
-import phd.ds.GraphUtils;
 
 /**
  *
@@ -71,15 +70,13 @@ public class SpanningTree {
         int[] processors = new int[params.getNumThreads()];
         AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
         AtomicInteger counter = new AtomicInteger(0);
-        Runnable barrierAction = () -> {
-        };
-        CyclicBarrier barrier = new CyclicBarrier(params.getNumThreads(), barrierAction);
+        CyclicBarrier barrier = new CyclicBarrier(params.getNumThreads());
         // Building the work-stealing algorithm
         for (int i = 0; i < params.getNumThreads(); i++) {
             structs[i] = WorkStealingStructLookUp
                     .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
         }
-        // Building the spanning tree and 
+        // Building the spanning tree and
         for (int i = 0; i < params.getNumThreads(); i++) {
             AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTree(params.getStepSpanningTreeType(),
                     graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,

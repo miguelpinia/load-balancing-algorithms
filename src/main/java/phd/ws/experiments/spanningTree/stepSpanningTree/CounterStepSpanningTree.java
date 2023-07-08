@@ -4,10 +4,9 @@ import java.util.Iterator;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-
-import phd.ws.WorkStealingStruct;
-import phd.utils.Report;
 import phd.ds.Graph;
+import phd.utils.Report;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -77,8 +76,8 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                 time = System.nanoTime();
                 stolenItem = structs[thread].steal();
                 time = System.nanoTime() - time;
-                report.stealsIncrement();
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                    report.stealsIncrement();
                     struct.put(stolenItem);
                     report.putsIncrement();
                 }

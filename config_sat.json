@@ -2,6 +2,7 @@
   "datafile": "data/pigeon.cnf",
   "structSize": 65536,
   "iterations": 1,
+  "step": 50,
   "algorithms": [
     "CILK",
     "CHASELEV",
