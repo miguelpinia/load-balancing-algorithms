@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.json.JSONObject;
 import phd.main.Constants;
-import phd.utils.WorkStealingUtils;
+import phd.utils.WSUtils;
 import phd.ws.AlgorithmsType;
 import phd.ws.experiments.Experiments;
 
@@ -46,7 +46,7 @@ public class BenchmarkZeroCost {
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
         String title = String.format("%s-%d-%d-%s.json", fileName, structSize, numOperations, time);
-        WorkStealingUtils.saveJsonObjectToFile(results, title);
+        WSUtils.saveJsonObjectToFile(results, title);
         System.out.println(String.format("Writing to file: %s", title));
     }
 

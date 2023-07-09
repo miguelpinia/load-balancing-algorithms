@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import phd.utils.WorkStealingUtils;
+import phd.utils.WSUtils;
 import phd.ws.experiments.sat.Formula;
 import phd.ws.experiments.sat.Utils;
 import phd.ws.gen.WSLookUp;
@@ -416,8 +416,7 @@ public class BruteSolver {
         return null;
     }
 
-    public static JSONObject experimentMeasurements(String configFile) {
-        JSONObject json = readProperties(configFile);
+    public static JSONObject experimentMeasurements(JSONObject json) {
         String dataFile = json.getString("datafile");
         int structSize = json.getInt("structSize");
         List<WSType> algs = json.getJSONArray("algorithms").toList().stream().map(s -> WSType.valueOf(s.toString())).collect(Collectors.toList());
@@ -486,7 +485,7 @@ public class BruteSolver {
     public static void main(String[] args) {
         String configFile = "config_sat.json";
         JSONObject result = experiment(configFile);
-        WorkStealingUtils.saveJsonObjectToFile(result, "experiment-sat-brute-result.json");
+        WSUtils.saveJsonObjectToFile(result, "experiment-sat-brute-result.json");
         System.out.println("Finish Evaluation");
     }
 

@@ -14,7 +14,7 @@ import phd.ds.GraphUtils;
 import phd.main.Constants;
 import phd.utils.Parameters;
 import phd.utils.Result;
-import phd.utils.WorkStealingUtils;
+import phd.utils.WSUtils;
 import phd.ws.AlgorithmsType;
 import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 
@@ -85,7 +85,7 @@ public class BenchmarkSpanningTree {
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
         String title = String.format("%s-%s-%d-%s-stats.json", graphType.toString(), directed ? "directed" : "undirected", structSize, time);
-        WorkStealingUtils.saveJsonObjectToFile(results, title);
+        WSUtils.saveJsonObjectToFile(results, title);
         return results;
     }
 
@@ -137,8 +137,8 @@ public class BenchmarkSpanningTree {
         String title = String.format("st-%s-%s-%s-%b-%d-%d.json",
                 types.toString(), time, graphType.name(),
                 directed, structSize, vertexSize);
-        WorkStealingUtils.saveJsonObjectToFile(results, title);
-        WorkStealingUtils.saveJsonObjectToFile(results, "experiment-1.json");
+        WSUtils.saveJsonObjectToFile(results, title);
+        WSUtils.saveJsonObjectToFile(results, "experiment-1.json");
         return results;
     }
 

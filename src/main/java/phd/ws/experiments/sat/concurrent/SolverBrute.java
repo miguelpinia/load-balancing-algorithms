@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import phd.utils.WorkStealingUtils;
+import phd.utils.WSUtils;
 import phd.ws.experiments.sat.Formula;
 import phd.ws.experiments.sat.Utils;
 import phd.ws.gen.WSLookUp;
@@ -235,7 +235,7 @@ public class SolverBrute {
     public static void main(String[] args) {
         String configFile = "config_sat.json";
         JSONObject result = experiment(configFile);
-        WorkStealingUtils.saveJsonObjectToFile(result, "experiment-sat-brute-result.json");
+        WSUtils.saveJsonObjectToFile(result, "experiment-sat-brute-result.json");
         System.out.println("Finish Evaluation");
     }
 

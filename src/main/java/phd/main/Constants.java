@@ -22,5 +22,8 @@ public class Constants {
     public static final String STATISTICS = "statistics";
     public static final String NUM_OPERATIONS = "numOperations";
     public static final String K = "k";
+    public static final String SAT_STATS = "satStats";
+    public static final String SAT_COUNT = "satCount";
+    public static final String SPANNING_TREE_COUNT = "spanningTreeCount";
 
 }

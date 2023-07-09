@@ -52,13 +52,12 @@ public class Statistics {
         return new CoVResult(config.getProcessors(), smallX, config.getType());
     }
 
-    public static Map<String, List<CoVResult>> fullExperiment(String fileName) {
+    public static Map<String, List<CoVResult>> fullExperiment(JSONObject properties) {
         Map<String, List<CoVResult>> evaluation = new HashMap<>();
-        JSONObject json = BruteSolver.readProperties(fileName);
-        String dataFile = json.getString("datafile");
-        int structSize = json.getInt("structSize");
-        List<WSType> algs = json.getJSONArray("algorithms").toList().stream().map(s -> WSType.valueOf(s.toString())).collect(Collectors.toList());
-        int step = json.getInt("step");
+        String dataFile = properties.getString("datafile");
+        int structSize = properties.getInt("structSize");
+        List<WSType> algs = properties.getJSONArray("algorithms").toList().stream().map(s -> WSType.valueOf(s.toString())).collect(Collectors.toList());
+        int step = properties.getInt("step");
         int processors = Runtime.getRuntime().availableProcessors();
         algs.forEach(alg -> {
             List<CoVResult> results = new ArrayList<>();
@@ -72,14 +71,9 @@ public class Statistics {
         return evaluation;
     }
 
-    public static JSONObject evaluationSATST(String fileName) {
-//        JSONObject json = BruteSolver.readProperties(fileName);
-        Map<String, List<CoVResult>> covs = fullExperiment(fileName);
+    public static JSONObject evaluationSATST(JSONObject properties) {
+        Map<String, List<CoVResult>> covs = fullExperiment(properties);
         JSONObject results = analysisCoV(covs);
-//        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
-//        String time = format.format(new Date());
-//        String title = String.format("brute-solver-%d-%s-stats.json", json.getInt("structSize"), time);
-//        WorkStealingUtils.saveJsonObjectToFile(results, title);
         return results;
     }
 

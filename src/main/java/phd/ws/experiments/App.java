@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import phd.main.Constants;
 import phd.ws.AlgorithmsType;
+import phd.ws.experiments.sat.concurrent.BenchmarkSAT;
 import phd.ws.experiments.spanningTree.BenchmarkSpanningTree;
 import phd.ws.experiments.zero.BenchmarkZeroCost;
 
@@ -26,10 +27,15 @@ public class App {
     private final boolean spanningTree;
     private final boolean putsTakesSteals;
     private final boolean statistics;
+    private final boolean satStats;
+    private final boolean satCount;
     private final JSONObject statsOptions;
     private final JSONObject ptsOptions;
+    private final JSONObject satStatsOptions;
+    private final JSONObject satCountOptions;
     private final BenchmarkZeroCost benchmarkZero;
     private final BenchmarkSpanningTree benchmarkSpanning;
+    private final BenchmarkSAT benchmarkSAT;
 
     public App(JSONObject object) {
         this.spanningTree = object.has(Constants.SPANNING_TREE_OPTIONS);
@@ -45,6 +51,11 @@ public class App {
         this.statsOptions = getOptionalValueJSONObj(object, Constants.STATISTICS);
         this.benchmarkZero = new BenchmarkZeroCost();
         this.benchmarkSpanning = new BenchmarkSpanningTree();
+        this.satStats = object.has(Constants.SAT_STATS);
+        this.satStatsOptions = getOptionalValueJSONObj(object, Constants.SAT_STATS);
+        this.satCount = object.has(Constants.SAT_COUNT);
+        this.satCountOptions = getOptionalValueJSONObj(object, Constants.SAT_COUNT);
+        this.benchmarkSAT = new BenchmarkSAT();
     }
 
     private JSONObject getOptionalValueJSONObj(JSONObject object, String key) {
@@ -80,6 +91,12 @@ public class App {
                       """;
             System.out.println(header);
             benchmarkSpanning.compare(spanningTreeOptions, types);
+        }
+        if (satStats) {
+            benchmarkSAT.statisticalEvaluation(satStatsOptions);
+        }
+        if (satCount) {
+            benchmarkSAT.multiplicityCountBenchmark(satCountOptions);
         }
     }
 
