@@ -8,7 +8,6 @@ package phd.ws.imp;
 import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -27,6 +26,9 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
 
     private final int[] tail;
     private final int[] head;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -61,6 +63,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
         tail[label] = tail[label] + 1;
         Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
         Tail.set(tail[label]);
+        puts++;
         return true;
     }
 
@@ -81,8 +84,10 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
         }
         Head.set(head[label]);
         if (x != TOP) {
+            takes++;
             return x;
         } else {
+            takes++;
             return EMPTY;
         }
     }
@@ -100,6 +105,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
                     if (x != TOP) {
                         head[label]++;
                         Head.set(head[label]);
+                        steals++;
                         return x;
                     }
                 }
@@ -109,6 +115,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
             VarHandle.acquireFence();
             if (tail[label] == ntail && x == TOP) {
                 Head.set(head[label]);
+                steals++;
                 return EMPTY;
             } else {
                 tail[label] = ntail;
@@ -138,6 +145,21 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
     @Override
     public boolean isEmpty(int label) {
         return Head.get() > Tail.get();
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

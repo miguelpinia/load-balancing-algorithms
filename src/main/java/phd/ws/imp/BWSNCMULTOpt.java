@@ -27,6 +27,10 @@ public class BWSNCMULTOpt implements WorkStealingStruct {
     private final int[] head;
     private int tail;
 
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
+
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
      * tareas.
@@ -54,13 +58,14 @@ public class BWSNCMULTOpt implements WorkStealingStruct {
             expand();
         }
         if (tail <= Tasks.length - 3) {
-            Tasks[tail + 1] = BOTTOM; 
+            Tasks[tail + 1] = BOTTOM;
             Tasks[tail + 2] = BOTTOM;
             B[tail + 1] = new AtomicBoolean(true);
             B[tail + 2] = new AtomicBoolean(true);
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
+        puts++;
         return true;
     }
 
@@ -71,8 +76,10 @@ public class BWSNCMULTOpt implements WorkStealingStruct {
             int x = Tasks[head[label]];
             head[label]++;
             Head.set(head[label]);
+            takes++;
             return x;
         }
+        takes++;
         return EMPTY;
     }
 
@@ -87,12 +94,15 @@ public class BWSNCMULTOpt implements WorkStealingStruct {
                     head[label]++;
                     if (B[h].getAndSet(false)) {
                         Head.set(head[label]);
+                        steals++;
                         return x;
                     }
                 } else {
+                    steals++;
                     return EMPTY;
                 }
             } else {
+                steals++;
                 return EMPTY;
             }
         }
@@ -137,5 +147,20 @@ public class BWSNCMULTOpt implements WorkStealingStruct {
     public boolean isEmpty(int label) {
         return head[label] > tail;
     }
-    
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
+    }
+
 }

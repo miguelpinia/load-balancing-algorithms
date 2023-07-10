@@ -7,9 +7,8 @@ package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicReference;
-
-import phd.ws.WorkStealingStruct;
 import phd.utils.Pair;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -22,6 +21,9 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
     private int[] tasks;
     private final AtomicReference<Pair> anchor;
     private int capacity;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public IdempotentWorkStealingLIFO(int size) {
         anchor = new AtomicReference<>(new Pair(0, 0));
@@ -47,6 +49,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
         tasks[t] = task;
         VarHandle.fullFence();
         anchor.set(new Pair(t + 1, g + 1));
+        puts++;
     }
 
     @Override
@@ -55,10 +58,12 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
         int t = a.getT();
         int g = a.getG();
         if (t == 0) {
+            takes++;
             return EMPTY;
         }
         int task = tasks[t - 1];
         anchor.set(new Pair(t - 1, g));
+        takes++;
         return task;
     }
 
@@ -69,6 +74,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int t = oldReference.getT();
             int g = oldReference.getG();
             if (t == 0) {
+                steals++;
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -76,6 +82,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int task = tmp[t - 1];
             VarHandle.fullFence();
             if (anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
+                steals++;
                 return task;
             }
         }
@@ -111,6 +118,21 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

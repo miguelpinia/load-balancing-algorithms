@@ -8,24 +8,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.json.JSONObject;
-import phd.ws.AlgorithmsType;
+import phd.ds.Graph;
+import phd.ds.GraphType;
+import phd.ds.GraphUtils;
+import phd.main.Constants;
 import phd.utils.Parameters;
 import phd.utils.Report;
 import phd.utils.Result;
-import phd.ds.Graph;
-import phd.ds.GraphUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
-import phd.ds.GraphType;
-import phd.main.Constants;
+import phd.utils.SimpleReport;
+import phd.ws.AlgorithmsType;
 
 /**
  *
  * @author miguel
  */
-public class StatisticsST {
+public class ExperimentsSpanningTree {
 
     private static final int ITERATIONS = 75;
     private static final int K = 5;
@@ -98,8 +97,6 @@ public class StatisticsST {
         return evaluation;
     }
 
-
-
     public static List<Report> experiment(Graph graph, Parameters params) {
         List<Report> reports = new ArrayList<>();
         final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
@@ -108,10 +105,26 @@ public class StatisticsST {
             Report report = new Report();
             report.setAlgType(params.getAlgType());
             report.setGraphType(params.getType());
-            Graph tree = st.spanningTree(graph, roots, report, params);
+            st.spanningTree(graph, roots, report, params);
             reports.add(report);
         }
         return reports;
+    }
+
+    public static List<List<SimpleReport>> experimentMeasurements(Graph graph, Parameters params) {
+        List<List<SimpleReport>> result = new ArrayList<>();
+        int iterations = params.getNumIterExps();
+        SpanningTree st = new SpanningTree();
+        final int[] roots = GraphUtils.stubSpanning(graph, params.getNumThreads());
+        for (int i = 0; i < iterations; i++) {
+            List<SimpleReport> reports = new ArrayList<>();
+            for (int j = 0; j < params.getNumThreads(); j++) {
+                reports.add(new SimpleReport());
+            }
+            st.measurementsSpanningTree(graph, roots, params, reports);
+            result.add(reports);
+        }
+        return result;
     }
 
     public static Result statistics(List<Report> reports, JSONObject results) {

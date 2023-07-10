@@ -2,9 +2,8 @@ package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import phd.ws.WorkStealingStruct;
 import phd.ds.TaskArrayWithSize;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -17,6 +16,9 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
     private TaskArrayWithSize tasks;
     private final AtomicInteger head;
     private final AtomicInteger tail;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public IdempotentWorkStealingFIFO(int size) {
         this.head = new AtomicInteger(0);
@@ -41,6 +43,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
         tasks.set(t % tasks.getSize(), task);
         VarHandle.releaseFence();
         tail.set(t + 1);
+        puts++;
     }
 
     @Override
@@ -48,10 +51,12 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
         int h = head.get();
         int t = tail.get();
         if (h == t) {
+            takes++;
             return EMPTY;
         }
         int task = tasks.get(h % tasks.getSize());
         head.set(h + 1);
+        takes++;
         return task;
     }
 
@@ -62,6 +67,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             VarHandle.acquireFence();
             int t = tail.get();
             if (h == t) {
+                steals++;
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -69,6 +75,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             int task = a.get(h % a.getSize());
             VarHandle.acquireFence();
             if (head.compareAndSet(h, h + 1)) {
+                steals++;
                 return task;
             }
 
@@ -107,6 +114,21 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

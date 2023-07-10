@@ -1,0 +1,35 @@
+{
+  "algorithms": [
+    "CILK",
+    "CHASELEV",
+    "IDEMPOTENT_LIFO",
+    "IDEMPOTENT_FIFO",
+    "IDEMPOTENT_DEQUE",
+    "WS_NC_MULT",
+    "B_WS_NC_MULT"
+  ],
+  "spanningTree": {
+    "graphType": "TORUD_2D",
+    "vertexSize": 1000,
+    "structSize": "256",
+    "stepSpanningTree": "COUNTER",
+    "iterations": 5,
+    "directed": true,
+    "stealTime": false
+  },
+  "satStats": {
+    "datafile": "data/pigeon.cnf",
+    "structSize": 65536,
+    "iterations": 1,
+    "step": 50,
+    "algorithms": [
+      "CILK",
+      "CHASELEV",
+      "IDEMPOTENT_LIFO",
+      "IDEMPOTENT_FIFO",
+      "IDEMPOTENT_DEQUE",
+      "WS_MULT",
+      "B_WS_MULT"
+    ]
+  }
+}

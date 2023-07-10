@@ -14,6 +14,7 @@ import phd.ds.GraphUtils;
 import phd.main.Constants;
 import phd.utils.Parameters;
 import phd.utils.Result;
+import phd.utils.SimpleReport;
 import phd.utils.WSUtils;
 import phd.ws.AlgorithmsType;
 import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
@@ -33,7 +34,7 @@ public class BenchmarkSpanningTree {
                     StepSpanningTreeType.valueOf(props.getString(Constants.STEP_SPANNING_TYPE)),
                     props.getBoolean(Constants.DIRECTED),
                     props.getBoolean(Constants.STEAL_TIME));
-            StatisticsST.experiment(graph, params);
+            ExperimentsSpanningTree.experiment(graph, params);
         });
     }
 
@@ -69,7 +70,7 @@ public class BenchmarkSpanningTree {
     }
 
     private Result getResult(Parameters params, Graph graph, JSONObject results) {
-        return StatisticsST.statistics(StatisticsST.experiment(graph, params), results);
+        return ExperimentsSpanningTree.statistics(ExperimentsSpanningTree.experiment(graph, params), results);
     }
 
     public JSONObject evaluationSpanningTree(JSONObject props, List<AlgorithmsType> types) {
@@ -80,12 +81,71 @@ public class BenchmarkSpanningTree {
         Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
         // Warm up the virtual machine.
         warmUp(props, graph, types);
-        Map<String, List<CoVResult>> covs = StatisticsST.fullExperiment(graph, props, types);
+        Map<String, List<CoVResult>> covs = ExperimentsSpanningTree.fullExperiment(graph, props, types);
         JSONObject results = analysisCoV(covs);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
         String title = String.format("%s-%s-%d-%s-stats.json", graphType.toString(), directed ? "directed" : "undirected", structSize, time);
         WSUtils.saveJsonObjectToFile(results, title);
+        return results;
+    }
+
+    public JSONObject multiplicityMeasurement(JSONObject properties, List<AlgorithmsType> types) {
+        JSONObject results = new JSONObject();
+        int vertexSize = properties.getInt(Constants.VERTEX_SIZE);
+        int structSize = properties.getInt(Constants.STRUCT_SIZE);
+        GraphType graphType = GraphType.valueOf(properties.getString(Constants.GRAPH_TYPE));
+        boolean directed = properties.getBoolean(Constants.DIRECTED);
+        StepSpanningTreeType stepType = StepSpanningTreeType.valueOf(properties.getString(Constants.STEP_SPANNING_TYPE));
+        int iterations = properties.getInt(Constants.ITERATIONS);
+        int processors = Runtime.getRuntime().availableProcessors();
+        Graph graph = GraphUtils.graphType(vertexSize, graphType, directed);
+        results.put("vertexSize", vertexSize);
+        results.put("structSize", structSize);
+        results.put("graphType", graphType.name());
+        results.put("directed", directed);
+        System.out.println(String.format("Avalaible Processors: %d", processors));
+        warmUp(properties, graph, types);
+        System.out.println("begin evaluation");
+        JSONObject execs = new JSONObject();
+        types.forEach(type -> {
+            JSONObject exec = new JSONObject();
+            for (int i = 0; i < processors; i++) {
+                System.out.println("Threads: " + (i + 1) + ", algorithm: " + type.name());
+
+                JSONArray reportResults = new JSONArray();
+                Parameters p = new Parameters(graphType, type, vertexSize,
+                        (i + 1), structSize, false, iterations, stepType, directed, false,
+                        false);
+                List<List<SimpleReport>> reports = ExperimentsSpanningTree.experimentMeasurements(graph, p);
+                for (List<SimpleReport> report : reports) {
+                    JSONObject dataOps = new JSONObject();
+                    JSONArray puts = new JSONArray();
+                    JSONArray takes = new JSONArray();
+                    JSONArray steals = new JSONArray();
+                    for (SimpleReport simpleReport : report) {
+                        puts.put(simpleReport.getPuts());
+                        takes.put(simpleReport.getTakes());
+                        steals.put(simpleReport.getSteals());
+                    }
+                    dataOps.put("puts", puts);
+                    dataOps.put("takes", takes);
+                    dataOps.put("steals", steals);
+                    reportResults.put(dataOps);
+                }
+                exec.put(Integer.toString(i), reportResults);
+            }
+            execs.put(type.name(), exec);
+        });
+        results.put("executions", execs);
+        SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
+        String time = format.format(new Date());
+        String title = String.format("st-%s-%s-%s-%b-%d-%d.json",
+                types.toString(), time, graphType.name(),
+                directed, structSize, vertexSize);
+        WSUtils.saveJsonObjectToFile(results, title);
+        WSUtils.saveJsonObjectToFile(results, "experiment-1.json");
+
         return results;
     }
 

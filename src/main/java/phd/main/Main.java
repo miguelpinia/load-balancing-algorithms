@@ -18,7 +18,6 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        // TODO: Implement a version for choose any of experiments (MAPA 2023-06-12)
         // Current applications:
         // - Zero cost experiments
         // - Spanning tree
@@ -28,7 +27,7 @@ public class Main {
         //   - Counting repeated work
         //   - Statistical measurement
 
-        // First read config file and pass it as json structure to APP
+        // First read config file and then pass it as json structure to APP
         if (args.length > 0) {
             String option = args[0].strip();
             JSONObject properties;

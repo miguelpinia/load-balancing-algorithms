@@ -90,7 +90,7 @@ public class App {
                       =====================================
                       """;
             System.out.println(header);
-            benchmarkSpanning.compare(spanningTreeOptions, types);
+            benchmarkSpanning.multiplicityMeasurement(spanningTreeOptions, types);
         }
         if (satStats) {
             benchmarkSAT.statisticalEvaluation(satStatsOptions);

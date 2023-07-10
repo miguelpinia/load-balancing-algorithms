@@ -79,4 +79,10 @@ public interface WorkStealingStruct {
      */
     int steal(int label);
 
+    int getPuts();
+
+    int getTakes();
+
+    int getSteals();
+
 }

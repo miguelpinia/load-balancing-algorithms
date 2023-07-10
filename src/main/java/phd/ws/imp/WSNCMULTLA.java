@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -25,6 +24,9 @@ public class WSNCMULTLA implements WorkStealingStruct {
     private int length;
 
     private final List<NodeArrayInt> tasks;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public WSNCMULTLA(int size, int numThreads) {
         this.nodes = 0;
@@ -61,6 +63,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
+        puts++;
         return true;
     }
 
@@ -74,8 +77,10 @@ public class WSNCMULTLA implements WorkStealingStruct {
             int x = tasks.get(node).get(position);
             head[label] = h + 1;
             Head.set(h + 1);
+            takes++;
             return x;
         } else {
+            takes++;
             return EMPTY;
         }
     }
@@ -87,16 +92,33 @@ public class WSNCMULTLA implements WorkStealingStruct {
         if (h < length) {
             int node = h / arrayLength;
             int position = h % arrayLength;
-            if (node < tasks.size())  {
+            if (node < tasks.size()) {
                 int x = tasks.get(node).get(position);
                 if (x != BOTTOM) {
                     head[label] = h + 1;
                     Head.set(h + 1);
+                    steals++;
                     return x;
                 }
             }
         }
+        steals++;
         return EMPTY;
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
     private class NodeArrayInt {
@@ -125,7 +147,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
         @Override
         public String toString() {
-            return "NodeArrayInt{" + "length=" + length + ", items=" + Arrays.toString(items)+ '}';
+            return "NodeArrayInt{" + "length=" + length + ", items=" + Arrays.toString(items) + '}';
         }
 
     }
