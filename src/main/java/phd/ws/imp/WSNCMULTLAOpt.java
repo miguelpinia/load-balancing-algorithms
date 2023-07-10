@@ -11,8 +11,8 @@ import phd.ws.WorkStealingStruct;
  * @author miguel
  */
 public class WSNCMULTLAOpt implements WorkStealingStruct {
-    
-        private static final int BOTTOM = -2;
+
+    private static final int BOTTOM = -2;
     private static final int EMPTY = -1;
 
     private final AtomicInteger Head;
@@ -24,6 +24,9 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
     private int length;
 
     private final List<NodeArrayInt> tasks;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public WSNCMULTLAOpt(int size, int numThreads) {
         this.nodes = 0;
@@ -62,6 +65,7 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
+        puts++;
         return true;
     }
 
@@ -75,8 +79,10 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
             int x = tasks.get(node).get(position);
             head[label] = h + 1;
             Head.set(h + 1);
+            takes++;
             return x;
         } else {
+            takes++;
             return EMPTY;
         }
     }
@@ -88,16 +94,33 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
         if (h <= tail) {
             int node = h / arrayLength;
             int position = h % arrayLength;
-            if (node < tasks.size())  {
+            if (node < tasks.size()) {
                 int x = tasks.get(node).get(position);
                 if (x != BOTTOM) {
                     head[label] = h + 1;
                     Head.set(h + 1);
+                    steals++;
                     return x;
                 }
             }
         }
+        steals++;
         return EMPTY;
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
     private class NodeArrayInt {
@@ -124,7 +147,7 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
 
         @Override
         public String toString() {
-            return "NodeArrayInt{" + "length=" + length + ", items=" + Arrays.toString(items)+ '}';
+            return "NodeArrayInt{" + "length=" + length + ", items=" + Arrays.toString(items) + '}';
         }
 
     }
@@ -148,5 +171,5 @@ public class WSNCMULTLAOpt implements WorkStealingStruct {
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
 }

@@ -1,6 +1,5 @@
 package phd.ws.imp;
 
-import phd.ws.imp.Node;
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -64,6 +63,21 @@ public class SIMPLEWorkStealing implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPuts() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int getTakes() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int getSteals() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

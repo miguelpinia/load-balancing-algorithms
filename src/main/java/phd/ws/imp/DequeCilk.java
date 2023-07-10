@@ -4,7 +4,6 @@ import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.concurrent.locks.ReentrantLock;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -18,6 +17,9 @@ public class DequeCilk implements WorkStealingStruct {
     private AtomicInteger T;
     private AtomicIntegerArray tasks;
     private final ReentrantLock lock;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public DequeCilk(int initialSize) {
         lock = new ReentrantLock(true);
@@ -47,9 +49,11 @@ public class DequeCilk implements WorkStealingStruct {
         if (tail >= tasks.length()) {
             expand();
             put(task);
+            return;
         }
         tasks.set(tail % tasks.length(), task);
         T.set(tail + 1);
+        puts++;
     }
 
     @Override
@@ -59,6 +63,7 @@ public class DequeCilk implements WorkStealingStruct {
         VarHandle.fullFence();
         int h = H.get();
         if (t > h) {
+            takes++;
             return tasks.get(t % tasks.length());
         }
         if (t < h) {
@@ -69,6 +74,7 @@ public class DequeCilk implements WorkStealingStruct {
                     if (lock.isHeldByCurrentThread()) {
                         lock.unlock();
                     }
+                    takes++;
                     return EMPTY;
                 }
             } finally {
@@ -77,6 +83,7 @@ public class DequeCilk implements WorkStealingStruct {
                 }
             }
         }
+        takes++;
         return tasks.get(t % tasks.length());
     }
 
@@ -96,6 +103,7 @@ public class DequeCilk implements WorkStealingStruct {
         if (lock.isHeldByCurrentThread()) {
             lock.unlock();
         }
+        steals++;
         return ret;
     }
 
@@ -117,6 +125,21 @@ public class DequeCilk implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

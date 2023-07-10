@@ -2,10 +2,9 @@ package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
 import java.util.concurrent.atomic.AtomicReference;
-
-import phd.ws.WorkStealingStruct;
-import phd.utils.Triplet;
 import phd.ds.TaskArrayWithSize;
+import phd.utils.Triplet;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -18,6 +17,9 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
 
     private TaskArrayWithSize tasks;
     private final AtomicReference<Triplet> anchor;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public IdempotentWorkStealingDeque(int size) {
         this.tasks = new TaskArrayWithSize(size);
@@ -38,6 +40,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         tasks.set((h + s) % tasks.getSize(), task);
         VarHandle.releaseFence();
         anchor.set(new Triplet(h, s + 1, g + 1));
+        puts++;
     }
 
     @Override
@@ -51,9 +54,13 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
-        if (s == 0) return EMPTY;
+        if (s == 0) {
+            takes++;
+            return EMPTY;
+        }
         int task = tasks.get((h + s - 1) % tasks.getSize());
         anchor.set(new Triplet(h, s - 1, g));
+        takes++;
         return task;
     }
 
@@ -66,6 +73,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int g = oldReference.getTag();
 
             if (s == 0) {
+                steals++;
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -74,6 +82,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int h2 = h + 1 % MAX_SIZE;
             Triplet newReference = new Triplet(h2, s - 1, g);
             if (anchor.compareAndSet(oldReference, newReference)) {
+                steals++;
                 return task;
             }
 
@@ -112,6 +121,21 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

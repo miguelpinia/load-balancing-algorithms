@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -23,6 +22,9 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     private int length;
     private final int[] head;
     private int tail;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public New_BWSNCMULTLA(int size, int numThreads) {
         this.nodes = 0;
@@ -57,6 +59,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
+        puts++;
         return true;
     }
 
@@ -70,8 +73,10 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
             int x = tasks.get(node).getValue(position);
             Head.set(h + 1);
             head[label] = h + 1;
+            takes++;
             return x;
         } else {
+            takes++;
             return EMPTY;
         }
     }
@@ -89,12 +94,15 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
                         head[label] = h + 1;
                         if (tasks.get(node).getSwap(position).getAndSet(false)) {
                             Head.set(h + 1);
+                            steals++;
                             return x;
                         }
                     }
                 }
+                steals++;
                 return EMPTY;
             } else {
+                steals++;
                 return EMPTY;
             }
         }
@@ -118,6 +126,21 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     @Override
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
     private class Item {
@@ -159,7 +182,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
         }
 
         public boolean setItem(int idx, int value) {
-            if (idx < 0 || idx  >= length) {
+            if (idx < 0 || idx >= length) {
                 return false;
             }
             tasks[idx].setValue(value);

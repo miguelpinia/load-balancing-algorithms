@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import phd.utils.WorkStealingUtils;
+import phd.utils.WSUtils;
 import phd.ws.experiments.sat.Formula;
 import phd.ws.experiments.sat.Literal;
 import phd.ws.experiments.sat.Utils;
@@ -267,7 +267,7 @@ public class Solver {
         try {
             String configFile = "config_sat.json";
             JSONObject result = experiment(configFile);
-            WorkStealingUtils.saveJsonObjectToFile(result, "experiment-sat-result.json");
+            WSUtils.saveJsonObjectToFile(result, "experiment-sat-result.json");
             System.out.println("Finish evaluation");
         } catch (InterruptedException ex) {
             Logger.getLogger(Solver.class.getName()).log(Level.SEVERE, null, ex);

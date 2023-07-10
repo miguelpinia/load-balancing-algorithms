@@ -8,10 +8,13 @@
     "WS_NC_MULT",
     "B_WS_NC_MULT"
   ],
-  "putSteals": {
-    "structSize": 10000000,
-    "numOperations": 10000000,
-    "iterations": 70,
-    "k": 5
+  "spanningTreeOptions": {
+    "graphType": "TORUS_2D",
+    "vertexSize": 1000,
+    "structSize": "256",
+    "stepSpanningType": "COUNTER",
+    "iterations": 5,
+    "directed": true,
+    "stealTime": false
   }
 }

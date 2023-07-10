@@ -8,10 +8,10 @@ package phd.ws.experiments.spanningTree.stepSpanningTree;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-
-import phd.ws.WorkStealingStruct;
-import phd.utils.Report;
 import phd.ds.Graph;
+import phd.utils.Report;
+import phd.utils.SimpleReport;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -24,12 +24,23 @@ public class StepSpanningTreeLookUp {
             WorkStealingStruct struct, WorkStealingStruct[] structs, Report report, boolean specialExecution,
             AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime, CyclicBarrier barrier) {
         return switch (type) {
-            case COUNTER -> new CounterStepSpanningTree(graph, root, color, parent, label, numThreads,
-                    struct, structs, report, specialExecution, visited, counter, stealTime, barrier);
-            case DOUBLE_COLLECT -> new DoubleCollectStepSpanningTree(graph, root, color, parent, label, numThreads,
-                    struct, structs, report, specialExecution, stealTime, barrier);
-            default -> null;
+            case COUNTER ->
+                new CounterStepSpanningTree(graph, root, color, parent, label, numThreads,
+                struct, structs, report, specialExecution, visited, counter, stealTime, barrier);
+            case DOUBLE_COLLECT ->
+                new DoubleCollectStepSpanningTree(graph, root, color, parent, label, numThreads,
+                struct, structs, report, specialExecution, stealTime, barrier);
+            default ->
+                null;
         };
+    }
+
+    public static AbstractStepSpanningTree getStepSpanningTreeMeasures(StepSpanningTreeType type, Graph graph,
+            int root, AtomicIntegerArray color, AtomicIntegerArray parent, int label, int numThreads,
+            WorkStealingStruct struct, WorkStealingStruct[] structs, SimpleReport report, boolean specialExecution,
+            AtomicIntegerArray visited, AtomicInteger counter, boolean stealTime, CyclicBarrier barrier) {
+        return new CounterStepSpanningTree(graph, root, color, parent, label, numThreads,
+                struct, structs, report, specialExecution, visited, counter, stealTime, barrier);
     }
 
 }

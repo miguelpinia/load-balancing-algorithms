@@ -20,7 +20,7 @@ import phd.ds.Graph;
  *
  * @author miguel
  */
-public class WorkStealingUtils {
+public class WSUtils {
 
     public static void report(Graph graph, AtomicIntegerArray parents, int roots[]) {
         report(graph, parents, null, roots);
@@ -54,7 +54,7 @@ public class WorkStealingUtils {
             pw.println(Arrays.toString(roots));
             pw.flush();
         } catch (IOException ex) {
-            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WSUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }
@@ -64,7 +64,7 @@ public class WorkStealingUtils {
             saveFile.println(jo.toString(2));
             saveFile.flush();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WSUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -73,7 +73,7 @@ public class WorkStealingUtils {
             saveFile.println(ja.toString(2));
             saveFile.flush();
         } catch (FileNotFoundException | UnsupportedEncodingException ex) {
-            Logger.getLogger(WorkStealingUtils.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WSUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

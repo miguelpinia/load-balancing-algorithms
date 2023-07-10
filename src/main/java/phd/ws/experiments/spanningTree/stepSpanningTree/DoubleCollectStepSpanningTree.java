@@ -3,10 +3,10 @@ package phd.ws.experiments.spanningTree.stepSpanningTree;
 import java.util.Iterator;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicIntegerArray;
-
-import phd.ws.WorkStealingStruct;
-import phd.utils.Report;
 import phd.ds.Graph;
+import phd.utils.Report;
+import phd.utils.SimpleReport;
+import phd.ws.WorkStealingStruct;
 
 /**
  *
@@ -146,6 +146,11 @@ public class DoubleCollectStepSpanningTree extends AbstractStepSpanningTree {
                 }
             }
         }
+    }
+
+    @Override
+    public void graphTraversalStep(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, SimpleReport report) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

@@ -2,7 +2,6 @@ package phd.ws.imp;
 
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -19,6 +18,9 @@ public class WSNCMULT implements WorkStealingStruct {
 
     private int tail;
     private final int[] head;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -51,6 +53,7 @@ public class WSNCMULT implements WorkStealingStruct {
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
+        puts++;
         return true;
     }
 
@@ -61,8 +64,10 @@ public class WSNCMULT implements WorkStealingStruct {
             int x = Tasks[head[label]];
             head[label]++;
             Head.set(head[label]);
+            takes++;
             return x;
         }
+        takes++;
         return EMPTY;
     }
 
@@ -74,9 +79,11 @@ public class WSNCMULT implements WorkStealingStruct {
             if (x != BOTTOM) {
                 head[label]++;
                 Head.set(head[label]);
+                steals++;
                 return x;
             }
         }
+        steals++;
         return EMPTY;
     }
 
@@ -105,6 +112,21 @@ public class WSNCMULT implements WorkStealingStruct {
     @Override
     public boolean isEmpty(int label) {
         return head[label] > tail;
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
 }

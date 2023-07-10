@@ -2,7 +2,6 @@ package phd.ws.imp;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import phd.ws.WorkStealingStruct;
 
 /**
@@ -19,6 +18,9 @@ public class New_BWSNCMULT implements WorkStealingStruct {
 
     private final int[] head;
     private int tail;
+    private int puts = 0;
+    private int takes = 0;
+    private int steals = 0;
 
     public New_BWSNCMULT(int size, int numThreads) {
         tail = -1;
@@ -46,6 +48,7 @@ public class New_BWSNCMULT implements WorkStealingStruct {
         }
         tail++;
         tasks[tail].setValue(task);
+        puts++;
         return true;
     }
 
@@ -57,8 +60,10 @@ public class New_BWSNCMULT implements WorkStealingStruct {
             int x = tasks[h].getValue();
             head[label] = h + 1;
             Head.set(h + 1);
+            takes++;
             return x;
         } else {
+            takes++;
             return EMPTY;
         }
     }
@@ -74,12 +79,15 @@ public class New_BWSNCMULT implements WorkStealingStruct {
                     head[label]++;
                     if (tasks[h].getSwap().getAndSet(false)) {
                         Head.set(head[label]);
+                        steals++;
                         return x;
                     }
                 } else {
+                    steals++;
                     return EMPTY;
                 }
             } else {
+                steals++;
                 return EMPTY;
             }
         }
@@ -116,6 +124,21 @@ public class New_BWSNCMULT implements WorkStealingStruct {
     @Override
     public int steal() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int getPuts() {
+        return puts;
+    }
+
+    @Override
+    public int getTakes() {
+        return takes;
+    }
+
+    @Override
+    public int getSteals() {
+        return steals;
     }
 
     private class Item {

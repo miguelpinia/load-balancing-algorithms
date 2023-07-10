@@ -1,5 +1,6 @@
 package phd.ws.experiments.spanningTree;
 
+import java.util.List;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicIntegerArray;
@@ -9,6 +10,7 @@ import phd.ds.Graph;
 import phd.ds.GraphUtils;
 import phd.utils.Parameters;
 import phd.utils.Report;
+import phd.utils.SimpleReport;
 import phd.ws.WorkStealingStruct;
 import phd.ws.experiments.spanningTree.stepSpanningTree.AbstractStepSpanningTree;
 import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeLookUp;
@@ -112,6 +114,40 @@ public class SpanningTree {
         }
         Graph tree = GraphUtils.buildFromParents(parents, roots[0], graph.isDirected());
         return tree;
+    }
+
+    public void measurementsSpanningTree(Graph graph, int[] roots, Parameters params, List<SimpleReport> reports) {
+        Thread[] threads = new Thread[params.getNumThreads()];
+        AtomicIntegerArray colors = new AtomicIntegerArray(graph.getNumberVertices());
+        AtomicIntegerArray parents = new AtomicIntegerArray(GraphUtils.initializeParents(graph.getNumberVertices()));
+        WorkStealingStruct[] structs = new WorkStealingStruct[params.getNumThreads()];
+        AtomicIntegerArray visited = new AtomicIntegerArray(graph.getNumberVertices());
+        AtomicInteger counter = new AtomicInteger(0);
+        CyclicBarrier barrier = new CyclicBarrier(params.getNumThreads());
+        for (int i = 0; i < params.getNumThreads(); i++) {
+            structs[i] = WorkStealingStructLookUp
+                    .getWorkStealingStruct(params.getAlgType(), params.getStructSize(), params.getNumThreads());
+        }
+        // Building the spanning tree and
+        for (int i = 0; i < params.getNumThreads(); i++) {
+            AbstractStepSpanningTree step = StepSpanningTreeLookUp.getStepSpanningTreeMeasures(params.getStepSpanningTreeType(),
+                    graph, roots[i], colors, parents, (i + 1), params.getNumThreads(), structs[i], structs,
+                    reports.get(i), params.isSpecialExecution(), visited, counter, params.isStealTime(), barrier);
+
+            threads[i] = new Thread(step);
+        }
+        for (Thread thread : threads) {
+            thread.start();
+        }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(SpanningTree.class.getName())
+                        .log(Level.SEVERE, ex.getMessage(), ex);
+            }
+        }
     }
 
 }
