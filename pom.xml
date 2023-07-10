@@ -6,7 +6,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.mx.unam.imate</groupId>
     <artifactId>concurrentAlgorithms</artifactId>
-    <version>1.8.2</version>
+    <version>1.9.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
@@ -42,17 +42,31 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20200518</version>
+            <version>20220320</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/gnu.trove/trove -->
         <dependency>
-          <groupId>gnu.trove</groupId>
-          <artifactId>trove</artifactId>
-          <version>3.0.3</version>
+            <groupId>gnu.trove</groupId>
+            <artifactId>trove</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
         </dependency>
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
+                <configuration>
+                    <mainClass>phd.ws.experiments.sat1.Main</mainClass>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -85,7 +99,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.mx.unam.imate.concurrent.main.Main</mainClass>
+                            <mainClass>phd.main.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -96,7 +110,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                org.mx.unam.imate.concurrent.main.Main
+                                phd.main.Main
                             </mainClass>
                         </manifest>
                     </archive>
@@ -105,13 +119,13 @@
                     </descriptorRefs>
                 </configuration>
                 <executions>
-                  <execution>
-                    <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                    <phase>package</phase> <!-- bind to the packaging phase -->
-                    <goals>
-                      <goal>single</goal>
-                    </goals>
-                  </execution>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>

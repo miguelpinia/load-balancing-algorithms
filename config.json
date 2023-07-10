@@ -9,25 +9,12 @@
     "B_WS_NC_MULT"
   ],
   "spanningTreeOptions": {
-    "graphType": "TORUS_3D_40",
-    "vertexSize": 100,
+    "graphType": "TORUS_2D",
+    "vertexSize": 1000,
+    "structSize": "256",
     "stepSpanningType": "COUNTER",
     "iterations": 5,
     "directed": true,
-    "stealTime": true
-  },
-  "putSteals": {
-    "operations": 1000000,
-    "size": 1000000
-  },
-  "putTakes": {
-    "operations": 1000000,
-    "size": 1000000
-  },
-  "putsTakesSteals": {
-    "workers": 3,
-    "stealers": 3,
-    "operations": 1000000,
-    "size": 1000000
+    "stealTime": false
   }
 }

@@ -1,5 +1,8 @@
 package org.mx.unam.imate.concurrent.datastructures.graph;
 
+import phd.ds.GraphType;
+import phd.ds.Graph;
+import phd.ds.Edge;
 import java.util.ArrayList;
 import java.util.List;
 
