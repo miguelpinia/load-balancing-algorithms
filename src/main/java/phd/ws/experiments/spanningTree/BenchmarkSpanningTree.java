@@ -85,7 +85,7 @@ public class BenchmarkSpanningTree {
         JSONObject results = analysisCoV(covs);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("%s-%s-%d-%s-stats.json", graphType.toString(), directed ? "directed" : "undirected", structSize, time);
+        String title = String.format("graph/stats/stats-%s-%s-%s-%s-%d-%d.json", types.toString(), time, graphType.toString(), directed ? "directed" : "undirected", vertexSize, structSize);
         WSUtils.saveJsonObjectToFile(results, title);
         return results;
     }
@@ -140,11 +140,10 @@ public class BenchmarkSpanningTree {
         results.put("executions", execs);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("st-%s-%s-%s-%b-%d-%d.json",
+        String title = String.format("graph/multiplicity/st-%s-%s-%s-%s-%d-%d.json",
                 types.toString(), time, graphType.name(),
-                directed, structSize, vertexSize);
+                directed ? "directed" : "undirected", vertexSize, structSize);
         WSUtils.saveJsonObjectToFile(results, title);
-        WSUtils.saveJsonObjectToFile(results, "experiment-1.json");
 
         return results;
     }

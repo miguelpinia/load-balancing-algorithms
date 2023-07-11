@@ -41,11 +41,11 @@ public class BenchmarkZeroCost {
     }
 
     private void generateJSONFile(JSONObject results, String fileName,
-            int structSize, int numOperations) {
+            int structSize, int numOperations, List<AlgorithmsType> types) {
         System.out.println(results.toString(2));
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("%s-%d-%d-%s.json", fileName, structSize, numOperations, time);
+        String title = String.format("%s-%s-%s-%d-%d.json", fileName, types.toString(), time, numOperations, structSize);
         WSUtils.saveJsonObjectToFile(results, title);
         System.out.println(String.format("Writing to file: %s", title));
     }
@@ -67,7 +67,7 @@ public class BenchmarkZeroCost {
         System.out.println(String.format("The benchmark will be performed with a size %d and a total of %d operations", structSize, numOperations));
         Map<String, CoVResultZero> covs = ZeroCost.fullExperimentPutsSteals(types, putStealsOptions);
         JSONObject results = processCoVPutSteals(covs);
-        generateJSONFile(results, "stats-puts-steals", structSize, numOperations);
+        generateJSONFile(results, "zerocost/puts-steals", structSize, numOperations, types);
         System.out.println(footer);
 
     }
@@ -89,7 +89,7 @@ public class BenchmarkZeroCost {
         System.out.println(String.format("The benchmark will be performed with a size %d and a total of %d operations", structSize, numOperations));
         Map<String, CoVResultZero> covs = ZeroCost.fullExperimentPutsTakes(types, putTakesOptions);
         JSONObject results = processCoVPutTakes(covs);
-        generateJSONFile(results, "stats-puts-takes", structSize, numOperations);
+        generateJSONFile(results, "zerocost/puts-takes", structSize, numOperations, types);
         System.out.println(footer);
     }
 
@@ -110,7 +110,7 @@ public class BenchmarkZeroCost {
         System.out.println(String.format("The benchmark will be performed with a size %d and a total of %d operations", structSize, numOperations));
         Experiments exp = new Experiments();
         JSONObject results = exp.putTakesSteals(types, ptsOptions);
-        generateJSONFile(results, "puts-takes-steals", structSize, numOperations);
+        generateJSONFile(results, "zerocost/puts-takes-steals", structSize, numOperations, types);
     }
 
 }

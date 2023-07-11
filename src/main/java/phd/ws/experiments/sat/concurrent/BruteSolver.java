@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import phd.utils.WSUtils;
 import phd.ws.experiments.sat.Formula;
 import phd.ws.experiments.sat.Utils;
 import phd.ws.gen.WSLookUp;
@@ -476,17 +475,6 @@ public class BruteSolver {
 
     public static void resetSatisfied() {
         isSatisfied.set(false);
-    }
-
-//    public static void meanCoVSat(String configFile) {
-//        JSONObject config = readProperties(configFile);
-//
-//    }
-    public static void main(String[] args) {
-        String configFile = "config_sat.json";
-        JSONObject result = experiment(configFile);
-        WSUtils.saveJsonObjectToFile(result, "experiment-sat-brute-result.json");
-        System.out.println("Finish Evaluation");
     }
 
 }
