@@ -101,14 +101,14 @@
     (fs/create-dirs "zerocost")
     (->> (build-json-zerocost experiment algorithms)
          (write-json configfile))
-    (shell script)))
+    (dotimes [_ 20] (shell script))))
 
 (defn execute-experiment-statistics [configfile algorithms]
   (doseq [experiment graph-combinations]
     (println (str "Graph experiment: " experiment))
     (fs/create-dirs "graph/stats")
     (write-json configfile (build-json-statistics experiment algorithms))
-    (shell script)))
+    (dotimes [_ 20] (shell script))))
 
 (defn execute-experiment-multiplicity [configfile algorithms]
   (doseq [experiment graph-combinations]
@@ -122,7 +122,7 @@
     (println (str "SAT Stats Experiment: " experiment))
     (fs/create-dirs "sat/stats")
     (write-json configfile (build-json-sat experiment))
-    (shell script)))
+    (dotimes [_ 20] (shell script))))
 
 (defn execute-experiment-sat-multiplicity [configfile]
   (doseq [experiment sat-stats-combinations]
