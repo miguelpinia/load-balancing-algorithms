@@ -1,7 +1,7 @@
 package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicStampedReference;
 import phd.ds.TaskArrayWithSize;
 import phd.utils.Triplet;
 import phd.ws.WorkStealingStruct;
@@ -16,19 +16,20 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
     private static final int MAX_SIZE = 0xFFFFFF;
 
     private TaskArrayWithSize tasks;
-    private final AtomicReference<Triplet> anchor;
+    private final AtomicStampedReference<Triplet> anchor;
     private int puts = 0;
     private int takes = 0;
     private int steals = 0;
+    private final int[] stampHolder = new int[1];
 
     public IdempotentWorkStealingDeque(int size) {
         this.tasks = new TaskArrayWithSize(size);
-        this.anchor = new AtomicReference<>(new Triplet(0, 0, 0));
+        this.anchor = new AtomicStampedReference<>(new Triplet(0, 0, 0), 0);
     }
 
     @Override
     public void put(int task) {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor.get(stampHolder);
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
@@ -39,18 +40,18 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         }
         tasks.set((h + s) % tasks.getSize(), task);
         VarHandle.releaseFence();
-        anchor.set(new Triplet(h, s + 1, g + 1));
+        anchor.set(new Triplet(h, s + 1, g + 1), stampHolder[0] + 1);
         puts++;
     }
 
     @Override
     public boolean isEmpty() {
-        return anchor.get().getSize() <= 0;
+        return anchor.getReference().getSize() <= 0;
     }
 
     @Override
     public int take() {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor.get(stampHolder);
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         int g = oldReference.getTag();
@@ -59,7 +60,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             return EMPTY;
         }
         int task = tasks.get((h + s - 1) % tasks.getSize());
-        anchor.set(new Triplet(h, s - 1, g));
+        anchor.set(new Triplet(h, s - 1, g), stampHolder[0]);
         takes++;
         return task;
     }
@@ -67,7 +68,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
     @Override
     public int steal() {
         while (true) {
-            Triplet oldReference = anchor.get();
+            Triplet oldReference = anchor.get(stampHolder);
             int h = oldReference.getHead();
             int s = oldReference.getSize();
             int g = oldReference.getTag();
@@ -81,7 +82,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int task = a.get(h % a.getSize());
             int h2 = h + 1 % MAX_SIZE;
             Triplet newReference = new Triplet(h2, s - 1, g);
-            if (anchor.compareAndSet(oldReference, newReference)) {
+            if (anchor.compareAndSet(oldReference, newReference, stampHolder[0], stampHolder[0])) {
                 steals++;
                 return task;
             }
@@ -90,7 +91,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
     }
 
     public void expand() {
-        Triplet oldReference = anchor.get();
+        Triplet oldReference = anchor.getReference();
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         TaskArrayWithSize a = new TaskArrayWithSize(2 * s);
