@@ -20,8 +20,9 @@ public class BenchmarkSAT {
         JSONObject result = BruteSolver.experimentMeasurements(properties);
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
+        int structSize = properties.getInt(Constants.STRUCT_SIZE);
         List<WSType> algs = properties.getJSONArray("algorithms").toList().stream().map(s -> WSType.valueOf(s.toString())).collect(Collectors.toList());
-        String title = String.format("sat/multiplicity/measurements-%s-%s-%d.json", algs.toString(), time, step);
+        String title = String.format("sat/multiplicity/measurements-%s-%d-%d-%s.json", algs.toString(), step, structSize, time);
         WSUtils.saveJsonObjectToFile(result, title);
     }
 
@@ -33,7 +34,7 @@ public class BenchmarkSAT {
         int structSize = properties.getInt(Constants.STRUCT_SIZE);
         List<WSType> algs = properties.getJSONArray("algorithms").toList().stream().map(s -> WSType.valueOf(s.toString())).collect(Collectors.toList());
         String time = format.format(new Date());
-        String title = String.format("sat/stats/stats-%s.%s-%d.json", algs.toString(), time, structSize);
+        String title = String.format("sat/stats/stats-%s-%d-%d-%s.json", algs.toString(), step, structSize, time);
         WSUtils.saveJsonObjectToFile(result, title);
     }
 

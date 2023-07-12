@@ -45,7 +45,7 @@ public class BenchmarkZeroCost {
         System.out.println(results.toString(2));
         SimpleDateFormat format = new SimpleDateFormat("dd_MM_yyyy-HH:mm:ss");
         String time = format.format(new Date());
-        String title = String.format("%s-%s-%s-%d-%d.json", fileName, types.toString(), time, numOperations, structSize);
+        String title = String.format("%s-%s-%d-%d-%s.json", fileName, types.toString(), numOperations, structSize, time);
         WSUtils.saveJsonObjectToFile(results, title);
         System.out.println(String.format("Writing to file: %s", title));
     }
