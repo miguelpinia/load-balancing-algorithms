@@ -137,6 +137,6 @@
 
 (execute-experiment-zerocost "config.json" zerocost-algs)
 (execute-experiment-multiplicity "config.json" graph-algs)
-(execute-experiment-statistics "config.json" only-deque)
+(execute-experiment-statistics "config.json" graph-algs)
 (execute-experiment-sat-stats "config.json")
 (execute-experiment-sat-multiplicity "config.json")
