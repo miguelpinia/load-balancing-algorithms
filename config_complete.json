@@ -8,8 +8,27 @@
     "WS_NC_MULT",
     "B_WS_NC_MULT"
   ],
+  "putSteals": {
+    "structSize": 256,
+    "numOperations": 10000000,
+    "iterations": 70,
+    "k": 5
+  },
+  "putTakes": {
+    "structSize": 256,
+    "numOperations": 10000000,
+    "iterations": 70,
+    "k": 5
+  },
+  "statistics": {
+    "vertexSize": 1000,
+    "directed": true,
+    "structSize": 256,
+    "graphType": "TORUS_2D",
+    "stealTime": false
+  },
   "spanningTree": {
-    "graphType": "TORUD_2D",
+    "graphType": "TORUS_2D",
     "vertexSize": 1000,
     "structSize": "256",
     "stepSpanningTree": "COUNTER",
@@ -31,5 +50,20 @@
       "WS_MULT",
       "B_WS_MULT"
     ]
+  },
+  "satCount": {
+    "datafile": "data/pigeon.cnf",
+    "structSize": 65536,
+    "algorithms": [
+      "CILK",
+      "CHASELEV",
+      "IDEMPOTENT_LIFO",
+      "IDEMPOTENT_FIFO",
+      "IDEMPOTENT_DEQUE",
+      "WS_MULT",
+      "B_WS_MULT"
+    ],
+    "iterations": 1,
+    "step": 50
   }
 }
