@@ -93,9 +93,21 @@ public class App {
             benchmarkSpanning.multiplicityMeasurement(spanningTreeOptions, types);
         }
         if (satStats) {
+            var header = """
+                      =====================================
+                      =      SAT statistics               =
+                      =====================================
+                      """;
+            System.out.println(header);
             benchmarkSAT.statisticalEvaluation(satStatsOptions);
         }
         if (satCount) {
+            var header = """
+                      =====================================
+                      =      SAT multiplicity             =
+                      =====================================
+                      """;
+            System.out.println(header);
             benchmarkSAT.multiplicityCountBenchmark(satCountOptions);
         }
     }
