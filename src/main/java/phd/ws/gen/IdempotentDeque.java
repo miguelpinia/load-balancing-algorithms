@@ -4,7 +4,7 @@ import java.lang.invoke.VarHandle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicStampedReference;
-import phd.utils.Triplet;
+import phd.utils.AnchorDeque;
 
 /**
  *
@@ -15,13 +15,12 @@ public class IdempotentDeque<T> implements WSStruct<T> {
 
     private static final int MAX_SIZE = 0xFFFFFF;
     private TaskArray<T> tasks;
-    private final AtomicStampedReference<Triplet> anchor;
+    private final AtomicStampedReference<AnchorDeque> anchor;
     private List<T> snapshot;
-    private final int[] stampHolder = new int[1];
 
     public IdempotentDeque(int size) {
         tasks = new TaskArray<>(size);
-        anchor = new AtomicStampedReference<>(new Triplet(0, 0, 0), 0);
+        anchor = new AtomicStampedReference<>(new AnchorDeque(0, 0), 0);
     }
 
     public IdempotentDeque(int size, boolean snapshot) {
@@ -42,7 +41,7 @@ public class IdempotentDeque<T> implements WSStruct<T> {
     }
 
     public void expand() {
-        Triplet oldTriplet = anchor.get(stampHolder);
+        AnchorDeque oldTriplet = anchor.getReference();
         int h = oldTriplet.getHead();
         int s = oldTriplet.getSize();
         TaskArray<T> a = new TaskArray<>(2 * s);
@@ -57,10 +56,10 @@ public class IdempotentDeque<T> implements WSStruct<T> {
 
     @Override
     public void put(T task) {
-        Triplet oldTriplet = anchor.get(stampHolder);
+        int[] stampHolder = new int[1];
+        AnchorDeque oldTriplet = anchor.get(stampHolder);
         int h = oldTriplet.getHead();
         int s = oldTriplet.getSize();
-        int g = stampHolder[0];
         if (s == tasks.size()) {
             expand();
             put(task);
@@ -68,7 +67,7 @@ public class IdempotentDeque<T> implements WSStruct<T> {
         }
         tasks.set((h + s) % tasks.size(), task);
         VarHandle.releaseFence();
-        anchor.set(new Triplet(h, s + 1, g + 1), g + 1);
+        anchor.set(new AnchorDeque(h, s + 1), stampHolder[0] + 1);
         if (snapshot != null) {
             snapshot.add(task);
         }
@@ -86,22 +85,23 @@ public class IdempotentDeque<T> implements WSStruct<T> {
 
     @Override
     public T take() {
-        Triplet oldReference = anchor.get(stampHolder);
+        int[] stampHolder = new int[1];
+        AnchorDeque oldReference = anchor.get(stampHolder);
         int h = oldReference.getHead();
         int s = oldReference.getSize();
-        int g = stampHolder[0];
         if (s == 0) {
             return null;
         }
         T task = tasks.get((h + s - 1) % tasks.size());
-        anchor.set(new Triplet(h, s - 1, g), g);
+        anchor.set(new AnchorDeque(h, s - 1), stampHolder[0]);
         return task;
     }
 
     @Override
     public T steal() {
+        int[] stampHolder = new int[1];
         while (true) {
-            Triplet oldReference = anchor.get(stampHolder);
+            AnchorDeque oldReference = anchor.get(stampHolder);
             int h = oldReference.getHead();
             int s = oldReference.getSize();
             int g = stampHolder[0];
@@ -112,7 +112,7 @@ public class IdempotentDeque<T> implements WSStruct<T> {
             TaskArray<T> a = tasks;
             T task = a.get(h % a.size());
             int h2 = h + 1 % MAX_SIZE;
-            Triplet newReference = new Triplet(h2, s - 1, g);
+            AnchorDeque newReference = new AnchorDeque(h2, s - 1);
             if (anchor.compareAndSet(oldReference, newReference, g, g)) {
                 return task;
             }
