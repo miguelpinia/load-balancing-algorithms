@@ -4,14 +4,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import phd.ws.AlgorithmsType;
-import phd.ws.experiments.spanningTree.SpanningTree;
-import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
-import phd.utils.Parameters;
-import phd.utils.Report;
 import phd.ds.Graph;
 import phd.ds.GraphType;
 import phd.ds.GraphUtils;
+import phd.utils.Parameters;
+import phd.utils.Report;
+import phd.ws.AlgorithmsType;
+import phd.ws.experiments.spanningTree.SpanningTree;
+import phd.ws.experiments.spanningTree.stepSpanningTree.StepSpanningTreeType;
 
 /**
  *
@@ -23,7 +23,7 @@ public class GeneralSpanningTreeTest {
 
     @BeforeAll
     public static void setUpClass() {
-        NUM_THREADS = Runtime.getRuntime().availableProcessors();
+        NUM_THREADS = 1;//Runtime.getRuntime().availableProcessors();
     }
 
     private static Graph generateTree(GraphType type, AlgorithmsType algType, int shape,
