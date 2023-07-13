@@ -4,16 +4,14 @@ package phd.utils;
  *
  * @author miguel
  */
-public class Triplet {
+public class AnchorDeque {
 
     private int head;
     private int size;
-    private int tag;
 
-    public Triplet(int head, int size, int tag) {
+    public AnchorDeque(int head, int size) {
         this.head = head;
         this.size = size;
-        this.tag = tag;
     }
 
     public int getHead() {
@@ -24,14 +22,9 @@ public class Triplet {
         return size;
     }
 
-    public int getTag() {
-        return tag;
-    }
-
-    public void set(int head, int size, int tag) {
+    public void set(int head, int size) {
         this.head = head;
         this.size = size;
-        this.tag = tag;
     }
 
     @Override
@@ -45,14 +38,11 @@ public class Triplet {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Triplet other = (Triplet) obj;
+        final AnchorDeque other = (AnchorDeque) obj;
         if (this.head != other.head) {
             return false;
         }
-        if (this.size != other.size) {
-            return false;
-        }
-        return this.tag == other.tag;
+        return this.size == other.size;
     }
 
     @Override
@@ -60,7 +50,6 @@ public class Triplet {
         int hash = 7;
         hash = 47 * hash + this.head;
         hash = 47 * hash + this.size;
-        hash = 47 * hash + this.tag;
         return hash;
     }
 
