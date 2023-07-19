@@ -18,7 +18,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
     private final AtomicInteger tail;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public IdempotentWorkStealingFIFO(int size) {
         this.head = new AtomicInteger(0);
@@ -67,7 +67,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             VarHandle.acquireFence();
             int t = tail.get();
             if (h == t) {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -75,7 +75,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
             int task = a.get(h % a.getSize());
             VarHandle.acquireFence();
             if (head.compareAndSet(h, h + 1)) {
-                steals++;
+                steals.incrementAndGet();
                 return task;
             }
 
@@ -128,7 +128,7 @@ public class IdempotentWorkStealingFIFO implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }

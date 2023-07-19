@@ -26,7 +26,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
     private final List<NodeArrayInt> tasks;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public WSNCMULTLA(int size, int numThreads) {
         this.nodes = 0;
@@ -97,12 +97,12 @@ public class WSNCMULTLA implements WorkStealingStruct {
                 if (x != BOTTOM) {
                     head[label] = h + 1;
                     Head.set(h + 1);
-                    steals++;
+                    steals.incrementAndGet();
                     return x;
                 }
             }
         }
-        steals++;
+        steals.incrementAndGet();
         return EMPTY;
     }
 
@@ -118,7 +118,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
     private class NodeArrayInt {

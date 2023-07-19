@@ -20,7 +20,7 @@ public class New_BWSNCMULT implements WorkStealingStruct {
     private int tail;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public New_BWSNCMULT(int size, int numThreads) {
         tail = -1;
@@ -79,15 +79,15 @@ public class New_BWSNCMULT implements WorkStealingStruct {
                     head[label]++;
                     if (tasks[h].getSwap().getAndSet(false)) {
                         Head.set(head[label]);
-                        steals++;
+                        steals.incrementAndGet();
                         return x;
                     }
                 } else {
-                    steals++;
+                    steals.incrementAndGet();
                     return EMPTY;
                 }
             } else {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
         }
@@ -138,7 +138,7 @@ public class New_BWSNCMULT implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
     private class Item {

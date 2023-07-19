@@ -20,7 +20,7 @@ public class WSNCMULT implements WorkStealingStruct {
     private final int[] head;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -79,11 +79,11 @@ public class WSNCMULT implements WorkStealingStruct {
             if (x != BOTTOM) {
                 head[label]++;
                 Head.set(head[label]);
-                steals++;
+                steals.incrementAndGet();
                 return x;
             }
         }
-        steals++;
+        steals.incrementAndGet();
         return EMPTY;
     }
 
@@ -126,7 +126,7 @@ public class WSNCMULT implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }

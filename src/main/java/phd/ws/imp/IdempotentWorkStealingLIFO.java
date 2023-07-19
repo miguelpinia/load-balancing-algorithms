@@ -6,6 +6,7 @@
 package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import phd.utils.Pair;
 import phd.ws.WorkStealingStruct;
@@ -23,7 +24,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
     private int capacity;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public IdempotentWorkStealingLIFO(int size) {
         anchor = new AtomicReference<>(new Pair(0, 0));
@@ -74,7 +75,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int t = oldReference.getT();
             int g = oldReference.getG();
             if (t == 0) {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -82,7 +83,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int task = tmp[t - 1];
             VarHandle.fullFence();
             if (anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
-                steals++;
+                steals.incrementAndGet();
                 return task;
             }
         }
@@ -132,7 +133,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }

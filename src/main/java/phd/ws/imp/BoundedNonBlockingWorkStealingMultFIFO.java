@@ -28,7 +28,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
     private final int[] head;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     /**
      * En esta primera versión, el tamaño del arreglo es igual al tamaño de las
@@ -105,7 +105,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
                     if (x != TOP) {
                         head[label]++;
                         Head.set(head[label]);
-                        steals++;
+                        steals.incrementAndGet();
                         return x;
                     }
                 }
@@ -115,7 +115,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
             VarHandle.acquireFence();
             if (tail[label] == ntail && x == TOP) {
                 Head.set(head[label]);
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             } else {
                 tail[label] = ntail;
@@ -159,7 +159,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.incrementAndGet();
     }
 
 }

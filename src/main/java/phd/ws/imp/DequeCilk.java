@@ -19,7 +19,7 @@ public class DequeCilk implements WorkStealingStruct {
     private final ReentrantLock lock;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public DequeCilk(int initialSize) {
         lock = new ReentrantLock(true);
@@ -103,7 +103,7 @@ public class DequeCilk implements WorkStealingStruct {
         if (lock.isHeldByCurrentThread()) {
             lock.unlock();
         }
-        steals++;
+        steals.incrementAndGet();
         return ret;
     }
 
@@ -139,7 +139,7 @@ public class DequeCilk implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }

@@ -1,6 +1,7 @@
 package phd.ws.imp;
 
 import java.lang.invoke.VarHandle;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicStampedReference;
 import phd.ds.TaskArrayWithSize;
 import phd.utils.AnchorDeque;
@@ -19,7 +20,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
     private final AtomicStampedReference<AnchorDeque> anchor;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public IdempotentWorkStealingDeque(int size) {
         this.tasks = new TaskArrayWithSize(size);
@@ -73,7 +74,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int h = oldReference.getHead();
             int s = oldReference.getSize();
             if (s == 0) {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -82,7 +83,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int h2 = h + 1 % MAX_SIZE;
             AnchorDeque newReference = new AnchorDeque(h2, s - 1);
             if (anchor.compareAndSet(oldReference, newReference, g, g)) {
-                steals++;
+                steals.incrementAndGet();
                 return task;
             }
 
@@ -135,7 +136,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }

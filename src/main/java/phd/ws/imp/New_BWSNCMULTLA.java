@@ -24,7 +24,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
     private int tail;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public New_BWSNCMULTLA(int size, int numThreads) {
         this.nodes = 0;
@@ -94,15 +94,15 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
                         head[label] = h + 1;
                         if (tasks.get(node).getSwap(position).getAndSet(false)) {
                             Head.set(h + 1);
-                            steals++;
+                            steals.incrementAndGet();
                             return x;
                         }
                     }
                 }
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             } else {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
         }
@@ -140,7 +140,7 @@ public class New_BWSNCMULTLA implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
     private class Item {

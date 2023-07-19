@@ -17,7 +17,7 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
     private AtomicIntegerArray tasks;
     private int puts = 0;
     private int takes = 0;
-    private int steals = 0;
+    private AtomicInteger steals = new AtomicInteger(0);
 
     public ChaseLevWorkStealing(int initialSize) {
         tasks = new AtomicIntegerArray(initialSize);
@@ -84,14 +84,14 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
             int h = H.get();
             int t = T.get();
             if (h >= t) {
-                steals++;
+                steals.incrementAndGet();
                 return EMPTY;
             }
             int task = tasks.get(h % tasks.length());
             if (!H.compareAndSet(h, h + 1)) {
                 continue;
             }
-            steals++;
+            steals.incrementAndGet();
             return task;
         }
     }
@@ -128,7 +128,7 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
 
     @Override
     public int getSteals() {
-        return steals;
+        return steals.get();
     }
 
 }
