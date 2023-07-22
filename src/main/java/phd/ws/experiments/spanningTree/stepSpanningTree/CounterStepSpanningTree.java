@@ -66,13 +66,13 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                 v = struct.take();
                 report.incrementTakes();
                 if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
-                    it = graph.getNeighbours(v).iterator();
+                    it = graph.getNeighbours(v).iterator();// Trabajo realizado
                     while (it.hasNext()) {
                         w = it.next();
                         if (colors.get(w) == 0) {
                             colors.set(w, label);
                             parents.set(w, v);
-                            struct.put(w);
+                            struct.put(w); // Trabajo por hacer por exploracion
                             x = visited.getAndSet(w, 1);
                             if (x == 0) {
                                 counter.getAndIncrement();
@@ -82,6 +82,9 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                     }
                 }
             }
+
+            // Trabajo por hilo: puts + takes por exploracion
+            // Trabajo repetido: puts - steals (si son exitosos)
             if (numThreads > 1) {
                 thread = pickRandomThread(numThreads, label);
                 time = System.nanoTime();
@@ -89,7 +92,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                 time = System.nanoTime() - time;
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                     report.stealsIncrement();
-                    struct.put(stolenItem);
+                    struct.put(stolenItem); // Crean tareas
                     report.putsIncrement();
                 }
                 if (stealTime) {
@@ -165,8 +168,12 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
     }
 
     private void generalExecutionMeasurement(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, SimpleReport report) {
+        int puts = 0;
+        int takes = 0;
+        int steals = 0;
         colors.set(root, label);
         struct.put(root);
+        puts++;
         int x = visited.getAndSet(root, 1);
         if (x == 0) {
             counter.getAndIncrement();
@@ -178,8 +185,8 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
         do {
             while (!struct.isEmpty()) {
                 v = struct.take();
-
                 if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
+                    takes++;
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {
                         w = it.next();
@@ -187,6 +194,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w);
+                            puts++;
                             x = visited.getAndSet(w, 1);
                             if (x == 0) {
                                 counter.getAndIncrement();
@@ -200,18 +208,24 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                 stolenItem = structs[thread].steal();
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
                     struct.put(stolenItem);
+                    puts++;
+                    steals++;
                 }
             }
         } while (counter.get() < graph.getNumberVertices());
-        report.setPuts(struct.getPuts());
-        report.setTakes(struct.getTakes());
-        report.setSteals(struct.getSteals());
+        report.setPuts(puts++);
+        report.setTakes(takes++);
+        report.setSteals(puts++);
     }
 
     private void specialExecutionMeasurement(Graph graph, AtomicIntegerArray colors, AtomicIntegerArray parents, int root, int label, SimpleReport report) {
+        int puts = 0;
+        int takes = 0;
+        int steals = 0;
         colors.set(root, label);
         struct.put(root, label - 1);
         int x = visited.getAndSet(root, 1);
+        puts++;
         if (x == 0) {
             counter.getAndIncrement();
         }
@@ -223,6 +237,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
             while (!struct.isEmpty(label - 1)) {
                 v = struct.take(label - 1);
                 if (v >= 0) { // Ignoramos en caso de que esté vacía la cola por concurrencia
+                    takes++;
                     it = graph.getNeighbours(v).iterator();
                     while (it.hasNext()) {
                         w = it.next();
@@ -230,6 +245,7 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                             colors.set(w, label);
                             parents.set(w, v);
                             struct.put(w, label - 1);
+                            puts++;
                             x = visited.getAndSet(w, 1);
                             if (x == 0) {
                                 counter.getAndIncrement();
@@ -242,13 +258,15 @@ public class CounterStepSpanningTree extends AbstractStepSpanningTree {
                 thread = pickRandomThread(numThreads, label);
                 stolenItem = structs[thread].steal(label - 1);
                 if (stolenItem >= 0) { // Ignoramos en caso de que esté vacía o intentemos robar algo que no nos corresponde.
+                    steals++;
                     struct.put(stolenItem, label - 1);
+                    puts++;
                 }
             }
         } while (counter.get() < graph.getNumberVertices());
-        report.setPuts(struct.getPuts());
-        report.setTakes(struct.getTakes());
-        report.setSteals(struct.getSteals());
+        report.setPuts(puts);
+        report.setTakes(takes);
+        report.setSteals(steals);
     }
 
 }

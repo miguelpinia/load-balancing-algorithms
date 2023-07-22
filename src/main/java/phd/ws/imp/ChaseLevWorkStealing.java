@@ -50,7 +50,7 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
         }
         tasks.set(tail % tasks.length(), task);
         T.set(tail + 1);
-        puts++;
+//        puts++;
     }
 
     @Override
@@ -60,20 +60,20 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
         VarHandle.fullFence();
         int h = H.get();
         if (t > h) {
-            takes++;
+//            takes++;
             return tasks.get(t % tasks.length());
         }
         if (t < h) {
             T.set(h);
-            takes++;
+//            takes++;
             return EMPTY;
         }
         T.set(h + 1);
         if (!H.compareAndSet(h, h + 1)) {
-            takes++;
+//            takes++;
             return EMPTY;
         } else {
-            takes++;
+//            takes++;
             return tasks.get(t % tasks.length());
         }
     }
@@ -84,14 +84,14 @@ public class ChaseLevWorkStealing implements WorkStealingStruct {
             int h = H.get();
             int t = T.get();
             if (h >= t) {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return EMPTY;
             }
             int task = tasks.get(h % tasks.length());
             if (!H.compareAndSet(h, h + 1)) {
                 continue;
             }
-            steals.incrementAndGet();
+//            steals.incrementAndGet();
             return task;
         }
     }

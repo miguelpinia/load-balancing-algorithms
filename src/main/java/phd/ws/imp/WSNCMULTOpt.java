@@ -53,7 +53,7 @@ public class WSNCMULTOpt implements WorkStealingStruct {
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
-        puts++;
+//        puts++;
         return true;
     }
 
@@ -64,10 +64,10 @@ public class WSNCMULTOpt implements WorkStealingStruct {
             int x = Tasks[head[label]];
             head[label]++;
             Head.set(head[label]);
-            takes++;
+//            takes++;
             return x;
         }
-        takes++;
+//        takes++;
         return EMPTY;
     }
 
@@ -79,11 +79,11 @@ public class WSNCMULTOpt implements WorkStealingStruct {
             if (x != BOTTOM) {
                 head[label]++;
                 Head.set(head[label]);
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return x;
             }
         }
-        steals.incrementAndGet();
+//        steals.incrementAndGet();
         return EMPTY;
     }
 

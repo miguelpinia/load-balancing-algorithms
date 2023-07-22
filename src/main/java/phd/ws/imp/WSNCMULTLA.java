@@ -63,7 +63,7 @@ public class WSNCMULTLA implements WorkStealingStruct {
         }
         tail++;
         tasks.get(nodes - 1).setItem(tail % arrayLength, task);
-        puts++;
+//        puts++;
         return true;
     }
 
@@ -77,10 +77,10 @@ public class WSNCMULTLA implements WorkStealingStruct {
             int x = tasks.get(node).get(position);
             head[label] = h + 1;
             Head.set(h + 1);
-            takes++;
+//            takes++;
             return x;
         } else {
-            takes++;
+//            takes++;
             return EMPTY;
         }
     }
@@ -97,12 +97,12 @@ public class WSNCMULTLA implements WorkStealingStruct {
                 if (x != BOTTOM) {
                     head[label] = h + 1;
                     Head.set(h + 1);
-                    steals.incrementAndGet();
+//                    steals.incrementAndGet();
                     return x;
                 }
             }
         }
-        steals.incrementAndGet();
+//        steals.incrementAndGet();
         return EMPTY;
     }
 

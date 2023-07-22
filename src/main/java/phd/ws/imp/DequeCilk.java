@@ -53,7 +53,7 @@ public class DequeCilk implements WorkStealingStruct {
         }
         tasks.set(tail % tasks.length(), task);
         T.set(tail + 1);
-        puts++;
+//        puts++;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DequeCilk implements WorkStealingStruct {
         VarHandle.fullFence();
         int h = H.get();
         if (t > h) {
-            takes++;
+//            takes++;
             return tasks.get(t % tasks.length());
         }
         if (t < h) {
@@ -74,7 +74,7 @@ public class DequeCilk implements WorkStealingStruct {
                     if (lock.isHeldByCurrentThread()) {
                         lock.unlock();
                     }
-                    takes++;
+//                    takes++;
                     return EMPTY;
                 }
             } finally {
@@ -83,7 +83,7 @@ public class DequeCilk implements WorkStealingStruct {
                 }
             }
         }
-        takes++;
+//        takes++;
         return tasks.get(t % tasks.length());
     }
 
@@ -103,7 +103,7 @@ public class DequeCilk implements WorkStealingStruct {
         if (lock.isHeldByCurrentThread()) {
             lock.unlock();
         }
-        steals.incrementAndGet();
+//        steals.incrementAndGet();
         return ret;
     }
 

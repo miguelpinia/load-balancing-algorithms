@@ -23,7 +23,7 @@ public class GeneralSpanningTreeTest {
 
     @BeforeAll
     public static void setUpClass() {
-        NUM_THREADS = 1;//Runtime.getRuntime().availableProcessors();
+        NUM_THREADS = Runtime.getRuntime().availableProcessors();
     }
 
     private static Graph generateTree(GraphType type, AlgorithmsType algType, int shape,

@@ -41,7 +41,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         tasks.set((h + s) % tasks.getSize(), task);
         VarHandle.releaseFence();
         anchor.set(new AnchorDeque(h, s + 1), stampHolder[0] + 1);
-        puts++;
+//        puts++;
     }
 
     @Override
@@ -56,12 +56,12 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
         int h = oldReference.getHead();
         int s = oldReference.getSize();
         if (s == 0) {
-            takes++;
+//            takes++;
             return EMPTY;
         }
         int task = tasks.get((h + s - 1) % tasks.getSize());
         anchor.set(new AnchorDeque(h, s - 1), stampHolder[0]);
-        takes++;
+//        takes++;
         return task;
     }
 
@@ -74,7 +74,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int h = oldReference.getHead();
             int s = oldReference.getSize();
             if (s == 0) {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -83,7 +83,7 @@ public class IdempotentWorkStealingDeque implements WorkStealingStruct {
             int h2 = h + 1 % MAX_SIZE;
             AnchorDeque newReference = new AnchorDeque(h2, s - 1);
             if (anchor.compareAndSet(oldReference, newReference, g, g)) {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return task;
             }
 

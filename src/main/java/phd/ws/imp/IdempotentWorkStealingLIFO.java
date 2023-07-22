@@ -50,7 +50,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
         tasks[t] = task;
         VarHandle.fullFence();
         anchor.set(new Pair(t + 1, g + 1));
-        puts++;
+//        puts++;
     }
 
     @Override
@@ -59,12 +59,12 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
         int t = a.getT();
         int g = a.getG();
         if (t == 0) {
-            takes++;
+//            takes++;
             return EMPTY;
         }
         int task = tasks[t - 1];
         anchor.set(new Pair(t - 1, g));
-        takes++;
+//        takes++;
         return task;
     }
 
@@ -75,7 +75,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int t = oldReference.getT();
             int g = oldReference.getG();
             if (t == 0) {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return EMPTY;
             }
             VarHandle.acquireFence();
@@ -83,7 +83,7 @@ public class IdempotentWorkStealingLIFO implements WorkStealingStruct {
             int task = tmp[t - 1];
             VarHandle.fullFence();
             if (anchor.compareAndSet(oldReference, new Pair(t - 1, g))) {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return task;
             }
         }

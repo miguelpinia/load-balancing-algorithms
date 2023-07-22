@@ -63,7 +63,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
         tail[label] = tail[label] + 1;
         Tasks.set(tail[label], task); // Equivalent to Tasks[tail].write(task)
         Tail.set(tail[label]);
-        puts++;
+//        puts++;
         return true;
     }
 
@@ -84,10 +84,10 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
         }
         Head.set(head[label]);
         if (x != TOP) {
-            takes++;
+//            takes++;
             return x;
         } else {
-            takes++;
+//            takes++;
             return EMPTY;
         }
     }
@@ -105,7 +105,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
                     if (x != TOP) {
                         head[label]++;
                         Head.set(head[label]);
-                        steals.incrementAndGet();
+//                steals.incrementAndGet();
                         return x;
                     }
                 }
@@ -115,7 +115,7 @@ public class BoundedNonBlockingWorkStealingMultFIFO implements WorkStealingStruc
             VarHandle.acquireFence();
             if (tail[label] == ntail && x == TOP) {
                 Head.set(head[label]);
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return EMPTY;
             } else {
                 tail[label] = ntail;

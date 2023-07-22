@@ -60,7 +60,7 @@ public class BWSNCMULT implements WorkStealingStruct {
         }
         tail++;
         Tasks[tail] = task; // Equivalent to Tasks[tail].write(task)
-        puts++;
+//        puts++;
         return true;
     }
 
@@ -71,10 +71,10 @@ public class BWSNCMULT implements WorkStealingStruct {
             int x = Tasks[head[label]];
             head[label]++;
             Head.set(head[label]);
-            takes++;
+            // takes++;
             return x;
         }
-        takes++;
+//        takes++;
         return EMPTY;
     }
 
@@ -89,15 +89,15 @@ public class BWSNCMULT implements WorkStealingStruct {
                     head[label]++;
                     if (B[h].getAndSet(false)) {
                         Head.set(head[label]);
-                        steals.incrementAndGet();
+//                        steals.incrementAndGet();
                         return x;
                     }
                 } else {
-                    steals.incrementAndGet();
+//                    steals.incrementAndGet();
                     return EMPTY;
                 }
             } else {
-                steals.incrementAndGet();
+//                steals.incrementAndGet();
                 return EMPTY;
             }
         }
